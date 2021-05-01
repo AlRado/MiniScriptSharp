@@ -41,19 +41,43 @@
     <ItemGroup>
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="sources\core\Interpreter.cs" />
         <Compile Include="sources\core\Intrinsics.cs" />
-        <Compile Include="sources\core\Keywords.cs" />
-        <Compile Include="sources\core\Lexer.cs" />
         <Compile Include="sources\core\Parser.cs" />
         <Compile Include="sources\core\TAC.cs" />
-        <Compile Include="sources\core\Types.cs" />
+        <Compile Include="sources\errors\CompilerException.cs" />
         <Compile Include="sources\errors\Errors.cs" />
+        <Compile Include="sources\errors\IndexException.cs" />
+        <Compile Include="sources\errors\KeyException.cs" />
+        <Compile Include="sources\errors\LexerException.cs" />
+        <Compile Include="sources\errors\LimitExceededException.cs" />
+        <Compile Include="sources\errors\MiniscriptException.cs" />
+        <Compile Include="sources\errors\RuntimeException.cs" />
+        <Compile Include="sources\errors\SourceLoc.cs" />
+        <Compile Include="sources\errors\TooManyArgumentsException.cs" />
+        <Compile Include="sources\errors\TypeException.cs" />
+        <Compile Include="sources\errors\UndefinedIdentifierException.cs" />
+        <Compile Include="sources\interpreter\Interpreter.cs" />
+        <Compile Include="sources\keywords\Keywords.cs" />
+        <Compile Include="sources\lexer\Lexer.cs" />
+        <Compile Include="sources\lexer\Token.cs" />
+        <Compile Include="sources\lexer\TokenType.cs" />
         <Compile Include="sources\tests\TestSuite.cs" />
         <Compile Include="sources\tests\UnitTest.cs" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="sources" />
+        <Compile Include="sources\types\Function.cs" />
+        <Compile Include="sources\types\RValueEqualityComparer.cs" />
+        <Compile Include="sources\types\TempValString.cs" />
+        <Compile Include="sources\types\ValFunction.cs" />
+        <Compile Include="sources\types\ValList.cs" />
+        <Compile Include="sources\types\ValMap.cs" />
+        <Compile Include="sources\types\ValNull.cs" />
+        <Compile Include="sources\types\ValNumber.cs" />
+        <Compile Include="sources\types\ValSeqElem.cs" />
+        <Compile Include="sources\types\ValString.cs" />
+        <Compile Include="sources\types\ValTemp.cs" />
+        <Compile Include="sources\types\Value.cs" />
+        <Compile Include="sources\types\ValueReverseSorter.cs" />
+        <Compile Include="sources\types\ValueSorter.cs" />
+        <Compile Include="sources\types\ValVar.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

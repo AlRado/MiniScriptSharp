@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
+using Miniscript.sources.types;
 
 namespace Miniscript {
 	/// <summary>

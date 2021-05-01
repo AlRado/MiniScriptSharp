@@ -9,57 +9,9 @@ need to worry about this stuff.
 */
 using System;
 using System.Collections.Generic;
+using Miniscript.sources.lexer;
 
 namespace Miniscript {
-	public class Token {
-		public enum Type {
-			Unknown,
-			Keyword,
-			Number,
-			String,
-			Identifier,
-			OpAssign,
-			OpPlus,
-			OpMinus,
-			OpTimes,
-			OpDivide,
-			OpMod,
-			OpPower,
-			OpEqual,
-			OpNotEqual,
-			OpGreater,
-			OpGreatEqual,
-			OpLesser,
-			OpLessEqual,
-			LParen,
-			RParen,
-			LSquare,
-			RSquare,
-			LCurly,
-			RCurly,
-			AddressOf,
-			Comma,
-			Dot,
-			Colon,
-			Comment,
-			EOL
-		}
-		public Type type;
-		public string text;	// may be null for things like operators, whose text is fixed
-		public bool afterSpace;
-		
-		public Token(Type type=Type.Unknown, string text=null) {
-			this.type = type;
-			this.text = text;
-		}
-
-		public override string ToString() {
-			if (text == null) return type.ToString();
-			return string.Format("{0}({1})", type, text);
-		}
-
-		public static Token EOL = new Token() { type=Type.EOL };
-	}
 				
 	public class Lexer {
 		public int lineNum = 1;	// start at 1, so we report 1-based line numbers
@@ -105,44 +57,44 @@ namespace Miniscript {
 			// Handle two-character operators first.
 			if (!AtEnd) {
 				char c2 = input[position];
-				if (c == '=' && c2 == '=') result.type = Token.Type.OpEqual;
-				if (c == '!' && c2 == '=') result.type = Token.Type.OpNotEqual;
-				if (c == '>' && c2 == '=') result.type = Token.Type.OpGreatEqual;
-				if (c == '<' && c2 == '=') result.type = Token.Type.OpLessEqual;
+				if (c == '=' && c2 == '=') result.tokenType = TokenType.OpEqual;
+				if (c == '!' && c2 == '=') result.tokenType = TokenType.OpNotEqual;
+				if (c == '>' && c2 == '=') result.tokenType = TokenType.OpGreatEqual;
+				if (c == '<' && c2 == '=') result.tokenType = TokenType.OpLessEqual;
 
-				if (result.type != Token.Type.Unknown) {
+				if (result.tokenType != TokenType.Unknown) {
 					position++;
 					return result;
 				}
 			}
 
 			// Handle one-char operators next.
-			if (c == '+') result.type = Token.Type.OpPlus;
-			else if (c == '-') result.type = Token.Type.OpMinus;
-			else if (c == '*') result.type = Token.Type.OpTimes;
-			else if (c == '/') result.type = Token.Type.OpDivide;
-			else if (c == '%') result.type = Token.Type.OpMod;
-			else if (c == '^') result.type = Token.Type.OpPower;
-			else if (c == '(') result.type = Token.Type.LParen;
-			else if (c == ')') result.type = Token.Type.RParen;
-			else if (c == '[') result.type = Token.Type.LSquare;
-			else if (c == ']') result.type = Token.Type.RSquare;
-			else if (c == '{') result.type = Token.Type.LCurly;
-			else if (c == '}') result.type = Token.Type.RCurly;
-			else if (c == ',') result.type = Token.Type.Comma;
-			else if (c == ':') result.type = Token.Type.Colon;
-			else if (c == '=') result.type = Token.Type.OpAssign;
-			else if (c == '<') result.type = Token.Type.OpLesser;
-			else if (c == '>') result.type = Token.Type.OpGreater;
-			else if (c == '@') result.type = Token.Type.AddressOf;
+			if (c == '+') result.tokenType = TokenType.OpPlus;
+			else if (c == '-') result.tokenType = TokenType.OpMinus;
+			else if (c == '*') result.tokenType = TokenType.OpTimes;
+			else if (c == '/') result.tokenType = TokenType.OpDivide;
+			else if (c == '%') result.tokenType = TokenType.OpMod;
+			else if (c == '^') result.tokenType = TokenType.OpPower;
+			else if (c == '(') result.tokenType = TokenType.LParen;
+			else if (c == ')') result.tokenType = TokenType.RParen;
+			else if (c == '[') result.tokenType = TokenType.LSquare;
+			else if (c == ']') result.tokenType = TokenType.RSquare;
+			else if (c == '{') result.tokenType = TokenType.LCurly;
+			else if (c == '}') result.tokenType = TokenType.RCurly;
+			else if (c == ',') result.tokenType = TokenType.Comma;
+			else if (c == ':') result.tokenType = TokenType.Colon;
+			else if (c == '=') result.tokenType = TokenType.OpAssign;
+			else if (c == '<') result.tokenType = TokenType.OpLesser;
+			else if (c == '>') result.tokenType = TokenType.OpGreater;
+			else if (c == '@') result.tokenType = TokenType.AddressOf;
 			else if (c == ';' || c == '\n') {
-				result.type = Token.Type.EOL;
+				result.tokenType = TokenType.EOL;
 				result.text = c == ';' ? ";" : "\n";
 				if (c != ';') lineNum++;
 			}
 			if (c == '\r') {
 				// Careful; DOS may use \r\n, so we need to check for that too.
-				result.type = Token.Type.EOL;
+				result.tokenType = TokenType.EOL;
 				if (position < inputLength && input[position] == '\n') {
 					position++;
 					result.text = "\r\n";
@@ -151,7 +103,7 @@ namespace Miniscript {
 				}
 				lineNum++;
 			}
-			if (result.type != Token.Type.Unknown) return result;
+			if (result.tokenType != TokenType.Unknown) return result;
 
 			// Then, handle more extended tokens.
 
@@ -159,13 +111,13 @@ namespace Miniscript {
 				// A token that starts with a dot is just Type.Dot, UNLESS
 				// it is followed by a number, in which case it's a decimal number.
 				if (position >= inputLength || !IsNumeric(input[position])) {
-					result.type = Token.Type.Dot;
+					result.tokenType = TokenType.Dot;
 					return result;
 				}
 			}
 
 			if (c == '.' || IsNumeric(c)) {
-				result.type = Token.Type.Number;
+				result.tokenType = TokenType.Number;
 				while (position < inputLength) {
 					char lastc = c;
 					c = input[position];
@@ -180,12 +132,12 @@ namespace Miniscript {
 					else break;
 				}
 				result.text = input.Substring(startPos, position - startPos);
-				result.type = (Keywords.IsKeyword(result.text) ? Token.Type.Keyword : Token.Type.Identifier);
+				result.tokenType = (Keywords.IsKeyword(result.text) ? TokenType.Keyword : TokenType.Identifier);
 				if (result.text == "end") {
 					// As a special case: when we see "end", grab the next keyword (after whitespace)
 					// too, and conjoin it, so our token is "end if", "end function", etc.
 					Token nextWord = Dequeue();
-					if (nextWord != null && nextWord.type == Token.Type.Keyword) {
+					if (nextWord != null && nextWord.tokenType == TokenType.Keyword) {
 						result.text = result.text + " " + nextWord.text;
 					} else {
 						// Oops, didn't find another keyword.  User error.
@@ -204,7 +156,7 @@ namespace Miniscript {
 				return result;
 			} else if (c == '"') {
 				// Lex a string... to the closing ", but skipping (and singling) a doubled double quote ("")
-				result.type = Token.Type.String;
+				result.tokenType = TokenType.String;
 				bool haveDoubledQuotes = false;
 				startPos = position;
 				bool gotEndQuote = false;
@@ -228,7 +180,7 @@ namespace Miniscript {
 				return result;
 
 			} else {
-				result.type = Token.Type.Unknown;
+				result.tokenType = TokenType.Unknown;
 			}
 
 			result.text = input.Substring(startPos, position - startPos);
@@ -333,11 +285,11 @@ namespace Miniscript {
 			return lex.Dequeue();
 		}
 
-		public static void Check(Token tok, Token.Type type, string text=null, int lineNum=0) {
+		public static void Check(Token tok, TokenType type, string text=null, int lineNum=0) {
 			UnitTest.ErrorIfNull(tok);
 			if (tok == null) return;
-			UnitTest.ErrorIf(tok.type != type, "Token type: expected "
-						+ type + ", but got " + tok.type);
+			UnitTest.ErrorIf(tok.tokenType != type, "Token type: expected "
+						+ type + ", but got " + tok.tokenType);
 
 			UnitTest.ErrorIf(text != null && tok.text != text,
 						"Token text: expected " + text + ", but got " + tok.text);
@@ -351,57 +303,57 @@ namespace Miniscript {
 
 		public static void RunUnitTests() {
 			Lexer lex = new Lexer("42  * 3.14158");
-			Check(lex.Dequeue(), Token.Type.Number, "42");
+			Check(lex.Dequeue(), TokenType.Number, "42");
 			CheckLineNum(lex.lineNum, 1);
-			Check(lex.Dequeue(), Token.Type.OpTimes);
-			Check(lex.Dequeue(), Token.Type.Number, "3.14158");
+			Check(lex.Dequeue(), TokenType.OpTimes);
+			Check(lex.Dequeue(), TokenType.Number, "3.14158");
 			UnitTest.ErrorIf(!lex.AtEnd, "AtEnd not set when it should be");
 			CheckLineNum(lex.lineNum, 1);
 
 			lex = new Lexer("6*(.1-foo) end if // and a comment!");
-			Check(lex.Dequeue(), Token.Type.Number, "6");
+			Check(lex.Dequeue(), TokenType.Number, "6");
 			CheckLineNum(lex.lineNum, 1);
-			Check(lex.Dequeue(), Token.Type.OpTimes);
-			Check(lex.Dequeue(), Token.Type.LParen);
-			Check(lex.Dequeue(), Token.Type.Number, ".1");
-			Check(lex.Dequeue(), Token.Type.OpMinus);
-			Check(lex.Peek(), Token.Type.Identifier, "foo");
-			Check(lex.Peek(), Token.Type.Identifier, "foo");
-			Check(lex.Dequeue(), Token.Type.Identifier, "foo");
-			Check(lex.Dequeue(), Token.Type.RParen);
-			Check(lex.Dequeue(), Token.Type.Keyword, "end if");
-			Check(lex.Dequeue(), Token.Type.EOL);
+			Check(lex.Dequeue(), TokenType.OpTimes);
+			Check(lex.Dequeue(), TokenType.LParen);
+			Check(lex.Dequeue(), TokenType.Number, ".1");
+			Check(lex.Dequeue(), TokenType.OpMinus);
+			Check(lex.Peek(), TokenType.Identifier, "foo");
+			Check(lex.Peek(), TokenType.Identifier, "foo");
+			Check(lex.Dequeue(), TokenType.Identifier, "foo");
+			Check(lex.Dequeue(), TokenType.RParen);
+			Check(lex.Dequeue(), TokenType.Keyword, "end if");
+			Check(lex.Dequeue(), TokenType.EOL);
 			UnitTest.ErrorIf(!lex.AtEnd, "AtEnd not set when it should be");
 			CheckLineNum(lex.lineNum, 1);
 
 			lex = new Lexer("\"foo\" \"isn't \"\"real\"\"\" \"now \"\"\"\" double!\"");
-			Check(lex.Dequeue(), Token.Type.String, "foo");
-			Check(lex.Dequeue(), Token.Type.String, "isn't \"real\"");
-			Check(lex.Dequeue(), Token.Type.String, "now \"\" double!");
+			Check(lex.Dequeue(), TokenType.String, "foo");
+			Check(lex.Dequeue(), TokenType.String, "isn't \"real\"");
+			Check(lex.Dequeue(), TokenType.String, "now \"\" double!");
 			UnitTest.ErrorIf(!lex.AtEnd, "AtEnd not set when it should be");
 
 			lex = new Lexer("foo\nbar\rbaz\r\nbamf");
-			Check(lex.Dequeue(), Token.Type.Identifier, "foo");
+			Check(lex.Dequeue(), TokenType.Identifier, "foo");
 			CheckLineNum(lex.lineNum, 1);
-			Check(lex.Dequeue(), Token.Type.EOL);
-			Check(lex.Dequeue(), Token.Type.Identifier, "bar");
+			Check(lex.Dequeue(), TokenType.EOL);
+			Check(lex.Dequeue(), TokenType.Identifier, "bar");
 			CheckLineNum(lex.lineNum, 2);
-			Check(lex.Dequeue(), Token.Type.EOL);
-			Check(lex.Dequeue(), Token.Type.Identifier, "baz");
+			Check(lex.Dequeue(), TokenType.EOL);
+			Check(lex.Dequeue(), TokenType.Identifier, "baz");
 			CheckLineNum(lex.lineNum, 3);
-			Check(lex.Dequeue(), Token.Type.EOL);
-			Check(lex.Dequeue(), Token.Type.Identifier, "bamf");
+			Check(lex.Dequeue(), TokenType.EOL);
+			Check(lex.Dequeue(), TokenType.Identifier, "bamf");
 			CheckLineNum(lex.lineNum, 4);
-			Check(lex.Dequeue(), Token.Type.EOL);
+			Check(lex.Dequeue(), TokenType.EOL);
 			UnitTest.ErrorIf(!lex.AtEnd, "AtEnd not set when it should be");
 			
-			Check(LastToken("x=42 // foo"), Token.Type.Number, "42");
-			Check(LastToken("x = [1, 2, // foo"), Token.Type.Comma);
-			Check(LastToken("x = [1, 2 // foo"), Token.Type.Number, "2");
-			Check(LastToken("x = [1, 2 // foo // and \"more\" foo"), Token.Type.Number, "2");
-			Check(LastToken("x = [\"foo\", \"//bar\"]"), Token.Type.RSquare);
-			Check(LastToken("print 1 // line 1\nprint 2"), Token.Type.Number, "2");			
-			Check(LastToken("print \"Hi\"\"Quote\" // foo bar"), Token.Type.String, "Hi\"Quote");			
+			Check(LastToken("x=42 // foo"), TokenType.Number, "42");
+			Check(LastToken("x = [1, 2, // foo"), TokenType.Comma);
+			Check(LastToken("x = [1, 2 // foo"), TokenType.Number, "2");
+			Check(LastToken("x = [1, 2 // foo // and \"more\" foo"), TokenType.Number, "2");
+			Check(LastToken("x = [\"foo\", \"//bar\"]"), TokenType.RSquare);
+			Check(LastToken("print 1 // line 1\nprint 2"), TokenType.Number, "2");			
+			Check(LastToken("print \"Hi\"\"Quote\" // foo bar"), TokenType.String, "Hi\"Quote");			
 		}
 	}
 }

@@ -11,6 +11,7 @@ For details, see Chapters 1-3 of the Minisript Integration Guide.
 
 using System;
 using System.Collections.Generic;
+using Miniscript.sources.types;
 
 namespace Miniscript {
 
