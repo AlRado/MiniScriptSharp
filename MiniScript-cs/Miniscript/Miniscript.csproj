@@ -42,7 +42,6 @@
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="sources\core\Intrinsics.cs" />
-        <Compile Include="sources\core\Parser.cs" />
         <Compile Include="sources\core\TAC.cs" />
         <Compile Include="sources\errors\CompilerException.cs" />
         <Compile Include="sources\errors\Errors.cs" />
@@ -61,6 +60,10 @@
         <Compile Include="sources\lexer\Lexer.cs" />
         <Compile Include="sources\lexer\Token.cs" />
         <Compile Include="sources\lexer\TokenType.cs" />
+        <Compile Include="sources\parser\BackPatch.cs" />
+        <Compile Include="sources\parser\JumpPoint.cs" />
+        <Compile Include="sources\parser\Parser.cs" />
+        <Compile Include="sources\parser\ParseState.cs" />
         <Compile Include="sources\tests\TestSuite.cs" />
         <Compile Include="sources\tests\UnitTest.cs" />
         <Compile Include="sources\types\Function.cs" />
