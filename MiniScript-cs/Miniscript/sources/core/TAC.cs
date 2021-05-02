@@ -13,6 +13,7 @@ deal with it directly (see MiniscriptInterpreter instead).
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Miniscript.sources.intrinsic;
 using Miniscript.sources.types;
 
 namespace Miniscript {
@@ -281,7 +282,7 @@ namespace Miniscript {
 						// they execute directly in the current context.  (But usually, the
 						// current context is a wrapper function that was invoked via
 						// Op.CallFunction, so it got a parameter context at that time.)
-						Intrinsic.Result result = Intrinsic.Execute((int)fA, context, context.partialResult);
+						Result result = Intrinsic.Execute((int)fA, context, context.partialResult);
 						if (result.done) {
 							context.partialResult = null;
 							return result.result;
@@ -544,7 +545,7 @@ namespace Miniscript {
 			public Context parent;			// parent (calling) context
 			public Value resultStorage;		// where to store the return value (in the calling context)
 			public Machine vm;				// virtual machine
-			public Intrinsic.Result partialResult;	// work-in-progress of our current intrinsic
+			public Result partialResult;	// work-in-progress of our current intrinsic
 			public int implicitResultCounter;	// how many times we have stored an implicit result
 
 			public bool done {
