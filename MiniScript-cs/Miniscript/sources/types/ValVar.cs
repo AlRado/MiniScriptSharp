@@ -3,8 +3,15 @@
 namespace Miniscript.sources.types {
 
     public class ValVar : Value {
+        
+        // Special name for the implicit result variable we assign to on expression statements:
+        public static ValVar implicitResult = new ValVar("_");
+
+        // Special var for 'self'
+        public static ValVar self = new ValVar("self");
 
         public string identifier;
+        
         public bool noInvoke; // reflects use of "@" (address-of) operator
 
         public ValVar(string identifier) {
@@ -34,12 +41,6 @@ namespace Miniscript.sources.types {
         public override double Equality(Value rhs, int recursionDepth = 16) {
             return rhs is ValVar && ((ValVar) rhs).identifier == identifier ? 1 : 0;
         }
-
-        // Special name for the implicit result variable we assign to on expression statements:
-        public static ValVar implicitResult = new ValVar("_");
-
-        // Special var for 'self'
-        public static ValVar self = new ValVar("self");
 
     }
 

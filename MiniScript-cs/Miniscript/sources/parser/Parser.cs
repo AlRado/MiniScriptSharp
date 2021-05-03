@@ -1067,7 +1067,7 @@ namespace Miniscript {
 		}
 
 		private static void TestValidParse(string src, bool dumpTac=false) {
-		Parser parser = new Parser();
+			Parser parser = new Parser();
 			try {
 				parser.Parse(src);
 			} catch (System.Exception e) {

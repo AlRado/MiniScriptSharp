@@ -45,10 +45,18 @@ namespace Miniscript {
 
 		private Function function;
 		private ValFunction valFunction;	// (cached wrapper for function)
-		int numericID;		// also its index in the 'all' list
+		private int numericID;		// also its index in the 'all' list
 
 		public static List<Intrinsic> all = new List<Intrinsic>() { null };
-		static Dictionary<string, Intrinsic> nameMap = new Dictionary<string, Intrinsic>();
+		private static Dictionary<string, Intrinsic> nameMap = new Dictionary<string, Intrinsic>();
+		
+		private ValString _self = new ValString("self");
+		private static ValMap _functionType = null;
+		private static ValMap _listType = null;
+		private static ValMap _stringType = null;
+		private static ValMap _mapType = null;
+		
+		private static Random random;	// TODO: consider storing this on the context, instead of global!
 		
 		/// <summary>
 		/// Factory method to create a new Intrinsic, filling out its name as given,
@@ -123,7 +131,6 @@ namespace Miniscript {
 			else defVal = new ValString(defaultValue);
 			function.parameters.Add(new Function.Param(name, defVal));
 		}
-		ValString _self = new ValString("self");
 		
 		/// <summary>
 		/// GetFunc is used internally by the compiler to get the Minisript function
@@ -1382,9 +1389,6 @@ namespace Miniscript {
 
 		}
 
-		private static Random random;	// TODO: consider storing this on the context, instead of global!
-
-
 		// Helper method to compile a call to Slice (when invoked directly via slice syntax).
 		public static void CompileSlice(List<Line> code, Value list, Value fromIdx, Value toIdx, int resultTempNum) {
 			code.Add(new Line(null, Line.Op.PushParam, list));
@@ -1403,7 +1407,6 @@ namespace Miniscript {
 			}
 			return _functionType;
 		}
-		static ValMap _functionType = null;
 		
 		/// <summary>
 		/// ListType: a static map that represents the List type, and provides
@@ -1430,7 +1433,6 @@ namespace Miniscript {
 			}
 			return _listType;
 		}
-		static ValMap _listType = null;
 		
 		/// <summary>
 		/// StringType: a static map that represents the String type, and provides
@@ -1455,7 +1457,6 @@ namespace Miniscript {
 			}
 			return _stringType;
 		}
-		static ValMap _stringType = null;
 		
 		/// <summary>
 		/// MapType: a static map that represents the Map type, and provides
@@ -1478,8 +1479,7 @@ namespace Miniscript {
 			}
 			return _mapType;
 		}
-		static ValMap _mapType = null;
-		
+
 		/// <summary>
 		/// NumberType: a static map that represents the Number type.
 		/// </summary>

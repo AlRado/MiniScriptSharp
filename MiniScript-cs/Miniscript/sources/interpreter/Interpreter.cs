@@ -79,8 +79,8 @@ namespace Miniscript {
 		public Machine vm;
 		
 		TextOutputMethod _standardOutput;
-		string source;
-		Parser parser;
+		private string source;
+		private Parser parser;
 		
 		/// <summary>
 		/// Constructor taking some Minisript source code, and the output delegates.

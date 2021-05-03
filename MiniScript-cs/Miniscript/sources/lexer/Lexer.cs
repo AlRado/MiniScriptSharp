@@ -17,10 +17,10 @@ namespace Miniscript {
 		public int lineNum = 1;	// start at 1, so we report 1-based line numbers
 		public int position;
 		
-		string input;
-		int inputLength;
+		private string input;
+		private int inputLength;
 
-		Queue<Token> pending;
+		private Queue<Token> pending;
 
 		public bool AtEnd {
 			get { return position >= inputLength && pending.Count == 0; }
@@ -187,7 +187,7 @@ namespace Miniscript {
 			return result;
 		}
 
-		void SkipWhitespaceAndComment() {
+		private void SkipWhitespaceAndComment() {
 			while (!AtEnd && IsWhitespace(input[position])) {
 				position++;
 			}

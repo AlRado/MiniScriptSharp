@@ -45,7 +45,6 @@ namespace Miniscript.sources.tac {
 			public Op op;
 			public Value rhsA;
 			public Value rhsB;
-//			public string comment;
 			public SourceLoc location;
 
 			public Line(Value lhs, Op op, Value rhsA=null, Value rhsB=null) {
@@ -501,12 +500,12 @@ namespace Miniscript.sources.tac {
 				return null;
 			}
 
-			static double Clamp01(double d) {
+			private static double Clamp01(double d) {
 				if (d < 0) return 0;
 				if (d > 1) return 1;
 				return d;
 			}
-			static double AbsClamp01(double d) {
+			private static double AbsClamp01(double d) {
 				if (d < 0) d = -d;
 				if (d > 1) return 1;
 				return d;

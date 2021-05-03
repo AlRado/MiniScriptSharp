@@ -8,6 +8,8 @@ namespace Miniscript.sources.types {
     public class ValString : Value {
 
         public static long maxSize = 0xFFFFFF; // about 16M elements
+        
+        private static ValString _empty = new ValString("");
 
         public string value;
 
@@ -54,14 +56,12 @@ namespace Miniscript.sources.types {
         // Magic identifier for the is-a entry in the class system:
         public static ValString magicIsA = new ValString("__isa");
 
-        static ValString _empty = new ValString("");
 
         /// <summary>
         /// Handy accessor for an empty ValString.
         /// IMPORTANT: do not alter the value of the object returned!
         /// </summary>
-        public static ValString empty
-        {
+        public static ValString empty {
             get { return _empty; }
         }
 

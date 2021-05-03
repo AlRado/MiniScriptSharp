@@ -36,19 +36,24 @@ namespace Miniscript {
 		public static ValTemp LTemp(int tempNum) {
 			return new ValTemp(tempNum);
 		}
+		
 		public static ValVar LVar(string identifier) {
 			if (identifier == "self") return ValVar.self;
 			return new ValVar(identifier);
 		}
+		
 		public static ValTemp RTemp(int tempNum) {
 			return new ValTemp(tempNum);
 		}
+		
 		public static ValNumber Num(double value) {
 			return new ValNumber(value);
 		}
+		
 		public static ValString Str(string value) {
 			return new ValString(value);
 		}
+		
 		public static ValNumber IntrinsicByName(string name) {
 			return new ValNumber(Intrinsic.GetByName(name).id);
 		}

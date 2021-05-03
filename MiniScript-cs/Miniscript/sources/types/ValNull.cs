@@ -7,6 +7,8 @@ namespace Miniscript.sources.types {
     /// an actual null (such as a dictionary key or value).
     /// </summary>
     public class ValNull : Value {
+        
+        private static readonly ValNull _inst = new ValNull();
 
         private ValNull() {
         }
@@ -51,14 +53,11 @@ namespace Miniscript.sources.types {
         public override double Equality(Value rhs, int recursionDepth = 16) {
             return (rhs == null || rhs is ValNull ? 1 : 0);
         }
-
-        static readonly ValNull _inst = new ValNull();
-
+        
         /// <summary>
         /// Handy accessor to a shared "instance".
         /// </summary>
-        public static ValNull instance
-        {
+        public static ValNull instance {
             get { return _inst; }
         }
 

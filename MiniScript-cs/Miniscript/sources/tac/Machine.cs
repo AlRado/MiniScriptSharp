@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Miniscript.sources.types;
 
 namespace Miniscript.sources.tac {
@@ -33,9 +34,9 @@ namespace Miniscript.sources.tac {
 				get { return stopwatch == null ? 0 : stopwatch.Elapsed.TotalSeconds; }
 			}
 
-			Context _globalContext;
-			Stack<Context> stack;
-			System.Diagnostics.Stopwatch stopwatch;
+			private Context _globalContext;
+			private Stack<Context> stack;
+			private Stopwatch stopwatch;
 
 			public Machine(Context globalContext, TextOutputMethod standardOutput) {
 				_globalContext = globalContext;
@@ -104,7 +105,7 @@ namespace Miniscript.sources.tac {
 				stack.Push(nextContext);				
 			}
 			
-			void DoOneLine(Line line, Context context) {
+			private void DoOneLine(Line line, Context context) {
 //				Console.WriteLine("EXECUTING line " + (context.lineNum-1) + ": " + line);
 				if (line.op == Line.Op.PushParam) {
 					Value val = context.ValueInContext(line.rhsA);
@@ -156,7 +157,7 @@ namespace Miniscript.sources.tac {
 				}
 			}
 
-			void PopContext() {
+			private void PopContext() {
 				// Our top context is done; pop it off, and copy the return value in temp 0.
 				if (stack.Count == 1) return;	// down to just the global stack (which we keep)
 				Context context = stack.Pop();

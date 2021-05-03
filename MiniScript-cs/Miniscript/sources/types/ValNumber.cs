@@ -9,6 +9,10 @@ namespace Miniscript.sources.types {
     /// </summary>
     public class ValNumber : Value {
 
+        private static ValNumber _zero = new ValNumber(0);
+        
+        private static ValNumber _one = new ValNumber(1);
+
         public double value;
 
         public ValNumber(double value) {
@@ -57,9 +61,7 @@ namespace Miniscript.sources.types {
         public override double Equality(Value rhs, int recursionDepth = 16) {
             return rhs is ValNumber && ((ValNumber) rhs).value == value ? 1 : 0;
         }
-
-        static ValNumber _zero = new ValNumber(0), _one = new ValNumber(1);
-
+        
         /// <summary>
         /// Handy accessor to a shared "zero" (0) value.
         /// IMPORTANT: do not alter the value of the object returned!

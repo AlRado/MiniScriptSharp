@@ -44,32 +44,32 @@ namespace Miniscript.sources.intrinsic {
 			/// Result.Null: static Result representing null (no value).
 			/// </summary>
 			public static Result Null { get { return _null; } }
-			static Result _null = new Result(null, true);
+			private static Result _null = new Result(null, true);
 			
 			/// <summary>
 			/// Result.EmptyString: static Result representing "" (empty string).
 			/// </summary>
 			public static Result EmptyString { get { return _emptyString; } }
-			static Result _emptyString = new Result(ValString.empty);
+			private static Result _emptyString = new Result(ValString.empty);
 			
 			/// <summary>
 			/// Result.True: static Result representing true (1.0).
 			/// </summary>
 			public static Result True { get { return _true; } }
-			static Result _true = new Result(ValNumber.one, true);
+			private static Result _true = new Result(ValNumber.one, true);
 			
 			/// <summary>
 			/// Result.True: static Result representing false (0.0).
 			/// </summary>
 			public static Result False { get { return _false; } }
-			static Result _false = new Result(ValNumber.zero, true);
+			private static Result _false = new Result(ValNumber.zero, true);
 			
 			/// <summary>
 			/// Result.Waiting: static Result representing a need to wait,
 			/// with no in-progress value.
 			/// </summary>
 			public static Result Waiting { get { return _waiting; } }
-			static Result _waiting = new Result(null, false);
+			private static Result _waiting = new Result(null, false);
 		}
 
 }
