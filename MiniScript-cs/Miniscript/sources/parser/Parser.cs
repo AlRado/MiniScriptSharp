@@ -861,7 +861,7 @@ namespace Miniscript {
 						Value index2 = null;
 						if (tokens.Peek().tokenType != TokenType.RSquare) index2 = ParseExpr(tokens);
 						ValTemp temp = new ValTemp(output.nextTempNum++);
-						Intrinsics.CompileSlice(output.code, val, null, index2, temp.tempNum);
+						Intrinsic.CompileSlice(output.code, val, null, index2, temp.tempNum);
 						val = temp;
 					} else {
 						Value index = ParseExpr(tokens);
@@ -871,7 +871,7 @@ namespace Miniscript {
 							Value index2 = null;
 							if (tokens.Peek().tokenType != TokenType.RSquare) index2 = ParseExpr(tokens);
 							ValTemp temp = new ValTemp(output.nextTempNum++);
-							Intrinsics.CompileSlice(output.code, val, index, index2, temp.tempNum);
+							Intrinsic.CompileSlice(output.code, val, index, index2, temp.tempNum);
 							val = temp;
 						} else {			// e.g., foo[3]  (not a slice at all)
 							if (statementStart) {

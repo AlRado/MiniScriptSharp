@@ -79,7 +79,6 @@ namespace Miniscript {
 		/// Look up an Intrinsic by its name.
 		/// </summary>
 		public static Intrinsic GetByName(string name) {
-			Intrinsics.InitIfNeeded();
 			Intrinsic result = null;
 			if (nameMap.TryGetValue(name, out result)) return result;
 			return null;
@@ -149,33 +148,14 @@ namespace Miniscript {
 			return item.code(context, partialResult);
 		}
 		
-	}
-	
-	/// <summary>
-	/// Intrinsics: a static class containing all of the standard Minisript
-	/// built-in intrinsics.  You shouldn't muck with these, but feel free
-	/// to browse them for lots of examples of how to write your own intrinics.
-	/// </summary>
-	public static class Intrinsics {
 
-		static bool initialized;
-	
-		private struct KeyedValue {
-			public Value sortKey;
-			public Value value;
-			//public long valueIndex;
-		}
-		
-	
 		/// <summary>
-		/// InitIfNeeded: called automatically during script setup to make sure
+		/// Intrinsic static constructor: called automatically during script setup to make sure
 		/// that all our standard intrinsics are defined.  Note how we use a
 		/// private bool flag to ensure that we don't create our intrinsics more
 		/// than once, no matter how many times this method is called.
 		/// </summary>
-		public static void InitIfNeeded() {
-			if (initialized) return;	// our work is already done; bail out.
-			initialized = true;
+		static Intrinsic() {
 			Intrinsic f;
 
 			// abs
@@ -1402,7 +1382,7 @@ namespace Miniscript {
 
 		}
 
-		static Random random;	// TODO: consider storing this on the context, instead of global!
+		private static Random random;	// TODO: consider storing this on the context, instead of global!
 
 
 		// Helper method to compile a call to Slice (when invoked directly via slice syntax).
