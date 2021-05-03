@@ -1,4 +1,6 @@
-﻿namespace Miniscript.sources.types {
+﻿using Miniscript.sources.tac;
+
+namespace Miniscript.sources.types {
 
     /// <summary>
     /// Value: abstract base class for the Minisript type hierarchy.
@@ -14,7 +16,7 @@
         /// </summary>
         /// <param name="context">TAC context to evaluate in</param>
         /// <returns>value of this value (possibly the same as this)</returns>
-        public virtual Value Val(TAC.Context context) {
+        public virtual Value Val(Context context) {
             return this; // most types evaluate to themselves
         }
 
@@ -22,7 +24,7 @@
             return ToString(null);
         }
 
-        public abstract string ToString(TAC.Machine vm);
+        public abstract string ToString(Machine vm);
 
         /// <summary>
         /// This version of Val is like the one above, but also returns
@@ -32,7 +34,7 @@
         /// <returns>The value.</returns>
         /// <param name="context">Context.</param>
         /// <param name="valueFoundIn">Value found in.</param>
-        public virtual Value Val(TAC.Context context, out ValMap valueFoundIn) {
+        public virtual Value Val(Context context, out ValMap valueFoundIn) {
             valueFoundIn = null;
             return this;
         }
@@ -43,7 +45,7 @@
         /// </summary>
         /// <param name="context">context in which to evaluate</param>
         /// <returns>fully-evaluated value</returns>
-        public virtual Value FullEval(TAC.Context context) {
+        public virtual Value FullEval(Context context) {
             return this;
         }
 
@@ -94,7 +96,7 @@
         /// </summary>
         /// <param name="recursionLimit">how deeply we can recurse, or -1 for no limit</param>
         /// <returns></returns>
-        public virtual string CodeForm(TAC.Machine vm, int recursionLimit = -1) {
+        public virtual string CodeForm(Machine vm, int recursionLimit = -1) {
             return ToString(vm);
         }
 
@@ -132,7 +134,7 @@
         /// Return whether this value is the given type (or some subclass thereof)
         /// in the context of the given virtual machine.
         /// </summary>
-        public virtual bool IsA(Value type, TAC.Machine vm) {
+        public virtual bool IsA(Value type, Machine vm) {
             return false;
         }
 

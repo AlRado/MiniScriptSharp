@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Miniscript.sources.tac;
 
 namespace Miniscript.sources.types {
 
@@ -10,16 +11,16 @@ namespace Miniscript.sources.types {
             this.tempNum = tempNum;
         }
 
-        public override Value Val(TAC.Context context) {
+        public override Value Val(Context context) {
             return context.GetTemp(tempNum);
         }
 
-        public override Value Val(TAC.Context context, out ValMap valueFoundIn) {
+        public override Value Val(Context context, out ValMap valueFoundIn) {
             valueFoundIn = null;
             return context.GetTemp(tempNum);
         }
 
-        public override string ToString(TAC.Machine vm) {
+        public override string ToString(Machine vm) {
             return "_" + tempNum.ToString(CultureInfo.InvariantCulture);
         }
 

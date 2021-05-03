@@ -1,4 +1,6 @@
-﻿namespace Miniscript.sources.types {
+﻿using Miniscript.sources.tac;
+
+namespace Miniscript.sources.types {
 
     public class ValSeqElem : Value {
 
@@ -18,7 +20,7 @@
         /// <param name="sequence">Sequence (object) to look in.</param>
         /// <param name="identifier">Identifier to look for.</param>
         /// <param name="context">Context.</param>
-        public static Value Resolve(Value sequence, string identifier, TAC.Context context, out ValMap valueFoundIn) {
+        public static Value Resolve(Value sequence, string identifier, Context context, out ValMap valueFoundIn) {
             var includeMapType = true;
             valueFoundIn = null;
             int loopsLeft = 1000; // (max __isa chain depth)
@@ -70,11 +72,11 @@
             return null;
         }
 
-        public override Value Val(TAC.Context context) {
+        public override Value Val(Context context) {
             return Val(context, out _);
         }
 
-        public override Value Val(TAC.Context context, out ValMap valueFoundIn) {
+        public override Value Val(Context context, out ValMap valueFoundIn) {
             Value baseSeq = sequence;
             if (sequence == ValVar.self) {
                 baseSeq = context.self;
@@ -101,7 +103,7 @@
             throw new TypeException("Type Exception: can't index into this type");
         }
 
-        public override string ToString(TAC.Machine vm) {
+        public override string ToString(Machine vm) {
             return $"{(noInvoke ? "@" : "")}{sequence}[{index}]";
         }
 

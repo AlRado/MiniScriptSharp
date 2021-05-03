@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Miniscript.sources.tac;
 
 namespace Miniscript.sources.types {
 
@@ -16,7 +17,7 @@ namespace Miniscript.sources.types {
             this.values = values == null ? new List<Value>() : values;
         }
 
-        public override Value FullEval(TAC.Context context) {
+        public override Value FullEval(Context context) {
             // Evaluate each of our list elements, and if any of those is
             // a variable or temp, then resolve those now.
             // CAUTION: do not mutate our original list!  We may need
@@ -47,7 +48,7 @@ namespace Miniscript.sources.types {
             return result ?? this;
         }
 
-        public ValList EvalCopy(TAC.Context context) {
+        public ValList EvalCopy(Context context) {
             // Create a copy of this list, evaluating its members as we go.
             // This is used when a list literal appears in the source, to
             // ensure that each time that code executes, we get a new, distinct
@@ -60,7 +61,7 @@ namespace Miniscript.sources.types {
             return result;
         }
 
-        public override string CodeForm(TAC.Machine vm, int recursionLimit = -1) {
+        public override string CodeForm(Machine vm, int recursionLimit = -1) {
             if (recursionLimit == 0) return "[...]";
             if (recursionLimit > 0 && recursionLimit < 3 && vm != null) {
                 string shortName = vm.FindShortName(this);
@@ -76,7 +77,7 @@ namespace Miniscript.sources.types {
             return "[" + string.Join(", ", strs) + "]";
         }
 
-        public override string ToString(TAC.Machine vm) {
+        public override string ToString(Machine vm) {
             return CodeForm(vm, 3);
         }
 
@@ -85,7 +86,7 @@ namespace Miniscript.sources.types {
             return values != null && values.Count > 0;
         }
 
-        public override bool IsA(Value type, TAC.Machine vm) {
+        public override bool IsA(Value type, Machine vm) {
             return type == vm.listType;
         }
 

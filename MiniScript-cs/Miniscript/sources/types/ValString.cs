@@ -1,4 +1,6 @@
-﻿namespace Miniscript.sources.types {
+﻿using Miniscript.sources.tac;
+
+namespace Miniscript.sources.types {
 
     /// <summary>
     /// ValString represents a string (text) value.
@@ -13,11 +15,11 @@
             this.value = value ?? _empty.value;
         }
 
-        public override string ToString(TAC.Machine vm) {
+        public override string ToString(Machine vm) {
             return value;
         }
 
-        public override string CodeForm(TAC.Machine vm, int recursionLimit = -1) {
+        public override string CodeForm(Machine vm, int recursionLimit = -1) {
             return "\"" + value.Replace("\"", "\"\"") + "\"";
         }
 
@@ -26,7 +28,7 @@
             return !string.IsNullOrEmpty(value);
         }
 
-        public override bool IsA(Value type, TAC.Machine vm) {
+        public override bool IsA(Value type, Machine vm) {
             return type == vm.stringType;
         }
 

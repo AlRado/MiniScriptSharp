@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Miniscript.sources.tac;
 using Miniscript.sources.types;
 
 namespace Miniscript.sources.parser {
 
 		class ParseState {
-			public List<TAC.Line> code = new List<TAC.Line>();
+			public List<Line> code = new List<Line>();
 			public List<BackPatch> backpatches = new List<BackPatch>();
 			public List<JumpPoint> jumpPoints = new List<JumpPoint>();
 			public int nextTempNum = 0;
 
-			public void Add(TAC.Line line) {
+			public void Add(Line line) {
 				code.Add(line);
 			}
 
@@ -41,8 +42,8 @@ namespace Miniscript.sources.parser {
 			public bool IsJumpTarget(int lineNum) {
 				for (int i=0; i < code.Count; i++) {
 					var op = code[i].op;
-					if ((op == TAC.Line.Op.GotoA || op == TAC.Line.Op.GotoAifB 
-					 || op == TAC.Line.Op.GotoAifNotB || op == TAC.Line.Op.GotoAifTrulyB)
+					if ((op == Line.Op.GotoA || op == Line.Op.GotoAifB 
+					 || op == Line.Op.GotoAifNotB || op == Line.Op.GotoAifTrulyB)
 					 && code[i].rhsA is ValNumber && code[i].rhsA.IntValue() == lineNum) return true;
 				}
 				for (int i=0; i<jumpPoints.Count(); i++) {

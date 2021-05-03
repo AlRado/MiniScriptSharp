@@ -1,4 +1,6 @@
-﻿namespace Miniscript.sources.types {
+﻿using Miniscript.sources.tac;
+
+namespace Miniscript.sources.types {
 
     /// <summary>
     /// ValNull is an object to represent null in places where we can't use
@@ -9,11 +11,11 @@
         private ValNull() {
         }
 
-        public override string ToString(TAC.Machine machine) {
+        public override string ToString(Machine machine) {
             return "null";
         }
 
-        public override bool IsA(Value type, TAC.Machine vm) {
+        public override bool IsA(Value type, Machine vm) {
             return false;
         }
 
@@ -21,16 +23,16 @@
             return -1;
         }
 
-        public override Value Val(TAC.Context context) {
+        public override Value Val(Context context) {
             return null;
         }
 
-        public override Value Val(TAC.Context context, out ValMap valueFoundIn) {
+        public override Value Val(Context context, out ValMap valueFoundIn) {
             valueFoundIn = null;
             return null;
         }
 
-        public override Value FullEval(TAC.Context context) {
+        public override Value FullEval(Context context) {
             return null;
         }
 

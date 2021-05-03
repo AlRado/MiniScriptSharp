@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Miniscript.sources.tac;
 
 namespace Miniscript.sources.types {
 
@@ -14,7 +15,7 @@ namespace Miniscript.sources.types {
             this.value = value;
         }
 
-        public override string ToString(TAC.Machine vm) {
+        public override string ToString(Machine vm) {
             // Convert to a string in the standard Minisript way.
             if (value % 1.0 == 0.0) {
                 // integer values as integers
@@ -45,7 +46,7 @@ namespace Miniscript.sources.types {
             return value != 0;
         }
 
-        public override bool IsA(Value type, TAC.Machine vm) {
+        public override bool IsA(Value type, Machine vm) {
             return type == vm.numberType;
         }
 

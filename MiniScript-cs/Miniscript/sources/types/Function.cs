@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Miniscript.sources.tac;
 
 namespace Miniscript.sources.types {
 
@@ -30,14 +31,14 @@ namespace Miniscript.sources.types {
         public List<Param> parameters;
 
         // Function code (compiled down to TAC form)
-        public List<TAC.Line> code;
+        public List<Line> code;
 
-        public Function(List<TAC.Line> code) {
+        public Function(List<Line> code) {
             this.code = code;
             parameters = new List<Param>();
         }
 
-        public string ToString(TAC.Machine vm) {
+        public string ToString(Machine vm) {
             var s = new System.Text.StringBuilder();
             s.Append("FUNCTION(");
             for (var i = 0; i < parameters.Count(); i++) {

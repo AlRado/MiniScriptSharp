@@ -1,4 +1,6 @@
-﻿namespace Miniscript.sources.types {
+﻿using Miniscript.sources.tac;
+
+namespace Miniscript.sources.types {
 
     /// <summary>
     /// ValFunction: a Value that is, in fact, a Function.
@@ -17,7 +19,7 @@
             this.outerVars = outerVars;
         }
 
-        public override string ToString(TAC.Machine vm) {
+        public override string ToString(Machine vm) {
             return function.ToString(vm);
         }
 
@@ -26,7 +28,7 @@
             return true;
         }
 
-        public override bool IsA(Value type, TAC.Machine vm) {
+        public override bool IsA(Value type, Machine vm) {
             return type == vm.functionType;
         }
 

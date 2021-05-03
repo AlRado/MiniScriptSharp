@@ -1,4 +1,6 @@
-﻿namespace Miniscript.sources.types {
+﻿using Miniscript.sources.tac;
+
+namespace Miniscript.sources.types {
 
     public class ValVar : Value {
 
@@ -9,18 +11,18 @@
             this.identifier = identifier;
         }
 
-        public override Value Val(TAC.Context context) {
+        public override Value Val(Context context) {
             if (this == self) return context.self;
             return context.GetVar(identifier);
         }
 
-        public override Value Val(TAC.Context context, out ValMap valueFoundIn) {
+        public override Value Val(Context context, out ValMap valueFoundIn) {
             valueFoundIn = null;
             if (this == self) return context.self;
             return context.GetVar(identifier);
         }
 
-        public override string ToString(TAC.Machine vm) {
+        public override string ToString(Machine vm) {
             if (noInvoke) return "@" + identifier;
             return identifier;
         }

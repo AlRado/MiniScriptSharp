@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Miniscript.sources.tac;
 
 namespace Miniscript.sources.types {
 
@@ -146,7 +147,7 @@ namespace Miniscript.sources.types {
             return null;
         }
 
-        public override Value FullEval(TAC.Context context) {
+        public override Value FullEval(Context context) {
             // Evaluate each of our elements, and if any of those is
             // a variable or temp, then resolve those now.
             foreach (Value k in map.Keys.ToArray()) {
@@ -167,7 +168,7 @@ namespace Miniscript.sources.types {
             return this;
         }
 
-        public ValMap EvalCopy(TAC.Context context) {
+        public ValMap EvalCopy(Context context) {
             // Create a copy of this map, evaluating its members as we go.
             // This is used when a map literal appears in the source, to
             // ensure that each time that code executes, we get a new, distinct
@@ -184,7 +185,7 @@ namespace Miniscript.sources.types {
             return result;
         }
 
-        public override string CodeForm(TAC.Machine vm, int recursionLimit = -1) {
+        public override string CodeForm(Machine vm, int recursionLimit = -1) {
             if (recursionLimit == 0) return "{...}";
             if (recursionLimit > 0 && recursionLimit < 3 && vm != null) {
                 string shortName = vm.FindShortName(this);
@@ -203,11 +204,11 @@ namespace Miniscript.sources.types {
             return "{" + String.Join(", ", strs) + "}";
         }
 
-        public override string ToString(TAC.Machine vm) {
+        public override string ToString(Machine vm) {
             return CodeForm(vm, 3);
         }
 
-        public override bool IsA(Value type, TAC.Machine vm) {
+        public override bool IsA(Value type, Machine vm) {
             // If the given type is the magic 'map' type, then we're definitely
             // one of those.  Otherwise, we have to walk the __isa chain.
             if (type == vm.mapType) return true;

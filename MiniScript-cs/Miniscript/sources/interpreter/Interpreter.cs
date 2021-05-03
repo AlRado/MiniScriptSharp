@@ -11,6 +11,7 @@ For details, see Chapters 1-3 of the Minisript Integration Guide.
 
 using System;
 using System.Collections.Generic;
+using Miniscript.sources.tac;
 using Miniscript.sources.types;
 
 namespace Miniscript {
@@ -75,7 +76,7 @@ namespace Miniscript {
 		/// vm: the virtual machine this interpreter is running.  Most applications will
 		/// not need to use this, but it's provided for advanced users.
 		/// </summary>
-		public TAC.Machine vm;
+		public Machine vm;
 		
 		TextOutputMethod _standardOutput;
 		string source;
@@ -276,7 +277,7 @@ namespace Miniscript {
 		/// <returns>Value of the named variable, or null if not found</returns>
 		public Value GetGlobalValue(string varName) {
 			if (vm == null) return null;
-			TAC.Context c = vm.globalContext;
+			Context c = vm.globalContext;
 			if (c == null) return null;
 			try {
 				return c.GetVar(varName);
