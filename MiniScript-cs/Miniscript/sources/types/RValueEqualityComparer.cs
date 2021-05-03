@@ -14,12 +14,7 @@ namespace Miniscript.sources.types {
 
         static RValueEqualityComparer _instance = null;
 
-        public static RValueEqualityComparer instance {
-            get {
-                if (_instance == null) _instance = new RValueEqualityComparer();
-                return _instance;
-            }
-        }
+        public static RValueEqualityComparer instance => _instance ??= new RValueEqualityComparer();
 
     }
 

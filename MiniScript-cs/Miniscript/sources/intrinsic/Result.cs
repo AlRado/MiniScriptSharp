@@ -36,40 +36,35 @@ namespace Miniscript.sources.intrinsic {
 			/// </summary>
 			public Result(string resultStr) {
 				this.done = true;
-				if (string.IsNullOrEmpty(resultStr)) this.result = ValString.empty;
-				else this.result = new ValString(resultStr);
+				this.result = string.IsNullOrEmpty(resultStr) ? ValString.empty : new ValString(resultStr);
 			}
 			
 			/// <summary>
 			/// Result.Null: static Result representing null (no value).
 			/// </summary>
-			public static Result Null { get { return _null; } }
-			private static Result _null = new Result(null, true);
-			
+			public static Result Null { get; } = new Result(null, true);
+
 			/// <summary>
 			/// Result.EmptyString: static Result representing "" (empty string).
 			/// </summary>
-			public static Result EmptyString { get { return _emptyString; } }
-			private static Result _emptyString = new Result(ValString.empty);
-			
+			public static Result EmptyString { get; } = new Result(ValString.empty);
+
 			/// <summary>
 			/// Result.True: static Result representing true (1.0).
 			/// </summary>
-			public static Result True { get { return _true; } }
-			private static Result _true = new Result(ValNumber.one, true);
-			
+			public static Result True { get; } = new Result(ValNumber.one, true);
+
 			/// <summary>
 			/// Result.True: static Result representing false (0.0).
 			/// </summary>
-			public static Result False { get { return _false; } }
-			private static Result _false = new Result(ValNumber.zero, true);
-			
+			public static Result False { get; } = new Result(ValNumber.zero, true);
+
 			/// <summary>
 			/// Result.Waiting: static Result representing a need to wait,
 			/// with no in-progress value.
 			/// </summary>
-			public static Result Waiting { get { return _waiting; } }
-			private static Result _waiting = new Result(null, false);
+			public static Result Waiting { get; } = new Result(null, false);
+
 		}
 
 }
