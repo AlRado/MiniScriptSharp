@@ -5,10 +5,10 @@ namespace Miniscript.sources.types {
     public class ValVar : Value {
         
         // Special name for the implicit result variable we assign to on expression statements:
-        public static ValVar implicitResult = new ValVar("_");
+        public static readonly ValVar implicitResult = new ValVar("_");
 
         // Special var for 'self'
-        public static ValVar self = new ValVar("self");
+        public static readonly ValVar self = new ValVar("self");
 
         public string identifier;
         
@@ -19,19 +19,16 @@ namespace Miniscript.sources.types {
         }
 
         public override Value Val(Context context) {
-            if (this == self) return context.self;
-            return context.GetVar(identifier);
+            return this == self ? context.self : context.GetVar(identifier);
         }
 
         public override Value Val(Context context, out ValMap valueFoundIn) {
             valueFoundIn = null;
-            if (this == self) return context.self;
-            return context.GetVar(identifier);
+            return this == self ? context.self : context.GetVar(identifier);
         }
 
         public override string ToString(Machine vm) {
-            if (noInvoke) return "@" + identifier;
-            return identifier;
+            return noInvoke ? $"@{identifier}" : identifier;
         }
 
         public override int Hash(int recursionDepth = 16) {
@@ -39,7 +36,7 @@ namespace Miniscript.sources.types {
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
-            return rhs is ValVar && ((ValVar) rhs).identifier == identifier ? 1 : 0;
+            return rhs is ValVar valVar && valVar.identifier == identifier ? 1 : 0;
         }
 
     }

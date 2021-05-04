@@ -8,11 +8,7 @@ namespace Miniscript.sources.types {
     /// Since we also use numbers to represent boolean values, ValNumber does that job too.
     /// </summary>
     public class ValNumber : Value {
-
-        private static ValNumber _zero = new ValNumber(0);
         
-        private static ValNumber _one = new ValNumber(1);
-
         public double value;
 
         public ValNumber(double value) {
@@ -27,7 +23,7 @@ namespace Miniscript.sources.types {
             }
             else if (value > 1E10 || value < -1E10 || (value < 1E-6 && value > -1E-6)) {
                 // very large/small numbers in exponential form
-                string s = value.ToString("E6", CultureInfo.InvariantCulture);
+                var s = value.ToString("E6", CultureInfo.InvariantCulture);
                 s = s.Replace("E-00", "E-0");
                 return s;
             }
@@ -59,26 +55,21 @@ namespace Miniscript.sources.types {
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
-            return rhs is ValNumber && ((ValNumber) rhs).value == value ? 1 : 0;
+            return rhs is ValNumber number && number.value == value ? 1 : 0;
         }
         
         /// <summary>
         /// Handy accessor to a shared "zero" (0) value.
         /// IMPORTANT: do not alter the value of the object returned!
         /// </summary>
-        public static ValNumber zero
-        {
-            get { return _zero; }
-        }
+        public static readonly ValNumber zero = new ValNumber(0);
 
         /// <summary>
         /// Handy accessor to a shared "one" (1) value.
         /// IMPORTANT: do not alter the value of the object returned!
         /// </summary>
-        public static ValNumber one
-        {
-            get { return _one; }
-        }
+        public static readonly ValNumber one = new ValNumber(1);
+
 
         /// <summary>
         /// Convenience method to get a reference to zero or one, according
@@ -99,9 +90,11 @@ namespace Miniscript.sources.types {
         ///	is either 0 or 1 (as is usually the case with truth tests).
         /// </summary>
         public static ValNumber Truth(double truthValue) {
-            if (truthValue == 0.0) return zero;
-            if (truthValue == 1.0) return one;
-            return new ValNumber(truthValue);
+            return truthValue switch {
+                0.0 => zero,
+                1.0 => one,
+                _ => new ValNumber(truthValue)
+            };
         }
 
     }

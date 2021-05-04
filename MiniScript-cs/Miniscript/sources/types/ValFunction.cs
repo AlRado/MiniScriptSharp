@@ -38,8 +38,7 @@ namespace Miniscript.sources.types {
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
             // Two Function values are equal only if they refer to the exact same function
-            if (!(rhs is ValFunction)) return 0;
-            var other = (ValFunction) rhs;
+            if (!(rhs is ValFunction other)) return 0;
             return function == other.function ? 1 : 0;
         }
 

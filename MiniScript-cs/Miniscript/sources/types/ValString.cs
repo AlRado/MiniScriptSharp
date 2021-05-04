@@ -6,15 +6,23 @@ namespace Miniscript.sources.types {
     /// ValString represents a string (text) value.
     /// </summary>
     public class ValString : Value {
+        
+        // Magic identifier for the is-a entry in the class system:
+        public static readonly ValString magicIsA = new ValString("__isa");
+
+        /// <summary>
+        /// Handy accessor for an empty ValString.
+        /// IMPORTANT: do not alter the value of the object returned!
+        /// </summary>
+        public static readonly ValString empty = new ValString("");
 
         public static long maxSize = 0xFFFFFF; // about 16M elements
         
-        private static ValString _empty = new ValString("");
 
         public string value;
 
         public ValString(string value) {
-            this.value = value ?? _empty.value;
+            this.value = value ?? empty.value;
         }
 
         public override string ToString(Machine vm) {
@@ -40,7 +48,7 @@ namespace Miniscript.sources.types {
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
             // String equality is treated the same as in C#.
-            return rhs is ValString && ((ValString) rhs).value == value ? 1 : 0;
+            return rhs is ValString valString && valString.value == value ? 1 : 0;
         }
 
         public Value GetElem(Value index) {
@@ -51,18 +59,6 @@ namespace Miniscript.sources.types {
             }
 
             return new ValString(value.Substring(i, 1));
-        }
-
-        // Magic identifier for the is-a entry in the class system:
-        public static ValString magicIsA = new ValString("__isa");
-
-
-        /// <summary>
-        /// Handy accessor for an empty ValString.
-        /// IMPORTANT: do not alter the value of the object returned!
-        /// </summary>
-        public static ValString empty {
-            get { return _empty; }
         }
 
     }

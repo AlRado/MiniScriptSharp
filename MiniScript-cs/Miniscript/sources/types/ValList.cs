@@ -14,7 +14,7 @@ namespace Miniscript.sources.types {
         public List<Value> values;
 
         public ValList(List<Value> values = null) {
-            this.values = values == null ? new List<Value>() : values;
+            this.values = values ?? new List<Value>();
         }
 
         public override Value FullEval(Context context) {
@@ -26,7 +26,7 @@ namespace Miniscript.sources.types {
             for (var i = 0; i < values.Count; i++) {
                 var copied = false;
                 if (values[i] is ValTemp || values[i] is ValVar) {
-                    Value newVal = values[i].Val(context);
+                    var newVal = values[i].Val(context);
                     if (newVal != values[i]) {
                         // OK, something changed, so we're going to need a new copy of the list.
                         if (result == null) {
@@ -64,7 +64,7 @@ namespace Miniscript.sources.types {
         public override string CodeForm(Machine vm, int recursionLimit = -1) {
             if (recursionLimit == 0) return "[...]";
             if (recursionLimit > 0 && recursionLimit < 3 && vm != null) {
-                string shortName = vm.FindShortName(this);
+                var shortName = vm.FindShortName(this);
                 if (shortName != null) return shortName;
             }
 
@@ -92,20 +92,20 @@ namespace Miniscript.sources.types {
 
         public override int Hash(int recursionDepth = 16) {
             //return values.GetHashCode();
-            int result = values.Count.GetHashCode();
+            var result = values.Count.GetHashCode();
             if (recursionDepth < 1) return result;
-            for (var i = 0; i < values.Count; i++) {
-                result ^= values[i].Hash(recursionDepth - 1);
+            foreach (var t in values) {
+                result ^= t.Hash(recursionDepth - 1);
             }
 
             return result;
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
-            if (!(rhs is ValList)) return 0;
-            List<Value> rhl = ((ValList) rhs).values;
+            if (!(rhs is ValList list)) return 0;
+            var rhl = list.values;
             if (rhl == values) return 1; // (same list)
-            int count = values.Count;
+            var count = values.Count;
             if (count != rhl.Count) return 0;
             if (recursionDepth < 1) return 0.5; // in too deep
             double result = 1;

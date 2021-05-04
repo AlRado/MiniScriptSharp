@@ -57,9 +57,7 @@ namespace Miniscript.sources.types {
         /// <summary>
         /// Handy accessor to a shared "instance".
         /// </summary>
-        public static ValNull instance {
-            get { return _inst; }
-        }
+        public static ValNull instance => _inst;
 
     }
 

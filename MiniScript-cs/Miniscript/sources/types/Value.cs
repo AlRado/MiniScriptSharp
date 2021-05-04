@@ -1,4 +1,6 @@
-﻿using Miniscript.sources.tac;
+﻿using System;
+using Miniscript.sources.tac;
+using static System.String;
 
 namespace Miniscript.sources.types {
 
@@ -144,8 +146,7 @@ namespace Miniscript.sources.types {
         public static int Compare(Value x, Value y) {
             // Always sort null to the end of the list.
             if (x == null) {
-                if (y == null) return 0;
-                return 1;
+                return y == null ? 0 : 1;
             }
 
             if (y == null) return -1;
@@ -153,20 +154,17 @@ namespace Miniscript.sources.types {
             if (x is ValString || y is ValString) {
                 var sx = x.ToString();
                 var sy = y.ToString();
-                return sx.CompareTo(sy);
+                return string.Compare(sx, sy, StringComparison.Ordinal);
             }
 
             // If both arguments are numbers, compare numerically
-            if (x is ValNumber && y is ValNumber) {
-                double fx = ((ValNumber) x).value;
-                double fy = ((ValNumber) y).value;
-                if (fx < fy) return -1;
-                if (fx > fy) return 1;
-                return 0;
-            }
+            if (!(x is ValNumber xNumber) || !(y is ValNumber yNumber)) return 0;
+            var fx = xNumber.value;
+            var fy = yNumber.value;
+            if (fx < fy) return -1;
+            return fx > fy ? 1 : 0;
 
             // Otherwise, consider all values equal, for sorting purposes.
-            return 0;
         }
 
     }

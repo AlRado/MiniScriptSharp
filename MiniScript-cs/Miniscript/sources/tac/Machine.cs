@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Miniscript.sources.types;
 
 namespace Miniscript.sources.tac {
@@ -22,17 +23,12 @@ namespace Miniscript.sources.tac {
 			public ValMap stringType;
 			public ValMap versionMap;
 			
-			public Context globalContext {			// contains global variables
-				get { return _globalContext; }
-			}
+			// contains global variables
+			public Context globalContext => _globalContext;
 
-			public bool done {
-				get { return (stack.Count <= 1 && stack.Peek().done); }
-			}
+			public bool done => (stack.Count <= 1 && stack.Peek().done);
 
-			public double runTime {
-				get { return stopwatch == null ? 0 : stopwatch.Elapsed.TotalSeconds; }
-			}
+			public double runTime => stopwatch?.Elapsed.TotalSeconds ?? 0;
 
 			private Context _globalContext;
 			private Stack<Context> stack;
@@ -41,11 +37,7 @@ namespace Miniscript.sources.tac {
 			public Machine(Context globalContext, TextOutputMethod standardOutput) {
 				_globalContext = globalContext;
 				_globalContext.vm = this;
-				if (standardOutput == null) {
-					this.standardOutput = s => Console.WriteLine(s);
-				} else {
-					this.standardOutput = standardOutput;
-				}
+				this.standardOutput = standardOutput ?? Console.WriteLine;
 				stack = new Stack<Context>();
 				stack.Push(_globalContext);
 			}
@@ -66,24 +58,23 @@ namespace Miniscript.sources.tac {
 					stopwatch = new System.Diagnostics.Stopwatch();
 					stopwatch.Start();
 				}
-				Context context = stack.Peek();
+				var context = stack.Peek();
 				while (context.done) {
 					if (stack.Count == 1) return;	// all done (can't pop the global context)
 					PopContext();
 					context = stack.Peek();
 				}
 
-				Line line = context.code[context.lineNum++];
+				var line = context.code[context.lineNum++];
 				try {
 					DoOneLine(line, context);
 				} catch (MiniscriptException mse) {
-					if (mse.location == null) mse.location = line.location;
-					if (mse.location == null) {
-						foreach (Context c in stack) {
-							if (c.lineNum >= c.code.Count) continue;
-							mse.location = c.code[c.lineNum].location;
-							if (mse.location != null) break;
-						}
+					mse.location ??= line.location;
+					if (mse.location != null) throw mse;
+					foreach (Context c in stack) {
+						if (c.lineNum >= c.code.Count) continue;
+						mse.location = c.code[c.lineNum].location;
+						if (mse.location != null) break;
 					}
 					throw mse;
 				}
@@ -97,72 +88,86 @@ namespace Miniscript.sources.tac {
 			/// <param name="func">Miniscript function to invoke</param>
 			/// <param name="resultStorage">where to store result of the call, in the calling context</param>
 			public void ManuallyPushCall(ValFunction func, Value resultStorage=null) {
-				int argCount = 0;
+				var argCount = 0;
 				Value self = null;	// "self" is always null for a manually pushed call
-				Context nextContext = stack.Peek().NextCallContext(func.function, argCount, self != null, null);
+				var nextContext = stack.Peek().NextCallContext(func.function, argCount, self != null, null);
 				if (self != null) nextContext.self = self;
 				nextContext.resultStorage = resultStorage;
 				stack.Push(nextContext);				
 			}
 			
 			private void DoOneLine(Line line, Context context) {
+				switch (line.op) {
+    
 //				Console.WriteLine("EXECUTING line " + (context.lineNum-1) + ": " + line);
-				if (line.op == Line.Op.PushParam) {
-					Value val = context.ValueInContext(line.rhsA);
-					context.PushParamArgument(val);
-				} else if (line.op == Line.Op.CallFunctionA) {
-					// Resolve rhsA.  If it's a function, invoke it; otherwise,
-					// just store it directly (but pop the call context).
-					ValMap valueFoundIn;
-					Value funcVal = line.rhsA.Val(context, out valueFoundIn);	// resolves the whole dot chain, if any
-					if (funcVal is ValFunction) {
-						Value self = null;
-						// bind "super" to the parent of the map the function was found in
-						Value super = valueFoundIn == null ? null : valueFoundIn.Lookup(ValString.magicIsA);
-						if (line.rhsA is ValSeqElem) {
-							// bind "self" to the object used to invoke the call, except
-							// when invoking via "super"
-							Value seq = ((ValSeqElem)(line.rhsA)).sequence;
-							if (seq is ValVar && ((ValVar)seq).identifier == "super") self = context.self;
-							else self = context.ValueInContext(seq);
+					case Line.Op.PushParam: {
+						var val = context.ValueInContext(line.rhsA);
+						context.PushParamArgument(val);
+						break;
+					}
+					case Line.Op.CallFunctionA: {
+						// Resolve rhsA.  If it's a function, invoke it; otherwise,
+						// just store it directly (but pop the call context).
+						ValMap valueFoundIn;
+						var funcVal = line.rhsA.Val(context, out valueFoundIn);	// resolves the whole dot chain, if any
+						if (funcVal is ValFunction func) {
+							Value self = null;
+							// bind "super" to the parent of the map the function was found in
+							var super = valueFoundIn?.Lookup(ValString.magicIsA);
+							if (line.rhsA is ValSeqElem elem) {
+								// bind "self" to the object used to invoke the call, except
+								// when invoking via "super"
+								var seq = elem.sequence;
+								if (seq is ValVar @var && @var.identifier == "super") self = context.self;
+								else self = context.ValueInContext(seq);
+							}
+
+							var argCount = line.rhsB.IntValue();
+							var nextContext = context.NextCallContext(func.function, argCount, self != null, line.lhs);
+							nextContext.outerVars = func.outerVars;
+							if (valueFoundIn != null) nextContext.SetVar("super", super);
+							if (self != null) nextContext.self = self;	// (set only if bound above)
+							stack.Push(nextContext);
+						} else {
+							// The user is attempting to call something that's not a function.
+							// We'll allow that, but any number of parameters is too many.  [#35]
+							// (No need to pop them, as the exception will pop the whole call stack anyway.)
+							var argCount = line.rhsB.IntValue();
+							if (argCount > 0) throw new TooManyArgumentsException();
+							context.StoreValue(line.lhs, funcVal);
 						}
-						ValFunction func = (ValFunction)funcVal;
-						int argCount = line.rhsB.IntValue();
-						Context nextContext = context.NextCallContext(func.function, argCount, self != null, line.lhs);
-						nextContext.outerVars = func.outerVars;
-						if (valueFoundIn != null) nextContext.SetVar("super", super);
-						if (self != null) nextContext.self = self;	// (set only if bound above)
-						stack.Push(nextContext);
-					} else {
-						// The user is attempting to call something that's not a function.
-						// We'll allow that, but any number of parameters is too many.  [#35]
-						// (No need to pop them, as the exception will pop the whole call stack anyway.)
-						int argCount = line.rhsB.IntValue();
-						if (argCount > 0) throw new TooManyArgumentsException();
-						context.StoreValue(line.lhs, funcVal);
+
+						break;
 					}
-				} else if (line.op == Line.Op.ReturnA) {
-					Value val = line.Evaluate(context);
-					context.StoreValue(line.lhs, val);
-					PopContext();
-				} else if (line.op == Line.Op.AssignImplicit) {
-					Value val = line.Evaluate(context);
-					if (storeImplicit) {
-						context.StoreValue(ValVar.implicitResult, val);
-						context.implicitResultCounter++;
+					case Line.Op.ReturnA: {
+						var val = line.Evaluate(context);
+						context.StoreValue(line.lhs, val);
+						PopContext();
+						break;
 					}
-				} else {
-					Value val = line.Evaluate(context);
-					context.StoreValue(line.lhs, val);
+					case Line.Op.AssignImplicit: {
+						var val = line.Evaluate(context);
+						if (storeImplicit) {
+							context.StoreValue(ValVar.implicitResult, val);
+							context.implicitResultCounter++;
+						}
+
+						break;
+					}
+					default: {
+						var val = line.Evaluate(context);
+						context.StoreValue(line.lhs, val);
+						break;
+					}
 				}
 			}
 
 			private void PopContext() {
 				// Our top context is done; pop it off, and copy the return value in temp 0.
 				if (stack.Count == 1) return;	// down to just the global stack (which we keep)
-				Context context = stack.Pop();
-				Value result = context.GetTemp(0, null);
-				Value storage = context.resultStorage;
+				var context = stack.Pop();
+				var result = context.GetTemp(0, null);
+				var storage = context.resultStorage;
 				context = stack.Peek();
 				context.StoreValue(storage, result);
 			}
@@ -176,21 +181,17 @@ namespace Miniscript.sources.tac {
 			}
 			
 			public string FindShortName(Value val) {
-				if (globalContext == null || globalContext.variables == null) return null;
+				if (globalContext?.variables == null) return null;
 				foreach (var kv in globalContext.variables.map) {
 					if (kv.Value == val && kv.Key != val) return kv.Key.ToString(this);
 				}
-				string result = null;
-				Intrinsic.shortNames.TryGetValue(val, out result);
+
+				Intrinsic.shortNames.TryGetValue(val, out var result);
 				return result;
 			}
 			
 			public List<SourceLoc> GetStack() {
-				var result = new List<SourceLoc>();
-				foreach (var context in stack) {
-					result.Add(context.GetSourceLoc());
-				}
-				return result;
+				return stack.Select(context => context.GetSourceLoc()).ToList();
 			}
 		}
 

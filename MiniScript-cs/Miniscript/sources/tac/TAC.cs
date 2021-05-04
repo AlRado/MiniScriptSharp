@@ -22,14 +22,14 @@ namespace Miniscript {
 	public static class TAC {
 
 		public static void Dump(List<Line> lines, int lineNumToHighlight, int indent=0) {
-			int lineNum = 0;
-			foreach (Line line in lines) {
-				string s = (lineNum == lineNumToHighlight ? "> " : "  ") + (lineNum++) + ". ";
+			var lineNum = 0;
+			foreach (var line in lines) {
+				var s = (lineNum == lineNumToHighlight ? "> " : "  ") + (lineNum++) + ". ";
 				Console.WriteLine(s + line);
-				if (line.op == Line.Op.BindAssignA) {
-					ValFunction func = (ValFunction)line.rhsA;
-					Dump(func.function.code, -1, indent+1);
-				}
+				if (line.op != Line.Op.BindAssignA) continue;
+				
+				var func = (ValFunction)line.rhsA;
+				Dump(func.function.code, -1, indent+1);
 			}
 		}
 
@@ -38,8 +38,7 @@ namespace Miniscript {
 		}
 		
 		public static ValVar LVar(string identifier) {
-			if (identifier == "self") return ValVar.self;
-			return new ValVar(identifier);
+			return identifier == "self" ? ValVar.self : new ValVar(identifier);
 		}
 		
 		public static ValTemp RTemp(int tempNum) {

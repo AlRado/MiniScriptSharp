@@ -38,7 +38,7 @@ namespace Miniscript.sources.types {
         /// <returns>true if the map contains that key; false otherwise</returns>
         public bool ContainsKey(string identifier) {
             var idVal = TempValString.Get(identifier);
-            bool result = map.ContainsKey(idVal);
+            var result = map.ContainsKey(idVal);
             TempValString.Release(idVal);
             return result;
         }
@@ -50,25 +50,19 @@ namespace Miniscript.sources.types {
         /// <param name="key">key to check for</param>
         /// <returns>true if the map contains that key; false otherwise</returns>
         public bool ContainsKey(Value key) {
-            if (key == null) key = ValNull.instance;
+            key ??= ValNull.instance;
             return map.ContainsKey(key);
         }
 
         /// <summary>
         /// Get the number of entries in this map.
         /// </summary>
-        public int Count
-        {
-            get { return map.Count; }
-        }
+        public int Count => map.Count;
 
         /// <summary>
         /// Return the KeyCollection for this map.
         /// </summary>
-        public Dictionary<Value, Value>.KeyCollection Keys
-        {
-            get { return map.Keys; }
-        }
+        public Dictionary<Value, Value>.KeyCollection Keys => map.Keys;
 
 
         /// <summary>
@@ -83,11 +77,11 @@ namespace Miniscript.sources.types {
             get
             {
                 var idVal = TempValString.Get(identifier);
-                Value result = Lookup(idVal);
+                var result = Lookup(idVal);
                 TempValString.Release(idVal);
                 return result;
             }
-            set { map[new ValString(identifier)] = value; }
+            set => map[new ValString(identifier)] = value;
         }
 
         /// <summary>
@@ -99,7 +93,7 @@ namespace Miniscript.sources.types {
         /// <returns>true if found, false if not</returns>
         public bool TryGetValue(string identifier, out Value value) {
             var idVal = TempValString.Get(identifier);
-            bool result = map.TryGetValue(idVal, out value);
+            var result = map.TryGetValue(idVal, out value);
             TempValString.Release(idVal);
             return result;
         }
@@ -111,13 +105,11 @@ namespace Miniscript.sources.types {
         /// <param name="key">key to search for</param>
         /// <returns>value associated with that key, or null if not found</returns>
         public Value Lookup(Value key) {
-            if (key == null) key = ValNull.instance;
-            Value result = null;
-            ValMap obj = this;
+            key ??= ValNull.instance;
+            var obj = this;
             while (obj != null) {
-                if (obj.map.TryGetValue(key, out result)) return result;
-                Value parent;
-                if (!obj.map.TryGetValue(ValString.magicIsA, out parent)) break;
+                if (obj.map.TryGetValue(key, out var result)) return result;
+                if (!obj.map.TryGetValue(ValString.magicIsA, out var parent)) break;
                 obj = parent as ValMap;
             }
 
@@ -132,17 +124,15 @@ namespace Miniscript.sources.types {
         /// <param name="key">key to search for</param>
         /// <returns>value associated with that key, or null if not found</returns>
         public Value Lookup(Value key, out ValMap valueFoundIn) {
-            if (key == null) key = ValNull.instance;
-            Value result = null;
-            ValMap obj = this;
+            key ??= ValNull.instance;
+            var obj = this;
             while (obj != null) {
-                if (obj.map.TryGetValue(key, out result)) {
+                if (obj.map.TryGetValue(key, out var result)) {
                     valueFoundIn = obj;
                     return result;
                 }
 
-                Value parent;
-                if (!obj.map.TryGetValue(ValString.magicIsA, out parent)) break;
+                if (!obj.map.TryGetValue(ValString.magicIsA, out var parent)) break;
                 obj = parent as ValMap;
             }
 
@@ -153,10 +143,10 @@ namespace Miniscript.sources.types {
         public override Value FullEval(Context context) {
             // Evaluate each of our elements, and if any of those is
             // a variable or temp, then resolve those now.
-            foreach (Value k in map.Keys.ToArray()) {
+            foreach (var k in map.Keys.ToArray()) {
                 // TODO: something more efficient here.
-                Value key = k; // stupid C#!
-                Value value = map[key];
+                var key = k; // stupid C#!
+                var value = map[key];
                 if (key is ValTemp || key is ValVar) {
                     map.Remove(key);
                     key = key.Val(context);
@@ -177,9 +167,9 @@ namespace Miniscript.sources.types {
             // ensure that each time that code executes, we get a new, distinct
             // mutable object, rather than the same object multiple times.
             var result = new ValMap();
-            foreach (Value k in map.Keys) {
-                Value key = k; // stupid C#!
-                Value value = map[key];
+            foreach (var k in map.Keys) {
+                var key = k; // stupid C#!
+                var value = map[key];
                 if (key is ValTemp || key is ValVar) key = key.Val(context);
                 if (value is ValTemp || value is ValVar) value = value.Val(context);
                 result.map[key] = value;
@@ -191,20 +181,20 @@ namespace Miniscript.sources.types {
         public override string CodeForm(Machine vm, int recursionLimit = -1) {
             if (recursionLimit == 0) return "{...}";
             if (recursionLimit > 0 && recursionLimit < 3 && vm != null) {
-                string shortName = vm.FindShortName(this);
+                var shortName = vm.FindShortName(this);
                 if (shortName != null) return shortName;
             }
 
             var strs = new string[map.Count];
-            int i = 0;
-            foreach (KeyValuePair<Value, Value> kv in map) {
-                int nextRecurLimit = recursionLimit - 1;
+            var i = 0;
+            foreach (var kv in map) {
+                var nextRecurLimit = recursionLimit - 1;
                 if (kv.Key == ValString.magicIsA) nextRecurLimit = 1;
-                strs[i++] = string.Format("{0}: {1}", kv.Key.CodeForm(vm, nextRecurLimit),
-                    kv.Value == null ? "null" : kv.Value.CodeForm(vm, nextRecurLimit));
+                strs[i++] =
+                    $"{kv.Key.CodeForm(vm, nextRecurLimit)}: {(kv.Value == null ? "null" : kv.Value.CodeForm(vm, nextRecurLimit))}";
             }
 
-            return "{" + String.Join(", ", strs) + "}";
+            return "{" + string.Join(", ", strs) + "}";
         }
 
         public override string ToString(Machine vm) {
@@ -215,12 +205,11 @@ namespace Miniscript.sources.types {
             // If the given type is the magic 'map' type, then we're definitely
             // one of those.  Otherwise, we have to walk the __isa chain.
             if (type == vm.mapType) return true;
-            Value p = null;
-            map.TryGetValue(ValString.magicIsA, out p);
+            map.TryGetValue(ValString.magicIsA, out var p);
             while (p != null) {
                 if (p == type) return true;
-                if (!(p is ValMap)) return false;
-                ((ValMap) p).map.TryGetValue(ValString.magicIsA, out p);
+                if (!(p is ValMap valMap)) return false;
+                valMap.map.TryGetValue(ValString.magicIsA, out p);
             }
 
             return false;
@@ -228,9 +217,9 @@ namespace Miniscript.sources.types {
 
         public override int Hash(int recursionDepth = 16) {
             //return map.GetHashCode();
-            int result = map.Count.GetHashCode();
+            var result = map.Count.GetHashCode();
             if (recursionDepth < 0) return result; // (important to recurse an odd number of times, due to bit flipping)
-            foreach (KeyValuePair<Value, Value> kv in map) {
+            foreach (var kv in map) {
                 result ^= kv.Key.Hash(recursionDepth - 1);
                 if (kv.Value != null) result ^= kv.Value.Hash(recursionDepth - 1);
             }
@@ -239,22 +228,22 @@ namespace Miniscript.sources.types {
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
-            if (!(rhs is ValMap)) return 0;
-            Dictionary<Value, Value> rhm = ((ValMap) rhs).map;
+            if (!(rhs is ValMap valMap)) return 0;
+            var rhm = valMap.map;
             if (rhm == map) return 1; // (same map)
-            int count = map.Count;
+            var count = map.Count;
             if (count != rhm.Count) return 0;
             if (recursionDepth < 1) return 0.5; // in too deep
             double result = 1;
-            foreach (KeyValuePair<Value, Value> kv in map) {
+            foreach (var kv in map) {
                 if (!rhm.ContainsKey(kv.Key)) return 0;
-                var rhvalue = rhm[kv.Key];
+                var rhValue = rhm[kv.Key];
                 if (kv.Value == null) {
-                    if (rhvalue != null) return 0;
+                    if (rhValue != null) return 0;
                     continue;
                 }
 
-                result *= kv.Value.Equality(rhvalue, recursionDepth - 1);
+                result *= kv.Value.Equality(rhValue, recursionDepth - 1);
                 if (result <= 0) break;
             }
 
@@ -271,7 +260,7 @@ namespace Miniscript.sources.types {
         /// and if found, give that a chance to handle it instead.
         /// </summary>
         public override void SetElem(Value index, Value value) {
-            if (index == null) index = ValNull.instance;
+            index ??= ValNull.instance;
             if (assignOverride == null || !assignOverride(index, value)) {
                 map[index] = value;
             }
@@ -284,15 +273,13 @@ namespace Miniscript.sources.types {
         /// <param name="index">0-based index of key/value pair to get.</param>
         /// <returns>new map containing "key" and "value" with the requested key/value pair</returns>
         public ValMap GetKeyValuePair(int index) {
-            Dictionary<Value, Value>.KeyCollection keys = map.Keys;
+            var keys = map.Keys;
             if (index < 0 || index >= keys.Count) {
                 throw new IndexException("index " + index + " out of range for map");
             }
 
-            Value key = keys.ElementAt<Value>(index); // (TODO: consider more efficient methods here)
-            var result = new ValMap();
-            result.map[keyStr] = (key is ValNull ? null : key);
-            result.map[valStr] = map[key];
+            var key = keys.ElementAt<Value>(index); // (TODO: consider more efficient methods here)
+            var result = new ValMap {map = {[keyStr] = (key is ValNull ? null : key), [valStr] = map[key]}};
             return result;
         }
 
