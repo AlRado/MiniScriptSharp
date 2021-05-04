@@ -7,7 +7,7 @@ namespace Miniscript {
 
 	internal static class Program {
 
-		private const string TestSuiteFilePath = "../../sources/tests/TestSuiteData.txt";
+		private const string TestSuiteFilePath = "../../tests/TestSuiteData.txt";
 		private const string QuickTestFilePath = "../../../QuickTest.mscp";
 	
 		public static void Main(string[] args) {
