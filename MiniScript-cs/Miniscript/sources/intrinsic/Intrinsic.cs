@@ -1,4 +1,4 @@
-﻿/*	MiniscriptIntrinsics.cs
+/*	MiniscriptIntrinsics.cs
 
 This file defines the Intrinsic class, which represents a built-in function
 available to Minisript code.  All intrinsics are held in static storage, so
@@ -527,14 +527,14 @@ namespace Miniscript {
 				var idx = index.IntValue();
 				switch (self) {
 					case ValList valList: {
-						List<Value> list = valList.values;
+						var list = valList.values;
 						if (idx < 0) idx += list.Count + 1;	// +1 because we are inserting AND counting from the end.
 						Check.Range(idx, 0, list.Count);	// and allowing all the way up to .Count here, because insert.
 						list.Insert(idx, value);
 						return new Result(valList);
 					}
 					case ValString _: {
-						string s = self.ToString();
+						var s = self.ToString();
 						if (idx < 0) idx += s.Length + 1;
 						Check.Range(idx, 0, s.Length);
 						s = s.Substring(0, idx) + value.ToString() + s.Substring(idx);
@@ -557,13 +557,11 @@ namespace Miniscript {
 			f.AddParam("delimiter", " ");
 			f.code = (context, partialResult) => {
 				var val = context.self;
-				var delim = context.GetVar("delimiter").ToString();
+				var delimiter = context.GetVar("delimiter").ToString();
 				if (!(val is ValList valList)) return new Result(val);
 				var list = new List<string>(valList.values.Count);
-				for (int i=0; i<valList.values.Count; i++) {
-					list.Add(valList.values[i] == null ? null : valList.values[i].ToString());
-				}
-				var result = string.Join(delim, list.ToArray());
+				list.AddRange(valList.values.Select(t => t?.ToString()));
+				var result = string.Join(delimiter, list.ToArray());
 				return new Result(result);
 			};
 			
@@ -577,21 +575,12 @@ namespace Miniscript {
 			f = Intrinsic.Create("len");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var val = context.self;
-				switch (val) {
-					case ValList valList: {
-						List<Value> list = valList.values;
-						return new Result(list.Count);
-					}
-					case ValString valString: {
-						string str = valString.value;
-						return new Result(str.Length);
-					}
-					case ValMap map:
-						return new Result(map.Count);
-					default:
-						return Result.Null;
-				}
+				return context.self switch {
+					ValList valList => new Result(valList.values.Count),
+					ValString valString => new Result(valString.value.Length),
+					ValMap map => new Result(map.Count),
+					_ => Result.Null
+				};
 			};
 			
 			// list type
@@ -637,8 +626,8 @@ namespace Miniscript {
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
 				var val = context.self;
-				if (!(val is ValString)) return new Result(val);
-				string str = ((ValString)val).value;
+				if (!(val is ValString valString)) return new Result(val);
+				var str = valString.value;
 				return new Result(str.ToLower());
 			};
 
@@ -707,17 +696,16 @@ namespace Miniscript {
 				var self = context.self;
 				switch (self) {
 					case ValList valList: {
-						List<Value> list = valList.values;
+						var list = valList.values;
 						if (list.Count < 1) return Result.Null;
-						Value result = list[list.Count-1];
+						var result = list[list.Count-1];
 						list.RemoveAt(list.Count-1);
 						return new Result(result);
 					}
 					case ValMap valMap: {
-						ValMap map = valMap;
-						if (map.map.Count < 1) return Result.Null;
-						Value result = map.map.Keys.First();
-						map.map.Remove(result);
+						if (valMap.map.Count < 1) return Result.Null;
+						var result = valMap.map.Keys.First();
+						valMap.map.Remove(result);
 						return new Result(result);
 					}
 					default:
@@ -792,21 +780,19 @@ namespace Miniscript {
 			// step (number, optional): amount to add to the previous number on each step;
 			//	defaults to 1 if to > from, or -1 if to < from
 			// Example: range(50, 5, -10)		returns [50, 40, 30, 20, 10]
-			f = Intrinsic.Create("range");
+			f = Create("range");
 			f.AddParam("from", 0);
 			f.AddParam("to", 0);
 			f.AddParam("step");
+			List<Value> values;
 			f.code = (context, partialResult) => {
-				Value p0 = context.GetVar("from");
-				Value p1 = context.GetVar("to");
-				Value p2 = context.GetVar("step");
-				double fromVal = p0.DoubleValue();
-				double toVal = p1.DoubleValue();
+				var fromVal = context.GetVar("from").DoubleValue();
+				var toVal = context.GetVar("to").DoubleValue();
 				double step = (toVal >= fromVal ? 1 : -1);
-				if (p2 is ValNumber) step = (p2 as ValNumber).value;
+				var p2 = context.GetVar("step");
+				if (p2 is ValNumber number) step = number.value;
 				if (step == 0) throw new RuntimeException("range() error (step==0)");
-				List<Value> values = new List<Value>();
-				int count = (int)((toVal - fromVal) / step) + 1;
+				var count = (int)((toVal - fromVal) / step) + 1;
 				if (count > ValList.maxSize) throw new RuntimeException("list too large");
 				try {
 					values = new List<Value>(count);
@@ -841,33 +827,34 @@ namespace Miniscript {
 			f.AddParam("self");
 			f.AddParam("k");
 			f.code = (context, partialResult) => {
-				Value self = context.self;
-				Value k = context.GetVar("k");
-				if (self is ValMap) {
-					ValMap selfMap = (ValMap)self;
-					if (k == null) k = ValNull.instance;
-					if (selfMap.map.ContainsKey(k)) {
-						selfMap.map.Remove(k);
+				var self = context.self;
+				var k = context.GetVar("k");
+				switch (self) {
+					case ValMap valMap: {
+						k ??= ValNull.instance;
+						if (!valMap.map.ContainsKey(k)) return Result.False;
+						valMap.map.Remove(k);
 						return Result.True;
 					}
-					return Result.False;
-				} else if (self is ValList) {
-					if (k == null) throw new RuntimeException("argument to 'remove' must not be null");
-					ValList selfList = (ValList)self;
-					int idx = k.IntValue();
-					if (idx < 0) idx += selfList.values.Count;
-					Check.Range(idx, 0, selfList.values.Count-1);
-					selfList.values.RemoveAt(idx);
-					return Result.Null;
-				} else if (self is ValString) {
-					if (k == null) throw new RuntimeException("argument to 'remove' must not be null");
-					ValString selfStr = (ValString)self;
-					string substr = k.ToString();
-					int foundPos = selfStr.value.IndexOf(substr);
-					if (foundPos < 0) return new Result(self);
-					return new Result(selfStr.value.Remove(foundPos, substr.Length));
+					case ValList _ when k == null:
+						throw new RuntimeException("argument to 'remove' must not be null");
+					case ValList valList: {
+						var idx = k.IntValue();
+						if (idx < 0) idx += valList.values.Count;
+						Check.Range(idx, 0, valList.values.Count-1);
+						valList.values.RemoveAt(idx);
+						return Result.Null;
+					}
+					case ValString _ when k == null:
+						throw new RuntimeException("argument to 'remove' must not be null");
+					case ValString valString: {
+						var substr = k.ToString();
+						var foundPos = valString.value.IndexOf(substr, StringComparison.Ordinal);
+						return foundPos < 0 ? new Result(valString) : new Result(valString.value.Remove(foundPos, substr.Length));
+					}
+					default:
+						throw new TypeException("Type Error: 'remove' requires map, list, or string");
 				}
-				throw new TypeException("Type Error: 'remove' requires map, list, or string");
 			};
 
 			// replace
@@ -877,8 +864,8 @@ namespace Miniscript {
 			//	a new string with the replacement is returned.  Note that with maps, it is
 			//	the values that are searched for and replaced, not the keys.
 			// self (list, map, or string): object to replace elements of
-			// oldval (any): value or substring to replace
-			// newval (any): new value or substring to substitute where oldval is found
+			// oldVal (any): value or substring to replace
+			// newVal (any): new value or substring to substitute where oldVal is found
 			// maxCount (number, optional): if given, replace no more than this many
 			// Returns: modified list or map, or new string, with replacements done
 			// Example: "Happy Pappy".replace("app", "ol")		returns "Holy Poly"
@@ -886,67 +873,73 @@ namespace Miniscript {
 			// Example: d = {1: "one"}; d.replace("one", "ichi")		returns (and mutates to) {1: "ichi"}
 			f = Intrinsic.Create("replace");
 			f.AddParam("self");
-			f.AddParam("oldval");
-			f.AddParam("newval");
+			f.AddParam("oldVal");
+			f.AddParam("newVal");
 			f.AddParam("maxCount");
 			f.code = (context, partialResult) => {
-				Value self = context.self;
+				var self = context.self;
 				if (self == null) throw new RuntimeException("argument to 'replace' must not be null");
-				Value oldval = context.GetVar("oldval");
-				Value newval = context.GetVar("newval");
-				Value maxCountVal = context.GetVar("maxCount");
-				int maxCount = -1;
+				var oldVal = context.GetVar("oldVal");
+				var newVal = context.GetVar("newVal");
+				var maxCountVal = context.GetVar("maxCount");
+				var maxCount = -1;
 				if (maxCountVal != null) {
 					maxCount = maxCountVal.IntValue();
 					if (maxCount < 1) return new Result(self);
 				}
-				int count = 0;
-				if (self is ValMap) {
-					ValMap selfMap = (ValMap)self;
-					// C# doesn't allow changing even the values while iterating
-					// over the keys.  So gather the keys to change, then change
-					// them afterwards.
-					List<Value> keysToChange = null;
-					foreach (Value k in selfMap.map.Keys) {
-						if (selfMap.map[k].Equality(oldval) == 1) {
-							if (keysToChange == null) keysToChange = new List<Value>();
+				var count = 0;
+				switch (self) {
+					case ValMap selfMap: {
+						// C# doesn't allow changing even the values while iterating
+						// over the keys.  So gather the keys to change, then change
+						// them afterwards.
+						List<Value> keysToChange = null;
+						foreach (var k in selfMap.map.Keys.Where(k => selfMap.map[k].Equality(oldVal) == 1)) {
+							keysToChange ??= new List<Value>();
 							keysToChange.Add(k);
 							count++;
 							if (maxCount > 0 && count == maxCount) break;
 						}
+
+						if (keysToChange == null) return new Result(selfMap);
+						{
+							foreach (var k in keysToChange) {
+								selfMap.map[k] = newVal;
+							}
+						}
+
+						return new Result(selfMap);
 					}
-					if (keysToChange != null) foreach (Value k in keysToChange) {
-						selfMap.map[k] = newval;
+					case ValList selfList: {
+						var idx = -1;
+						while (true) {
+							idx = selfList.values.FindIndex(idx+1, x => x.Equality(oldVal) == 1);
+							if (idx < 0) break;
+							selfList.values[idx] = newVal;
+							count++;
+							if (maxCount > 0 && count == maxCount) break;
+						}
+						return new Result(selfList);
 					}
-					return new Result(self);
-				} else if (self is ValList) {
-					ValList selfList = (ValList)self;
-					int idx = -1;
-					while (true) {
-						idx = selfList.values.FindIndex(idx+1, x => x.Equality(oldval) == 1);
-						if (idx < 0) break;
-						selfList.values[idx] = newval;
-						count++;
-						if (maxCount > 0 && count == maxCount) break;
+					case ValString _: {
+						var str = self.ToString();
+						var oldStr = oldVal == null ? "" : oldVal.ToString();
+						if (string.IsNullOrEmpty(oldStr)) throw new RuntimeException("replace: oldVal argument is empty");
+						var newStr = newVal == null ? "" : newVal.ToString();
+						var idx = 0;
+						while (true) {
+							idx = str.IndexOf(oldStr, idx, StringComparison.Ordinal);
+							if (idx < 0) break;
+							str = str.Substring(0, idx) + newStr + str.Substring(idx + oldStr.Length);
+							idx += newStr.Length;
+							count++;
+							if (maxCount > 0 && count == maxCount) break;
+						}
+						return new Result(str);
 					}
-					return new Result(self);
-				} else if (self is ValString) {
-					string str = self.ToString();
-					string oldstr = oldval == null ? "" : oldval.ToString();
-					if (string.IsNullOrEmpty(oldstr)) throw new RuntimeException("replace: oldval argument is empty");
-					string newstr = newval == null ? "" : newval.ToString();
-					int idx = 0;
-					while (true) {
-						idx = str.IndexOf(oldstr, idx);
-						if (idx < 0) break;
-						str = str.Substring(0, idx) + newstr + str.Substring(idx + oldstr.Length);
-						idx += newstr.Length;
-						count++;
-						if (maxCount > 0 && count == maxCount) break;
-					}
-					return new Result(str);
+					default:
+						throw new TypeException("Type Error: 'replace' requires map, list, or string");
 				}
-				throw new TypeException("Type Error: 'replace' requires map, list, or string");
 			};
 
 			// round
@@ -954,15 +947,15 @@ namespace Miniscript {
 			//	a negative number for decimalPlaces, then rounds to a power of 10:
 			//	-1 rounds to the nearest 10, -2 rounds to the nearest 100, etc.
 			// x (number): number to round
-			// decimalePlaces (number, defaults to 0): how many places past the decimal point to round to
+			// decimalPlaces (number, defaults to 0): how many places past the decimal point to round to
 			// Example: round(pi, 2)		returns 3.14
 			// Example: round(12345, -3)		returns 12000
 			f = Intrinsic.Create("round");
 			f.AddParam("x", 0);
 			f.AddParam("decimalPlaces", 0);
 			f.code = (context, partialResult) => {
-				double num = context.GetVar("x").DoubleValue();
-				int decimalPlaces = context.GetVar("decimalPlaces").IntValue();
+				var num = context.GetVar("x").DoubleValue();
+				var decimalPlaces = context.GetVar("decimalPlaces").IntValue();
 				return new Result(Math.Round(num, decimalPlaces));
 			};
 
@@ -978,8 +971,8 @@ namespace Miniscript {
 			f = Intrinsic.Create("rnd");
 			f.AddParam("seed");
 			f.code = (context, partialResult) => {
-				if (random == null) random = new Random();
-				Value seed = context.GetVar("seed");
+				random ??= new Random();
+				var seed = context.GetVar("seed");
 				if (seed != null) random = new Random(seed.IntValue());
 				return new Result(random.NextDouble());
 			};
@@ -991,9 +984,7 @@ namespace Miniscript {
 			// Example: sign(-42.6)		returns -1
 			f = Intrinsic.Create("sign");
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => {
-				return new Result(Math.Sign(context.GetVar("x").DoubleValue()));
-			};
+			f.code = (context, partialResult) => new Result(Math.Sign(context.GetVar("x").DoubleValue()));
 
 			// sin
 			//	Returns the sine of the given angle (in radians).
@@ -1002,9 +993,7 @@ namespace Miniscript {
 			// Example: sin(pi/2)		returns 1
 			f = Intrinsic.Create("sin");
 			f.AddParam("radians", 0);
-			f.code = (context, partialResult) => {
-				return new Result(Math.Sin(context.GetVar("radians").DoubleValue()));
-			};
+			f.code = (context, partialResult) => new Result(Math.Sin(context.GetVar("radians").DoubleValue()));
 				
 			// slice
 			//	Return a subset of a string or list.  This is equivalent to using
@@ -1022,36 +1011,41 @@ namespace Miniscript {
 			f.AddParam("from", 0);
 			f.AddParam("to");
 			f.code = (context, partialResult) => {
-				Value seq = context.GetVar("seq");
-				int fromIdx = context.GetVar("from").IntValue();
-				Value toVal = context.GetVar("to");
-				int toIdx = 0;
+				var seq = context.GetVar("seq");
+				var fromIdx = context.GetVar("from").IntValue();
+				var toVal = context.GetVar("to");
+				var toIdx = 0;
 				if (toVal != null) toIdx = toVal.IntValue();
-				if (seq is ValList) {
-					List<Value> list = ((ValList)seq).values;
-					if (fromIdx < 0) fromIdx += list.Count;
-					if (fromIdx < 0) fromIdx = 0;
-					if (toVal == null) toIdx = list.Count;
-					if (toIdx < 0) toIdx += list.Count;
-					if (toIdx > list.Count) toIdx = list.Count;
-					ValList slice = new ValList();
-					if (fromIdx < list.Count && toIdx > fromIdx) {
-						for (int i = fromIdx; i < toIdx; i++) {
-							slice.values.Add(list[i]);
+				switch (seq) {
+					case ValList valList: {
+						var list = valList.values;
+						if (fromIdx < 0) fromIdx += list.Count;
+						if (fromIdx < 0) fromIdx = 0;
+						if (toVal == null) toIdx = list.Count;
+						if (toIdx < 0) toIdx += list.Count;
+						if (toIdx > list.Count) toIdx = list.Count;
+						var slice = new ValList();
+						if (fromIdx < list.Count && toIdx > fromIdx) {
+							for (int i = fromIdx; i < toIdx; i++) {
+								slice.values.Add(list[i]);
+							}
 						}
+						return new Result(slice);
 					}
-					return new Result(slice);
-				} else if (seq is ValString) {
-					string str = ((ValString)seq).value;
-					if (fromIdx < 0) fromIdx += str.Length;
-					if (fromIdx < 0) fromIdx = 0;
-					if (toVal == null) toIdx = str.Length;
-					if (toIdx < 0) toIdx += str.Length;
-					if (toIdx > str.Length) toIdx = str.Length;
-					if (toIdx - fromIdx <= 0) return Result.EmptyString;
-					return new Result(str.Substring(fromIdx, toIdx - fromIdx));
+					case ValString valString: {
+						var str = valString.value;
+						if (fromIdx < 0) fromIdx += str.Length;
+						if (fromIdx < 0) fromIdx = 0;
+						if (toVal == null) toIdx = str.Length;
+						if (toIdx < 0) toIdx += str.Length;
+						if (toIdx > str.Length) toIdx = str.Length;
+						if (toIdx - fromIdx <= 0) return Result.EmptyString;
+						
+						return new Result(str.Substring(fromIdx, toIdx - fromIdx));
+					}
+					default:
+						return Result.Null;
 				}
-				return Result.Null;
 			};
 			
 			// sort
@@ -1071,22 +1065,21 @@ namespace Miniscript {
 			f.AddParam("byKey");
 			f.AddParam("ascending", ValNumber.one);
 			f.code = (context, partialResult) => {
-				Value self = context.self;
-				ValList list = self as ValList;
-				if (list == null || list.values.Count < 2) return new Result(self);
+				var self = context.self;
+				if (!(self is ValList list) || list.values.Count < 2) return new Result(self);
 
 				IComparer<Value> sorter;
 				if (context.GetVar("ascending").BoolValue()) sorter = ValueSorter.instance;
 				else sorter = ValueReverseSorter.instance;
 
-				Value byKey = context.GetVar("byKey");
+				var byKey = context.GetVar("byKey");
 				if (byKey == null) {
 					// Simple case: sort the values as themselves
 					list.values = list.values.OrderBy((arg) => arg, sorter).ToList();
 				} else {
 					// Harder case: sort by a key.
-					int count = list.values.Count;
-					KeyedValue[] arr = new KeyedValue[count];
+					var count = list.values.Count;
+					var arr = new KeyedValue[count];
 					for (int i=0; i<count; i++) {
 						arr[i].value = list.values[i];
 						//arr[i].valueIndex = i;
@@ -1094,21 +1087,25 @@ namespace Miniscript {
 					// The key for each item will be the item itself, unless it is a map, in which
 					// case it's the item indexed by the given key.  (Works too for lists if our
 					// index is an integer.)
-					int byKeyInt = byKey.IntValue();
+					var byKeyInt = byKey.IntValue();
 					for (int i=0; i<count; i++) {
-						Value item = list.values[i];
-						if (item is ValMap) arr[i].sortKey = ((ValMap)item).Lookup(byKey);
-						else if (item is ValList) {
-							ValList itemList = (ValList)item;
-							if (byKeyInt > -itemList.values.Count && byKeyInt < itemList.values.Count) arr[i].sortKey = itemList.values[byKeyInt];
-							else arr[i].sortKey = null;
+						var item = list.values[i];
+						switch (item) {
+							case ValMap map:
+								arr[i].sortKey = map.Lookup(byKey);
+								break;
+							case ValList valList: {
+								if (byKeyInt > -valList.values.Count && byKeyInt < valList.values.Count) arr[i].sortKey = valList.values[byKeyInt];
+								else arr[i].sortKey = null;
+								break;
+							}
 						}
 					}
 					// Now sort our list of keyed values, by key
 					var sortedArr = arr.OrderBy((arg) => arg.sortKey, sorter);
 					// And finally, convert that back into our list
-					int idx=0;
-					foreach (KeyedValue kv in sortedArr) {
+					var idx=0;
+					foreach (var kv in sortedArr) {
 						list.values[idx++] = kv.value;
 					}
 				}
@@ -1130,11 +1127,11 @@ namespace Miniscript {
 			f.AddParam("delimiter", " ");
 			f.AddParam("maxCount", -1);
 			f.code = (context, partialResult) => {
-				string self = context.self.ToString();
-				string delim = context.GetVar("delimiter").ToString();
-				int maxCount = context.GetVar("maxCount").IntValue();
-				ValList result = new ValList();
-				int pos = 0;
+				var self = context.self.ToString();
+				var delim = context.GetVar("delimiter").ToString();
+				var maxCount = context.GetVar("maxCount").IntValue();
+				var result = new ValList();
+				var pos = 0;
 				while (pos < self.Length) {
 					int nextPos;
 					if (maxCount >= 0 && result.values.Count == maxCount - 1) nextPos = self.Length;
@@ -1155,9 +1152,7 @@ namespace Miniscript {
 			// Example: sqrt(1764)		returns 42
 			f = Intrinsic.Create("sqrt");
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => {
-				return new Result(Math.Sqrt(context.GetVar("x").DoubleValue()));
-			};
+			f.code = (context, partialResult) => new Result(Math.Sqrt(context.GetVar("x").DoubleValue()));
 
 			// str
 			//	Convert any value to a string.
@@ -1167,9 +1162,7 @@ namespace Miniscript {
 			// See also: val
 			f = Intrinsic.Create("str");
 			f.AddParam("x", ValString.empty);
-			f.code = (context, partialResult) => {
-				return new Result(context.GetVar("x").ToString());
-			};
+			f.code = (context, partialResult) => new Result(context.GetVar("x").ToString());
 
 			// string type
 			//	Returns a map that represents the string datatype in
@@ -1180,9 +1173,7 @@ namespace Miniscript {
 			// See also: number, list, map, funcRef
 			f = Intrinsic.Create("string");
 			f.code = (context, partialResult) => {
-				if (context.vm.stringType == null) {
-					context.vm.stringType = StringType().EvalCopy(context.vm.globalContext);
-				}
+				context.vm.stringType ??= StringType().EvalCopy(context.vm.globalContext);
 				return new Result(context.vm.stringType);
 			};
 
@@ -1194,30 +1185,37 @@ namespace Miniscript {
 			f = Intrinsic.Create("shuffle");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				Value self = context.self;
-				if (random == null) random = new Random();
-				if (self is ValList) {
-					List<Value> list = ((ValList)self).values;
-					// We'll do a Fisher-Yates shuffle, i.e., swap each element
-					// with a randomly selected one.
-					for (int i=list.Count-1; i >= 1; i--) {
-						int j = random.Next(i+1);
-						Value temp = list[j];
-						list[j] = list[i];
-						list[i] = temp;
+				var self = context.self;
+				random ??= new Random();
+				switch (self) {
+					case ValList valList: {
+						var list = valList.values;
+						// We'll do a Fisher-Yates shuffle, i.e., swap each element
+						// with a randomly selected one.
+						for (int i=list.Count-1; i >= 1; i--) {
+							var j = random.Next(i+1);
+							var temp = list[j];
+							list[j] = list[i];
+							list[i] = temp;
+						}
+
+						break;
 					}
-				} else if (self is ValMap) {
-					Dictionary<Value, Value> map = ((ValMap)self).map;
-					// Fisher-Yates again, but this time, what we're swapping
-					// is the values associated with the keys, not the keys themselves.
-					List<Value> keys = System.Linq.Enumerable.ToList(map.Keys);
-					for (int i=keys.Count-1; i >= 1; i--) {
-						int j = random.Next(i+1);
-						Value keyi = keys[i];
-						Value keyj = keys[j];
-						Value temp = map[keyj];
-						map[keyj] = map[keyi];
-						map[keyi] = temp;
+					case ValMap valMap: {
+						var map = valMap.map;
+						// Fisher-Yates again, but this time, what we're swapping
+						// is the values associated with the keys, not the keys themselves.
+						var keys = map.Keys.ToList();
+						for (int i=keys.Count-1; i >= 1; i--) {
+							var j = random.Next(i+1);
+							var keyi = keys[i];
+							var keyj = keys[j];
+							var temp = map[keyj];
+							map[keyj] = map[keyi];
+							map[keyi] = temp;
+						}
+
+						break;
 					}
 				}
 				return Result.Null;
@@ -1231,17 +1229,16 @@ namespace Miniscript {
 			f = Intrinsic.Create("sum");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				Value val = context.self;
+				var val = context.self;
 				double sum = 0;
-				if (val is ValList) {
-					List<Value> list = ((ValList)val).values;
-					foreach (Value v in list) {
-						sum += v.DoubleValue();
+				switch (val) {
+					case ValList valList: {
+						sum += valList.values.Sum(v => v.DoubleValue());
+						break;
 					}
-				} else if (val is ValMap) {
-					Dictionary<Value, Value> map = ((ValMap)val).map;
-					foreach (Value v in map.Values) {
-						sum += v.DoubleValue();
+					case ValMap valMap: {
+						sum += valMap.map.Values.Sum(v => v.DoubleValue());
+						break;
 					}
 				}
 				return new Result(sum);
@@ -1254,16 +1251,12 @@ namespace Miniscript {
 			// Example: tan(pi/4)		returns 1
 			f = Intrinsic.Create("tan");
 			f.AddParam("radians", 0);
-			f.code = (context, partialResult) => {
-				return new Result(Math.Tan(context.GetVar("radians").DoubleValue()));
-			};
+			f.code = (context, partialResult) => new Result(Math.Tan(context.GetVar("radians").DoubleValue()));
 
 			// time
 			//	Returns the number of seconds since the script started running.
 			f = Intrinsic.Create("time");
-			f.code = (context, partialResult) => {
-				return new Result(context.vm.runTime);
-			};
+			f.code = (context, partialResult) => new Result(context.vm.runTime);
 			
 			// upper
 			//	Return an upper-case (all capitals) version of a string.
@@ -1275,12 +1268,10 @@ namespace Miniscript {
 			f = Intrinsic.Create("upper");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				Value val = context.self;
-				if (val is ValString) {
-					string str = ((ValString)val).value;
-					return new Result(str.ToUpper());
-				}
-				return new Result(val);
+				var val = context.self;
+				if (!(val is ValString)) return new Result(val);
+				var str = ((ValString)val).value;
+				return new Result(str.ToUpper());
 			};
 			
 			// val
@@ -1294,14 +1285,17 @@ namespace Miniscript {
 			f = Intrinsic.Create("val");
 			f.AddParam("self", 0);
 			f.code = (context, partialResult) => {
-				Value val = context.self;
-				if (val is ValNumber) return new Result(val);
-				if (val is ValString) {
-					double value = 0;
-					double.TryParse(val.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out value);
-					return new Result(value);
+				var val = context.self;
+				switch (val) {
+					case ValNumber _:
+						return new Result(val);
+					case ValString _: {
+						double.TryParse(val.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var value);
+						return new Result(value);
+					}
+					default:
+						return Result.Null;
 				}
-				return Result.Null;
 			};
 
             // values
@@ -1315,20 +1309,23 @@ namespace Miniscript {
 			f = Intrinsic.Create("values");
             f.AddParam("self");
             f.code = (context, partialResult) => {
-                Value self = context.self;
-                if (self is ValMap) {
-                    ValMap map = (ValMap)self;
-                    List<Value> values = new List<Value>(map.map.Values);
-                    return new Result(new ValList(values));
-                } else if (self is ValString) {
-                    string str = ((ValString)self).value;
-                    List<Value> values = new List<Value>(str.Length);
-                    for (int i = 0; i < str.Length; i++) {
-                        values.Add(TAC.Str(str[i].ToString()));
-                    }
-                    return new Result(new ValList(values));
+                var self = context.self;
+                switch (self) {
+	                case ValMap valMap: {
+		                var values = new List<Value>(valMap.map.Values);
+		                return new Result(new ValList(values));
+	                }
+	                case ValString valString: {
+		                var str = valString.value;
+		                var values = new List<Value>(str.Length);
+		                for (int i = 0; i < str.Length; i++) {
+			                values.Add(TAC.Str(str[i].ToString()));
+		                }
+		                return new Result(new ValList(values));
+	                }
+	                default:
+		                return new Result(self);
                 }
-                return new Result(self);
             };
 
 			// version
@@ -1341,26 +1338,25 @@ namespace Miniscript {
 			//		hostName: name of the host application, e.g. "Mini Micro"
 			//		hostInfo: URL or other short info about the host app
 			f = Intrinsic.Create("version");
+			var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			f.code = (context, partialResult) => {
-				if (context.vm.versionMap == null) {
-					var d = new ValMap();
-					d["miniscript"] = new ValString("1.5");
-			
-					// Getting the build date is annoyingly hard in C#.
-					// This will work if the assembly.cs file uses the version format: 1.0.*
-					DateTime buildDate;
-					System.Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-					buildDate = new DateTime(2000, 1, 1);
-					buildDate = buildDate.AddDays(version.Build);
-					buildDate = buildDate.AddSeconds(version.Revision * 2);
-					d["buildDate"] = new ValString(buildDate.ToString("yyyy-MM-dd"));
+				if (context.vm.versionMap != null) return new Result(context.vm.versionMap);
 
-					d["host"] = new ValNumber(HostInfo.version);
-					d["hostName"] = new ValString(HostInfo.name);
-					d["hostInfo"] = new ValString(HostInfo.info);
+				var d = new ValMap {["miniscript"] = new ValString("1.5")};
 
-					context.vm.versionMap = d;
-				}
+				// Getting the build date is annoyingly hard in C#.
+				// This will work if the assembly.cs file uses the version format: 1.0.*
+				var buildDate = new DateTime(2000, 1, 1);
+				buildDate = buildDate.AddDays(version.Build);
+				buildDate = buildDate.AddSeconds(version.Revision * 2);
+				
+				d["buildDate"] = new ValString(buildDate.ToString("yyyy-MM-dd"));
+
+				d["host"] = new ValNumber(HostInfo.version);
+				d["hostName"] = new ValString(HostInfo.name);
+				d["hostInfo"] = new ValString(HostInfo.info);
+
+				context.vm.versionMap = d;
 				return new Result(context.vm.versionMap);
 			};
 
@@ -1372,15 +1368,14 @@ namespace Miniscript {
 			f = Intrinsic.Create("wait");
 			f.AddParam("seconds", 1);
 			f.code = (context, partialResult) => {
-				double now = context.vm.runTime;
+				var now = context.vm.runTime;
 				if (partialResult == null) {
 					// Just starting our wait; calculate end time and return as partial result
-					double interval = context.GetVar("seconds").DoubleValue();
+					var interval = context.GetVar("seconds").DoubleValue();
 					return new Result(new ValNumber(now + interval), false);
 				} else {
 					// Continue until current time exceeds the time in the partial result
-					if (now > partialResult.result.DoubleValue()) return Result.Null;
-					return partialResult;
+					return now > partialResult.result.DoubleValue() ? Result.Null : partialResult;
 				}
 			};
 
@@ -1401,9 +1396,9 @@ namespace Miniscript {
 		// Helper method to compile a call to Slice (when invoked directly via slice syntax).
 		public static void CompileSlice(List<Line> code, Value list, Value fromIdx, Value toIdx, int resultTempNum) {
 			code.Add(new Line(null, Line.Op.PushParam, list));
-			code.Add(new Line(null, Line.Op.PushParam, fromIdx == null ? TAC.Num(0) : fromIdx));
+			code.Add(new Line(null, Line.Op.PushParam, fromIdx ?? TAC.Num(0)));
 			code.Add(new Line(null, Line.Op.PushParam, toIdx));// toIdx == null ? TAC.Num(0) : toIdx));
-			ValFunction func = Intrinsic.GetByName("slice").GetFunc();
+			var func = Intrinsic.GetByName("slice").GetFunc();
 			code.Add(new Line(TAC.LTemp(resultTempNum), Line.Op.CallFunctionA, func, TAC.Num(3)));
 		}
 		
@@ -1411,10 +1406,7 @@ namespace Miniscript {
 		/// FunctionType: a static map that represents the Function type.
 		/// </summary>
 		public static ValMap FunctionType() {
-			if (_functionType == null) {
-				_functionType = new ValMap();
-			}
-			return _functionType;
+			return _functionType ??= new ValMap();
 		}
 		
 		/// <summary>
@@ -1422,24 +1414,25 @@ namespace Miniscript {
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
 		public static ValMap ListType() {
-			if (_listType == null) {
-				_listType = new ValMap();
-				_listType["hasIndex"] = Intrinsic.GetByName("hasIndex").GetFunc();
-				_listType["indexes"] = Intrinsic.GetByName("indexes").GetFunc();
-				_listType["indexOf"] = Intrinsic.GetByName("indexOf").GetFunc();
-				_listType["insert"] = Intrinsic.GetByName("insert").GetFunc();
-				_listType["join"] = Intrinsic.GetByName("join").GetFunc();
-				_listType["len"] = Intrinsic.GetByName("len").GetFunc();
-				_listType["pop"] = Intrinsic.GetByName("pop").GetFunc();
-				_listType["pull"] = Intrinsic.GetByName("pull").GetFunc();
-				_listType["push"] = Intrinsic.GetByName("push").GetFunc();
-				_listType["shuffle"] = Intrinsic.GetByName("shuffle").GetFunc();
-				_listType["sort"] = Intrinsic.GetByName("sort").GetFunc();
-				_listType["sum"] = Intrinsic.GetByName("sum").GetFunc();
-                _listType["remove"] = Intrinsic.GetByName("remove").GetFunc();
-                _listType["replace"] = Intrinsic.GetByName("replace").GetFunc();
-                _listType["values"] = Intrinsic.GetByName("values").GetFunc();
-			}
+			if (_listType != null) return _listType;
+
+			_listType = new ValMap {
+				["hasIndex"] = GetByName("hasIndex").GetFunc(),
+				["indexes"] = GetByName("indexes").GetFunc(),
+				["indexOf"] = GetByName("indexOf").GetFunc(),
+				["insert"] = GetByName("insert").GetFunc(),
+				["join"] = GetByName("join").GetFunc(),
+				["len"] = GetByName("len").GetFunc(),
+				["pop"] = GetByName("pop").GetFunc(),
+				["pull"] = GetByName("pull").GetFunc(),
+				["push"] = GetByName("push").GetFunc(),
+				["shuffle"] = GetByName("shuffle").GetFunc(),
+				["sort"] = GetByName("sort").GetFunc(),
+				["sum"] = GetByName("sum").GetFunc(),
+				["remove"] = GetByName("remove").GetFunc(),
+				["replace"] = GetByName("replace").GetFunc(),
+				["values"] = GetByName("values").GetFunc()
+			};
 			return _listType;
 		}
 		
@@ -1448,22 +1441,23 @@ namespace Miniscript {
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
 		public static ValMap StringType() {
-			if (_stringType == null) {
-				_stringType = new ValMap();
-				_stringType["hasIndex"] = Intrinsic.GetByName("hasIndex").GetFunc();
-				_stringType["indexes"] = Intrinsic.GetByName("indexes").GetFunc();
-				_stringType["indexOf"] = Intrinsic.GetByName("indexOf").GetFunc();
-				_stringType["insert"] = Intrinsic.GetByName("insert").GetFunc();
-				_stringType["code"] = Intrinsic.GetByName("code").GetFunc();
-				_stringType["len"] = Intrinsic.GetByName("len").GetFunc();
-				_stringType["lower"] = Intrinsic.GetByName("lower").GetFunc();
-				_stringType["val"] = Intrinsic.GetByName("val").GetFunc();
-				_stringType["remove"] = Intrinsic.GetByName("remove").GetFunc();
-                _stringType["replace"] = Intrinsic.GetByName("replace").GetFunc();
-				_stringType["split"] = Intrinsic.GetByName("split").GetFunc();
-                _stringType["upper"] = Intrinsic.GetByName("upper").GetFunc();
-                _stringType["values"] = Intrinsic.GetByName("values").GetFunc();
-			}
+			if (_stringType != null) return _stringType;
+
+			_stringType = new ValMap {
+				["hasIndex"] = GetByName("hasIndex").GetFunc(),
+				["indexes"] = GetByName("indexes").GetFunc(),
+				["indexOf"] = GetByName("indexOf").GetFunc(),
+				["insert"] = GetByName("insert").GetFunc(),
+				["code"] = GetByName("code").GetFunc(),
+				["len"] = GetByName("len").GetFunc(),
+				["lower"] = GetByName("lower").GetFunc(),
+				["val"] = GetByName("val").GetFunc(),
+				["remove"] = GetByName("remove").GetFunc(),
+				["replace"] = GetByName("replace").GetFunc(),
+				["split"] = GetByName("split").GetFunc(),
+				["upper"] = GetByName("upper").GetFunc(),
+				["values"] = GetByName("values").GetFunc()
+			};
 			return _stringType;
 		}
 		
@@ -1472,20 +1466,21 @@ namespace Miniscript {
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
 		public static ValMap MapType() {
-			if (_mapType == null) {
-				_mapType = new ValMap();
-				_mapType["hasIndex"] = Intrinsic.GetByName("hasIndex").GetFunc();
-				_mapType["indexes"] = Intrinsic.GetByName("indexes").GetFunc();
-				_mapType["indexOf"] = Intrinsic.GetByName("indexOf").GetFunc();
-				_mapType["len"] = Intrinsic.GetByName("len").GetFunc();
-				_mapType["pop"] = Intrinsic.GetByName("pop").GetFunc();
-				_mapType["push"] = Intrinsic.GetByName("push").GetFunc();
-				_mapType["shuffle"] = Intrinsic.GetByName("shuffle").GetFunc();
-				_mapType["sum"] = Intrinsic.GetByName("sum").GetFunc();
-                _mapType["remove"] = Intrinsic.GetByName("remove").GetFunc();
-                _mapType["replace"] = Intrinsic.GetByName("replace").GetFunc();
-                _mapType["values"] = Intrinsic.GetByName("values").GetFunc();
-			}
+			if (_mapType != null) return _mapType;
+
+			_mapType = new ValMap {
+				["hasIndex"] = GetByName("hasIndex").GetFunc(),
+				["indexes"] = GetByName("indexes").GetFunc(),
+				["indexOf"] = GetByName("indexOf").GetFunc(),
+				["len"] = GetByName("len").GetFunc(),
+				["pop"] = GetByName("pop").GetFunc(),
+				["push"] = GetByName("push").GetFunc(),
+				["shuffle"] = GetByName("shuffle").GetFunc(),
+				["sum"] = GetByName("sum").GetFunc(),
+				["remove"] = GetByName("remove").GetFunc(),
+				["replace"] = GetByName("replace").GetFunc(),
+				["values"] = GetByName("values").GetFunc()
+			};
 			return _mapType;
 		}
 
@@ -1493,12 +1488,10 @@ namespace Miniscript {
 		/// NumberType: a static map that represents the Number type.
 		/// </summary>
 		public static ValMap NumberType() {
-			if (_numberType == null) {
-				_numberType = new ValMap();
-			}
-			return _numberType;
+			return _numberType ??= new ValMap();
 		}
-		static ValMap _numberType = null;
+
+		private static ValMap _numberType = null;
 		
 		
 	}
