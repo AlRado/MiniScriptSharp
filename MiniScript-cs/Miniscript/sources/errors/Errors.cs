@@ -20,8 +20,7 @@ namespace Miniscript {
     public static class Check {
 
         public static void Range(int i, int min, int max, string desc = "index") {
-            if (i < min || i > max)
-                throw new IndexException($"Index Error: {desc} ({i}) out of range ({min} to {max})");
+            if (i < min || i > max) throw new IndexException($"Index Error: {desc} ({i}) out of range ({min} to {max})");
         }
 
         public static void Type(Value val, System.Type requiredType, string desc = null) {
