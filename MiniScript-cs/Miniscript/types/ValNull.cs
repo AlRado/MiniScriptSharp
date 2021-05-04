@@ -1,6 +1,6 @@
-﻿using Miniscript.sources.tac;
+﻿using Miniscript.tac;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     /// <summary>
     /// ValNull is an object to represent null in places where we can't use

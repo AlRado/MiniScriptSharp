@@ -15,15 +15,16 @@ Note that you should put any intrinsics you add in a separate file; leave the
 Minisript source files untouched, so you can easily replace them when updates
 become available.
 */
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Globalization;
-using Miniscript.sources.intrinsic;
-using Miniscript.sources.tac;
-using Miniscript.sources.types;
+using System.Linq;
+using Miniscript.errors;
+using Miniscript.tac;
+using Miniscript.types;
 
-namespace Miniscript {
+namespace Miniscript.intrinsic {
 		
 	/// <summary>
 	/// Intrinsic: represents an intrinsic function available to Minisript code.

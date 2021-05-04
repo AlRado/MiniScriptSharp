@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Miniscript.sources.intrinsic;
-using Miniscript.sources.types;
+using Miniscript.errors;
+using Miniscript.interpreter;
+using Miniscript.intrinsic;
+using Miniscript.types;
 
-namespace Miniscript.sources.tac {
+namespace Miniscript.tac {
 
 		/// <summary>
 		/// Context keeps track of the runtime environment, including local 

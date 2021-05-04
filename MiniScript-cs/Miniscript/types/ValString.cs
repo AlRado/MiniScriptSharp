@@ -1,6 +1,7 @@
-﻿using Miniscript.sources.tac;
+﻿using Miniscript.errors;
+using Miniscript.tac;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     /// <summary>
     /// ValString represents a string (text) value.

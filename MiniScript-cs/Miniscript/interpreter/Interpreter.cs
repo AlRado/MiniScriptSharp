@@ -11,10 +11,12 @@ For details, see Chapters 1-3 of the Minisript Integration Guide.
 
 using System;
 using System.Collections.Generic;
-using Miniscript.sources.tac;
-using Miniscript.sources.types;
+using Miniscript.errors;
+using Miniscript.parser;
+using Miniscript.tac;
+using Miniscript.types;
 
-namespace Miniscript {
+namespace Miniscript.interpreter {
 
 	/// <summary>
 	/// TextOutputMethod: a delegate used to return text from the script

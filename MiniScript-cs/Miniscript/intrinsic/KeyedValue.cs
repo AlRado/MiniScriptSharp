@@ -1,6 +1,6 @@
-﻿using Miniscript.sources.types;
+﻿using Miniscript.types;
 
-namespace Miniscript.sources.intrinsic {
+namespace Miniscript.intrinsic {
 
     public struct KeyedValue {
         public Value sortKey;

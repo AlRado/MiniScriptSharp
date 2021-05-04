@@ -1,4 +1,4 @@
-﻿namespace Miniscript.sources.parser {
+﻿namespace Miniscript.parser {
 
     // JumpPoint: represents a place in the code we will need to jump to later
     // (typically, the top of a loop of some sort).

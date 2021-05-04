@@ -1,8 +1,7 @@
 ﻿using System;
-using Miniscript.sources.tac;
-using static System.String;
+using Miniscript.tac;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     /// <summary>
     /// Value: abstract base class for the Minisript type hierarchy.

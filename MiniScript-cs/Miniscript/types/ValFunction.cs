@@ -1,6 +1,6 @@
-﻿using Miniscript.sources.tac;
+﻿using Miniscript.tac;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     /// <summary>
     /// ValFunction: a Value that is, in fact, a Function.

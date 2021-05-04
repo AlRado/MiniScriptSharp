@@ -1,6 +1,6 @@
-﻿using Miniscript.sources.types;
+﻿using Miniscript.types;
 
-namespace Miniscript.sources.intrinsic {
+namespace Miniscript.intrinsic {
 
 		/// <summary>
 		/// Result represents the result of an intrinsic call.  An intrinsic will either

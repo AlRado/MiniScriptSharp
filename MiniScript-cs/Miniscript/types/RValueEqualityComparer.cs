@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     public class RValueEqualityComparer : IEqualityComparer<Value> {
 

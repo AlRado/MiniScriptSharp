@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using Miniscript.sources.tac;
+using Miniscript.errors;
+using Miniscript.tac;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     /// <summary>
     /// ValList represents a Minisript list (which, under the hood, is

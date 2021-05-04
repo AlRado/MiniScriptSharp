@@ -1,6 +1,8 @@
-﻿using Miniscript.sources.tac;
+﻿using Miniscript.errors;
+using Miniscript.intrinsic;
+using Miniscript.tac;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     public class ValSeqElem : Value {
 

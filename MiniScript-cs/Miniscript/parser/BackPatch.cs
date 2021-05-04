@@ -1,4 +1,4 @@
-﻿namespace Miniscript.sources.parser {
+﻿namespace Miniscript.parser {
 
     // BackPatch: represents a place where we need to patch the code to fill
     // in a jump destination (once we figure out where that destination is).

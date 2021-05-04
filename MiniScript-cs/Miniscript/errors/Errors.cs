@@ -13,9 +13,9 @@ but they will always derive from one of those three (and ultimately
 from MiniscriptException).
 */
 
-using Miniscript.sources.types;
+using Miniscript.types;
 
-namespace Miniscript {
+namespace Miniscript.errors {
 
     public static class Check {
 

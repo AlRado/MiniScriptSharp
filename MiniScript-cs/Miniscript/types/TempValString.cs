@@ -1,4 +1,4 @@
-﻿namespace Miniscript.sources.types {
+﻿namespace Miniscript.types {
 
     // We frequently need to generate a ValString out of a string for fleeting purposes,
     // like looking up an identifier in a map (which we do ALL THE TIME).  So, here's

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
-using Miniscript.sources.intrinsic;
+using Miniscript.interpreter;
+using Miniscript.intrinsic;
+using Miniscript.tests;
 
 // Unit and integration tests, quick test script from file and REPL in console
 namespace Miniscript {

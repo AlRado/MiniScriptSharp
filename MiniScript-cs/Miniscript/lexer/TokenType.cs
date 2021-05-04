@@ -1,4 +1,4 @@
-﻿namespace Miniscript.sources.lexer {
+﻿namespace Miniscript.lexer {
 
     public enum TokenType {
 

@@ -1,4 +1,4 @@
-﻿namespace Miniscript {
+﻿namespace Miniscript.errors {
 
     public class SourceLoc {
 

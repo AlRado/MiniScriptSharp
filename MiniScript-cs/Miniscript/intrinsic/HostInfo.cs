@@ -1,4 +1,4 @@
-﻿namespace Miniscript.sources.intrinsic {
+﻿namespace Miniscript.intrinsic {
 
     /// <summary>
     /// Information about the app hosting Minisript.  Set this in your main program.

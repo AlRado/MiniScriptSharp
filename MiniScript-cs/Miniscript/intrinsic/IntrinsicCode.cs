@@ -1,7 +1,6 @@
-﻿using Miniscript.sources.intrinsic;
-using Miniscript.sources.tac;
+﻿using Miniscript.tac;
 
-namespace Miniscript {
+namespace Miniscript.intrinsic {
 
     /// <summary>
     /// IntrinsicCode is a delegate to the actual C# code invoked by an intrinsic method.

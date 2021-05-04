@@ -7,9 +7,10 @@ sure some user-entered identifier isn’t going to conflict with a
 reserved word.
 
 */
+
 using System;
 
-namespace Miniscript {
+namespace Miniscript.keywords {
 	public static class Keywords {
 		public static readonly string[] All = {
 			"break",

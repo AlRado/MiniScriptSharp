@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Miniscript.sources.types;
+using Miniscript.errors;
+using Miniscript.interpreter;
+using Miniscript.intrinsic;
+using Miniscript.types;
 
-namespace Miniscript.sources.tac {
+namespace Miniscript.tac {
 
 		/// <summary>
 		/// Machine implements a complete Minisript virtual machine.  It 

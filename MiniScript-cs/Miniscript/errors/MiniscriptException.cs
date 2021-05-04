@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Miniscript {
+namespace Miniscript.errors {
 
     public class MiniscriptException: Exception {
         public SourceLoc location;

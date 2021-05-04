@@ -11,13 +11,11 @@ deal with it directly (see MiniscriptInterpreter instead).
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Miniscript.sources.intrinsic;
-using Miniscript.sources.tac;
-using Miniscript.sources.types;
+using Miniscript.intrinsic;
+using Miniscript.types;
 
-namespace Miniscript {
+namespace Miniscript.tac {
 
 	public static class TAC {
 

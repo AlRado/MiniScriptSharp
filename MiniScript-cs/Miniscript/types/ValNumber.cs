@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
-using Miniscript.sources.tac;
+using Miniscript.tac;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     /// <summary>
     /// ValNumber represents a numeric (double-precision floating point) value in Minisript.

@@ -10,8 +10,10 @@ just call Miniscript.UnitTest.Run().
 */
 
 using System;
+using Miniscript.lexer;
+using Miniscript.parser;
 
-namespace Miniscript {
+namespace Miniscript.tests {
 
     public static class UnitTest {
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Miniscript.sources.types {
+namespace Miniscript.types {
 
     public class ValueReverseSorter : IComparer<Value> {
         public static readonly ValueReverseSorter instance = new ValueReverseSorter();

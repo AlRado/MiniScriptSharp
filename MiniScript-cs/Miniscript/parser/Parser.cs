@@ -7,16 +7,19 @@ faster to execute.
 This is normally wrapped by the Interpreter class, so you probably don't
 need to deal with Parser directly.
 */
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Globalization;
-using Miniscript.sources.lexer;
-using Miniscript.sources.parser;
-using Miniscript.sources.tac;
-using Miniscript.sources.types;
+using System.Linq;
+using Miniscript.errors;
+using Miniscript.interpreter;
+using Miniscript.intrinsic;
+using Miniscript.lexer;
+using Miniscript.tac;
+using Miniscript.types;
 
-namespace Miniscript {
+namespace Miniscript.parser {
 	public class Parser {
 
 		public string errorContext;	// name of file, etc., used for error reporting

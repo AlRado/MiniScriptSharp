@@ -7,11 +7,14 @@ Unless you’re writing a fancy Minisript code editor, you probably don’t
 need to worry about this stuff. 
 
 */
+
 using System;
 using System.Collections.Generic;
-using Miniscript.sources.lexer;
+using Miniscript.errors;
+using Miniscript.keywords;
+using Miniscript.tests;
 
-namespace Miniscript {
+namespace Miniscript.lexer {
 				
 	public class Lexer {
 		public int lineNum = 1;	// start at 1, so we report 1-based line numbers

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Miniscript.sources.tac;
-using Miniscript.sources.types;
+using Miniscript.errors;
+using Miniscript.tac;
+using Miniscript.types;
 
-namespace Miniscript.sources.parser {
+namespace Miniscript.parser {
 
 		internal class ParseState {
 			public List<Line> code = new List<Line>();

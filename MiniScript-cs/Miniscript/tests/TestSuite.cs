@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Miniscript.interpreter;
 
-namespace Miniscript {
+namespace Miniscript.tests {
 
     public class TestSuite {
 
