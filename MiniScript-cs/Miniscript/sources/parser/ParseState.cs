@@ -29,11 +29,11 @@ namespace Miniscript.sources.parser {
 			}
 
 			public JumpPoint CloseJumpPoint(string keyword) {
-				int idx = jumpPoints.Count - 1;
+				var idx = jumpPoints.Count - 1;
 				if (idx < 0 || jumpPoints[idx].keyword != keyword) {
-					throw new CompilerException(string.Format("'end {0}' without matching '{0}'", keyword));
+					throw new CompilerException($"'end {keyword}' without matching '{keyword}'");
 				}
-				JumpPoint result = jumpPoints[idx];
+				var result = jumpPoints[idx];
 				jumpPoints.RemoveAt(idx);
 				return result;
 			}
@@ -73,9 +73,9 @@ namespace Miniscript.sources.parser {
 			/// <param name="reservingLines">Extra lines (after the current position) to patch to.</param> 
 			public void Patch(string keywordFound, bool alsoBreak, int reservingLines=0) {
 				Value target = TAC.Num(code.Count + reservingLines);
-				bool done = false;
+				var done = false;
 				for (int idx = backpatches.Count - 1; idx >= 0 && !done; idx--) {
-					bool patchIt = false;
+					var patchIt = false;
 					if (backpatches[idx].waitingFor == keywordFound) patchIt = done = true;
 					else if (backpatches[idx].waitingFor == "break") {
 						// Not the expected keyword, but "break"; this is always OK,
@@ -101,21 +101,29 @@ namespace Miniscript.sources.parser {
 			public void PatchIfBlock() {
 				Value target = TAC.Num(code.Count);
 
-				int idx = backpatches.Count - 1;
+				var idx = backpatches.Count - 1;
 				while (idx >= 0) {
-					BackPatch bp = backpatches[idx];
-					if (bp.waitingFor == "if:MARK") {
-						// There's the special marker that indicates the true start of this if block.
-						backpatches.RemoveAt(idx);
-						return;
-					} else if (bp.waitingFor == "end if" || bp.waitingFor == "else") {
-						code[bp.lineNum].rhsA = target;
-						backpatches.RemoveAt(idx);
-					} else if (backpatches[idx].waitingFor == "break") {
-						// Not the expected keyword, but "break"; this is always OK.
-					} else {
-						// Not the expected patch, and not "break"; we have a mismatched block start/end.
-						throw new CompilerException("'end if' without matching 'if'");
+					var bp = backpatches[idx];
+					switch (bp.waitingFor) {
+						case "if:MARK":
+							// There's the special marker that indicates the true start of this if block.
+							backpatches.RemoveAt(idx);
+							return;
+						case "end if":
+						case "else":
+							code[bp.lineNum].rhsA = target;
+							backpatches.RemoveAt(idx);
+							break;
+						default: {
+							if (backpatches[idx].waitingFor == "break") {
+								// Not the expected keyword, but "break"; this is always OK.
+							} else {
+								// Not the expected patch, and not "break"; we have a mismatched block start/end.
+								throw new CompilerException("'end if' without matching 'if'");
+							}
+
+							break;
+						}
 					}
 					idx--;
 				}
@@ -123,6 +131,4 @@ namespace Miniscript.sources.parser {
 				throw new CompilerException("'end if' without matching 'if'");
 			}
 		}
-		
-
 }

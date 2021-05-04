@@ -32,9 +32,7 @@ namespace Miniscript {
 		/// standardOutput: receives the output of the "print" intrinsic.
 		/// </summary>
 		public TextOutputMethod standardOutput {
-			get {
-				return _standardOutput;
-			}
+			get => _standardOutput;
 			set {
 				_standardOutput = value;
 				if (vm != null) vm.standardOutput = value;
@@ -68,17 +66,15 @@ namespace Miniscript {
 		/// done: returns true when we don't have a virtual machine, or we do have
 		/// one and it is done (has reached the end of its code).
 		/// </summary>
-		public bool done {
-			get { return vm == null || vm.done; }	
-		}
-		
+		public bool done => vm == null || vm.done;
+
 		/// <summary>
 		/// vm: the virtual machine this interpreter is running.  Most applications will
 		/// not need to use this, but it's provided for advanced users.
 		/// </summary>
 		public Machine vm;
 		
-		TextOutputMethod _standardOutput;
+		private TextOutputMethod _standardOutput;
 		private string source;
 		private Parser parser;
 		
@@ -87,8 +83,8 @@ namespace Miniscript {
 		/// </summary>
 		public Interpreter(string source=null, TextOutputMethod standardOutput=null, TextOutputMethod errorOutput=null) {
 			this.source = source;
-			if (standardOutput == null) standardOutput = s => Console.WriteLine(s);
-			if (errorOutput == null) errorOutput = s => Console.WriteLine(s);
+			standardOutput ??= Console.WriteLine;
+			errorOutput ??= Console.WriteLine;
 			this.standardOutput = standardOutput;
 			this.errorOutput = errorOutput;
 		}
@@ -96,22 +92,20 @@ namespace Miniscript {
 		/// <summary>
 		/// Constructor taking source code in the form of a list of strings.
 		/// </summary>
-		public Interpreter(List<string> source) : this(string.Join("\n", source.ToArray())) {
-		}
+		public Interpreter(List<string> source) : this(string.Join("\n", source.ToArray())) {}
 		
 		/// <summary>
 		/// Constructor taking source code in the form of a string array.
 		/// </summary>
-		public Interpreter(string[] source) : this(string.Join("\n", source)) {
-		}
+		public Interpreter(string[] source) : this(string.Join("\n", source)) {}
 		
 		/// <summary>
 		/// Stop the virtual machine, and jump to the end of the program code.
 		/// Also reset the parser, in case it's stuck waiting for a block ender.
 		/// </summary>
 		public void Stop() {
-			if (vm != null) vm.Stop();
-			if (parser != null) parser.PartialReset();
+			vm?.Stop();
+			parser?.PartialReset();
 		}
 		
 		/// <summary>
@@ -131,7 +125,7 @@ namespace Miniscript {
 		public void Compile() {
 			if (vm != null) return;	// already compiled
 
-			if (parser == null) parser = new Parser();
+			parser ??= new Parser();
 			try {
 				parser.Parse(source);
 				vm = parser.CreateVM(standardOutput);
@@ -148,7 +142,7 @@ namespace Miniscript {
 		/// want to run over and over, without recompiling every time.
 		/// </summary>
 		public void Restart() {
-			if (vm != null) vm.Reset();			
+			vm?.Reset();
 		}
 		
 		/// <summary>
@@ -173,7 +167,7 @@ namespace Miniscript {
 					Compile();
 					if (vm == null) return;	// (must have been some error)
 				}
-				double startTime = vm.runTime;
+				var startTime = vm.runTime;
 				vm.yielding = false;
 				while (!vm.done && !vm.yielding) {
 					if (vm.runTime - startTime > timeLimit) return;	// time's up for now!
@@ -208,7 +202,7 @@ namespace Miniscript {
 		/// <param name="sourceLine">Source line.</param>
 		/// <param name="timeLimit">Time limit.</param>
 		public void REPL(string sourceLine, double timeLimit=60) {
-			if (parser == null) parser = new Parser();
+			parser ??= new Parser();
 			if (vm == null) {
 				vm = parser.CreateVM(standardOutput);
 				vm.interpreter = new WeakReference(this);
@@ -223,24 +217,23 @@ namespace Miniscript {
 				return;
 			}
 			
-			double startTime = vm.runTime;
-			int startImpResultCount = vm.globalContext.implicitResultCounter;
+			var startTime = vm.runTime;
+			var startImpResultCount = vm.globalContext.implicitResultCounter;
 			vm.storeImplicit = (implicitOutput != null);
 
 			try {
 				if (sourceLine != null) parser.Parse(sourceLine, true);
-				if (!parser.NeedMoreInput()) {
-					while (!vm.done && !vm.yielding) {
-						if (vm.runTime - startTime > timeLimit) return;	// time's up for now!
-						vm.Step();
-					}
-					if (implicitOutput != null && vm.globalContext.implicitResultCounter > startImpResultCount) {
+				if (parser.NeedMoreInput()) return;
+				
+				while (!vm.done && !vm.yielding) {
+					if (vm.runTime - startTime > timeLimit) return;	// time's up for now!
+					vm.Step();
+				}
 
-						Value result = vm.globalContext.GetVar(ValVar.implicitResult.identifier);
-						if (result != null) {
-							implicitOutput.Invoke(result.ToString(vm));
-						}
-					}
+				if (implicitOutput == null || vm.globalContext.implicitResultCounter <= startImpResultCount) return;
+				var result = vm.globalContext.GetVar(ValVar.implicitResult.identifier);
+				if (result != null) {
+					implicitOutput.Invoke(result.ToString(vm));
 				}
 
 			} catch (MiniscriptException mse) {
@@ -276,9 +269,9 @@ namespace Miniscript {
 		/// <param name="varName">name of global variable to get</param>
 		/// <returns>Value of the named variable, or null if not found</returns>
 		public Value GetGlobalValue(string varName) {
-			if (vm == null) return null;
-			Context c = vm.globalContext;
+			var c = vm?.globalContext;
 			if (c == null) return null;
+			
 			try {
 				return c.GetVar(varName);
 			} catch (UndefinedIdentifierException) {
@@ -292,7 +285,7 @@ namespace Miniscript {
 		/// <param name="varName">name of global variable to set</param>
 		/// <param name="value">value to set</param>
 		public void SetGlobalValue(string varName, Value value) {
-			if (vm != null) vm.globalContext.SetVar(varName, value);
+			vm?.globalContext.SetVar(varName, value);
 		}
 		
 		/// <summary>

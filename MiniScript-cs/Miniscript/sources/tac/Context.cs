@@ -28,7 +28,7 @@ namespace Miniscript.sources.tac {
 
 			public Context root {
 				get {
-					Context c = this;
+					var c = this;
 					while (c.parent != null) c = c.parent;
 					return c;
 				}
@@ -86,7 +86,7 @@ namespace Miniscript.sources.tac {
 				switch (identifier) {
 					case "globals":
 					case "locals":
-						throw new RuntimeException("can't assign to " + identifier);
+						throw new RuntimeException($"can't assign to {identifier}");
 					case "self":
 						self = value;
 						break;
@@ -142,6 +142,7 @@ namespace Miniscript.sources.tac {
 
 			public SourceLoc GetSourceLoc() {
 				if (lineNum < 0 || lineNum >= code.Count) return null;
+				
 				return code[lineNum].location;
 			}
 			
@@ -180,7 +181,7 @@ namespace Miniscript.sources.tac {
 
 				// OK, we don't have a local or module variable with that name.
 				// Check the global scope (if that's not us already).
-				Context globals = root;
+				var globals = root;
 				if (parent != null) {
 					if (globals.variables != null && globals.variables.TryGetValue(identifier, out result)) {
 						return result;
@@ -252,7 +253,7 @@ namespace Miniscript.sources.tac {
 				};
 
 				// Stuff arguments, stored in our 'args' stack,
-				// into local variables corrersponding to parameter names.
+				// into local variables corresponding to parameter names.
 				// As a special case, skip over the first parameter if it is named 'self'
 				// and we were invoked with dot syntax.
 				var selfParam = (gotSelf && func.parameters.Count > 0 && func.parameters[0].name == "self" ? 1 : 0);
