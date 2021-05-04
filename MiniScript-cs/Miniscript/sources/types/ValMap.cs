@@ -19,8 +19,8 @@ namespace Miniscript.sources.types {
 
         public AssignOverrideFunc assignOverride;
         
-        private static ValString keyStr = new ValString("key");
-        private static ValString valStr = new ValString("value");
+        private static readonly ValString keyStr = new ValString("key");
+        private static readonly ValString valStr = new ValString("value");
 
         public ValMap() {
             this.map = new Dictionary<Value, Value>(RValueEqualityComparer.instance);

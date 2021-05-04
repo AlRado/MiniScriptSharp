@@ -71,7 +71,8 @@ namespace Miniscript.sources.tac {
 				} catch (MiniscriptException mse) {
 					mse.location ??= line.location;
 					if (mse.location != null) throw mse;
-					foreach (Context c in stack) {
+					
+					foreach (var c in stack) {
 						if (c.lineNum >= c.code.Count) continue;
 						mse.location = c.code[c.lineNum].location;
 						if (mse.location != null) break;
@@ -165,6 +166,7 @@ namespace Miniscript.sources.tac {
 			private void PopContext() {
 				// Our top context is done; pop it off, and copy the return value in temp 0.
 				if (stack.Count == 1) return;	// down to just the global stack (which we keep)
+				
 				var context = stack.Pop();
 				var result = context.GetTemp(0, null);
 				var storage = context.resultStorage;

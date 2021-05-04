@@ -18,7 +18,6 @@ namespace Miniscript.sources.types {
 
         public static long maxSize = 0xFFFFFF; // about 16M elements
         
-
         public string value;
 
         public ValString(string value) {

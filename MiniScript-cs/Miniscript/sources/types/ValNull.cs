@@ -8,7 +8,10 @@ namespace Miniscript.sources.types {
     /// </summary>
     public class ValNull : Value {
         
-        private static readonly ValNull _inst = new ValNull();
+        /// <summary>
+        /// Handy accessor to a shared "instance".
+        /// </summary>
+        public static readonly ValNull instance = new ValNull();
 
         private ValNull() {
         }
@@ -54,11 +57,6 @@ namespace Miniscript.sources.types {
             return (rhs == null || rhs is ValNull ? 1 : 0);
         }
         
-        /// <summary>
-        /// Handy accessor to a shared "instance".
-        /// </summary>
-        public static ValNull instance => _inst;
-
     }
 
 }
