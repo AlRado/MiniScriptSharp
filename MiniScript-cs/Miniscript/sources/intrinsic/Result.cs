@@ -42,28 +42,28 @@ namespace Miniscript.sources.intrinsic {
 			/// <summary>
 			/// Result.Null: static Result representing null (no value).
 			/// </summary>
-			public static Result Null { get; } = new Result(null, true);
+			public static readonly Result Null = new Result(null, true);
 
 			/// <summary>
 			/// Result.EmptyString: static Result representing "" (empty string).
 			/// </summary>
-			public static Result EmptyString { get; } = new Result(ValString.empty);
+			public static readonly Result EmptyString  = new Result(ValString.empty);
 
 			/// <summary>
 			/// Result.True: static Result representing true (1.0).
 			/// </summary>
-			public static Result True { get; } = new Result(ValNumber.one, true);
+			public static readonly Result True = new Result(ValNumber.one, true);
 
 			/// <summary>
 			/// Result.True: static Result representing false (0.0).
 			/// </summary>
-			public static Result False { get; } = new Result(ValNumber.zero, true);
+			public static readonly Result False = new Result(ValNumber.zero, true);
 
 			/// <summary>
 			/// Result.Waiting: static Result representing a need to wait,
 			/// with no in-progress value.
 			/// </summary>
-			public static Result Waiting { get; } = new Result(null, false);
+			public static readonly Result Waiting = new Result(null, false);
 
 		}
 

@@ -5,7 +5,7 @@ using Miniscript.sources.types;
 
 namespace Miniscript.sources.parser {
 
-		class ParseState {
+		internal class ParseState {
 			public List<Line> code = new List<Line>();
 			public List<BackPatch> backpatches = new List<BackPatch>();
 			public List<JumpPoint> jumpPoints = new List<JumpPoint>();

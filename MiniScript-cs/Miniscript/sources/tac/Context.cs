@@ -24,9 +24,7 @@ namespace Miniscript.sources.tac {
 			public Result partialResult;	// work-in-progress of our current intrinsic
 			public int implicitResultCounter;	// how many times we have stored an implicit result
 
-			public bool done {
-				get { return lineNum >= code.Count; }
-			}
+			public bool done => lineNum >= code.Count;
 
 			public Context root {
 				get {
@@ -36,14 +34,9 @@ namespace Miniscript.sources.tac {
 				}
 			}
 
-			public Interpreter interpreter {
-				get {
-					if (vm == null || vm.interpreter == null) return null;
-					return vm.interpreter.Target as Interpreter;
-				}
-			}
+			public Interpreter interpreter => vm?.interpreter?.Target as Interpreter;
 
-			List<Value> temps;			// values of temporaries; temps[0] is always return value
+			private List<Value> temps;			// values of temporaries; temps[0] is always return value
 
 			public Context(List<Line> code) {
 				this.code = code;
@@ -52,7 +45,7 @@ namespace Miniscript.sources.tac {
 			public void ClearCodeAndTemps() {
 		 		code.Clear();
 				lineNum = 0;
-				if (temps != null) temps.Clear();
+				temps?.Clear();
 			}
 
 			/// <summary>
@@ -75,13 +68,13 @@ namespace Miniscript.sources.tac {
 				// can pre-allocate this list with that many and avoid having to
 				// grow it later.  Also OFI: do lifetime analysis on these temps
 				// and reuse ones we don't need anymore.
-				if (temps == null) temps = new List<Value>();
+				temps ??= new List<Value>();
 				while (temps.Count <= tempNum) temps.Add(null);
 				temps[tempNum] = value;
 			}
 
 			public Value GetTemp(int tempNum) {
-				return temps == null ? null : temps[tempNum];
+				return temps?[tempNum];
 			}
 
 			public Value GetTemp(int tempNum, Value defaultValue) {
@@ -90,11 +83,16 @@ namespace Miniscript.sources.tac {
 			}
 
 			public void SetVar(string identifier, Value value) {
-				if (identifier == "globals" || identifier == "locals") {
-					throw new RuntimeException("can't assign to " + identifier);
+				switch (identifier) {
+					case "globals":
+					case "locals":
+						throw new RuntimeException("can't assign to " + identifier);
+					case "self":
+						self = value;
+						break;
 				}
-				if (identifier == "self") self = value;
-				if (variables == null) variables = new ValMap();
+
+				variables ??= new ValMap();
 				if (variables.assignOverride == null || !variables.assignOverride(new ValString(identifier), value)) {
 					variables[identifier] = value;
 				}
@@ -107,45 +105,37 @@ namespace Miniscript.sources.tac {
 			/// intrinsic function call by the parameter name.
 			/// </summary>
 			public Value GetLocal(string identifier, Value defaultValue=null) {
-				Value result;
-				if (variables != null && variables.TryGetValue(identifier, out result)) {
+				if (variables != null && variables.TryGetValue(identifier, out var result)) {
 					return result;
 				}
 				return defaultValue;
 			}
 			
 			public int GetLocalInt(string identifier, int defaultValue = 0) {
-				Value result;
-				if (variables != null && variables.TryGetValue(identifier, out result)) {
-					if (result == null) return 0;	// variable found, but its value was null!
-					return result.IntValue();
+				if (variables != null && variables.TryGetValue(identifier, out var result)) {
+					return result?.IntValue() ?? 0;
 				}
 				return defaultValue;
 			}
 
 			public bool GetLocalBool(string identifier, bool defaultValue = false) {
-				Value result;
-				if (variables != null && variables.TryGetValue(identifier, out result)) {
-					if (result == null) return false;	// variable found, but its value was null!
-					return result.BoolValue();
+				if (variables != null && variables.TryGetValue(identifier, out var result)) {
+					return result != null && result.BoolValue();
 				}
 				return defaultValue;
 			}
 
 			public float GetLocalFloat(string identifier, float defaultValue = 0) {
-				Value result;
-				if (variables != null && variables.TryGetValue(identifier, out result)) {
-					if (result == null) return 0;	// variable found, but its value was null!
-					return result.FloatValue();
-				}
-				return defaultValue;
+				if (variables == null || !variables.TryGetValue(identifier, out var result)) return defaultValue;
+				
+				if (result == null) return 0;	// variable found, but its value was null!
+				
+				return result.FloatValue();
 			}
 
 			public string GetLocalString(string identifier, string defaultValue = null) {
-				Value result;
-				if (variables != null && variables.TryGetValue(identifier, out result)) {
-					if (result == null) return null;	// variable found, but its value was null!
-					return result.ToString();
+				if (variables != null && variables.TryGetValue(identifier, out var result)) {
+					return result?.ToString();
 				}
 				return defaultValue;
 			}
@@ -163,26 +153,23 @@ namespace Miniscript.sources.tac {
 			/// <param name="identifier">name of identifier to look up</param>
 			/// <returns>value of that identifier</returns>
 			public Value GetVar(string identifier) {
-				// check for special built-in identifiers 'locals', 'globals', etc.
-				if (identifier == "self") return self;
-				if (identifier == "locals") {
-					if (variables == null) variables = new ValMap();
-					return variables;
-				}
-				if (identifier == "globals") {
-					if (root.variables == null) root.variables = new ValMap();
-					return root.variables;
-				}
-				if (identifier == "outer") {
+				switch (identifier) {
+					// check for special built-in identifiers 'locals', 'globals', etc.
+					case "self":
+						return self;
+					case "locals":
+						return variables ??= new ValMap();
+					case "globals":
+						return root.variables ?? (root.variables = new ValMap());
 					// return module variables, if we have them; else globals
-					if (outerVars != null) return outerVars;
-					if (root.variables == null) root.variables = new ValMap();
-					return root.variables;
+					case "outer" when outerVars != null:
+						return outerVars;
+					case "outer":
+						return root.variables ?? (root.variables = new ValMap());
 				}
-				
+
 				// check for a local variable
-				Value result;
-				if (variables != null && variables.TryGetValue(identifier, out result)) {
+				if (variables != null && variables.TryGetValue(identifier, out var result)) {
 					return result;
 				}
 
@@ -193,15 +180,15 @@ namespace Miniscript.sources.tac {
 
 				// OK, we don't have a local or module variable with that name.
 				// Check the global scope (if that's not us already).
+				Context globals = root;
 				if (parent != null) {
-					Context globals = root;
 					if (globals.variables != null && globals.variables.TryGetValue(identifier, out result)) {
 						return result;
 					}
 				}
 
 				// Finally, check intrinsics.
-				Intrinsic intrinsic = Intrinsic.GetByName(identifier);
+				var intrinsic = Intrinsic.GetByName(identifier);
 				if (intrinsic != null) return intrinsic.GetFunc();
 
 				// No luck there either?  Undefined identifier.
@@ -209,29 +196,34 @@ namespace Miniscript.sources.tac {
 			}
 
 			public void StoreValue(Value lhs, Value value) {
-				if (lhs is ValTemp) {
-					SetTemp(((ValTemp)lhs).tempNum, value);
-				} else if (lhs is ValVar) {
-					SetVar(((ValVar)lhs).identifier, value);
-				} else if (lhs is ValSeqElem) {
-					ValSeqElem seqElem = (ValSeqElem)lhs;
-					Value seq = seqElem.sequence.Val(this);
-					if (seq == null) throw new RuntimeException("can't set indexed element of null");
-					if (!seq.CanSetElem()) {
-						throw new RuntimeException("can't set an indexed element in this type");
+				switch (lhs) {
+					case ValTemp temp:
+						SetTemp(temp.tempNum, value);
+						break;
+					case ValVar @var:
+						SetVar(@var.identifier, value);
+						break;
+					case ValSeqElem seqElem: {
+						var seq = seqElem.sequence.Val(this);
+						if (seq == null) throw new RuntimeException("can't set indexed element of null");
+						if (!seq.CanSetElem()) {
+							throw new RuntimeException("can't set an indexed element in this type");
+						}
+						var index = seqElem.index;
+						if (index is ValVar || index is ValSeqElem || 
+						    index is ValTemp) index = index.Val(this);
+						seq.SetElem(index, value);
+						break;
 					}
-					Value index = seqElem.index;
-					if (index is ValVar || index is ValSeqElem || 
-						index is ValTemp) index = index.Val(this);
-					seq.SetElem(index, value);
-				} else {
-					if (lhs != null) throw new RuntimeException("not an lvalue");
+					default: {
+						if (lhs != null) throw new RuntimeException("not an lvalue");
+						break;
+					}
 				}
 			}
 			
 			public Value ValueInContext(Value value) {
-				if (value == null) return null;
-				return value.Val(this);
+				return value?.Val(this);
 			}
 
 			/// <summary>
@@ -240,7 +232,7 @@ namespace Miniscript.sources.tac {
 			/// </summary>
 			/// <param name="arg">Argument.</param>
 			public void PushParamArgument(Value arg) {
-				if (args == null) args = new Stack<Value>();
+				args ??= new Stack<Value>();
 				if (args.Count > 255) throw new RuntimeException("Argument limit exceeded");
 				args.Push(arg);				
 			}
@@ -255,26 +247,23 @@ namespace Miniscript.sources.tac {
 			/// <param name="gotSelf">Whether this method was called with dot syntax.</param> 
 			/// <param name="resultStorage">Value to stuff the result into when done.</param>
 			public Context NextCallContext(Function func, int argCount, bool gotSelf, Value resultStorage) {
-				Context result = new Context(func.code);
-
-				result.code = func.code;
-				result.resultStorage = resultStorage;
-				result.parent = this;
-				result.vm = vm;
+				var result = new Context(func.code) {
+					code = func.code, resultStorage = resultStorage, parent = this, vm = vm
+				};
 
 				// Stuff arguments, stored in our 'args' stack,
 				// into local variables corrersponding to parameter names.
 				// As a special case, skip over the first parameter if it is named 'self'
 				// and we were invoked with dot syntax.
-				int selfParam = (gotSelf && func.parameters.Count > 0 && func.parameters[0].name == "self" ? 1 : 0);
+				var selfParam = (gotSelf && func.parameters.Count > 0 && func.parameters[0].name == "self" ? 1 : 0);
 				for (int i = 0; i < argCount; i++) {
 					// Careful -- when we pop them off, they're in reverse order.
-					Value argument = args.Pop();
-					int paramNum = argCount - 1 - i + selfParam;
+					var argument = args.Pop();
+					var paramNum = argCount - 1 - i + selfParam;
 					if (paramNum >= func.parameters.Count) {
 						throw new TooManyArgumentsException();
 					}
-					string param = func.parameters[paramNum].name;
+					var param = func.parameters[paramNum].name;
 					if (param == "self") result.self = argument;
 					else result.SetVar(param, argument);
 				}
@@ -298,8 +287,8 @@ namespace Miniscript.sources.tac {
 					Console.WriteLine(" NONE");
 				} else {
 					foreach (Value v in variables.Keys) {
-						string id = v.ToString(vm);
-						Console.WriteLine(string.Format("{0}: {1}", id, variables[id].ToString(vm)));
+						var id = v.ToString(vm);
+						Console.WriteLine($"{id}: {variables[id].ToString(vm)}");
 					}
 				}
 
@@ -308,13 +297,13 @@ namespace Miniscript.sources.tac {
 					Console.WriteLine(" NONE");
 				} else {
 					for (int i = 0; i < temps.Count; i++) {
-						Console.WriteLine(string.Format("_{0}: {1}", i, temps[i]));
+						Console.WriteLine($"_{i}: {temps[i]}");
 					}
 				}
 			}
 
 			public override string ToString() {
-				return string.Format("Context[{0}/{1}]", lineNum, code.Count);
+				return $"Context[{lineNum}/{code.Count}]";
 			}
 		}
 		

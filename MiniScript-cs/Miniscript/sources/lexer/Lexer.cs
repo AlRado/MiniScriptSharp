@@ -22,9 +22,7 @@ namespace Miniscript {
 
 		private Queue<Token> pending;
 
-		public bool AtEnd {
-			get { return position >= inputLength && pending.Count == 0; }
-		}
+		public bool AtEnd => position >= inputLength && pending.Count == 0;
 
 		public Lexer(string input) {
 			this.input = input;
@@ -34,25 +32,25 @@ namespace Miniscript {
 		}
 
 		public Token Peek() {
-			if (pending.Count == 0) {
-				if (AtEnd) return Token.EOL;
-				pending.Enqueue(Dequeue());
-			}
+			if (pending.Count != 0) return pending.Peek();
+			
+			if (AtEnd) return Token.EOL;
+			
+			pending.Enqueue(Dequeue());
 			return pending.Peek();
 		}
 
 		public Token Dequeue() {
 			if (pending.Count > 0) return pending.Dequeue();
 
-			int oldPos = position;
+			var oldPos = position;
 			SkipWhitespaceAndComment();
 
 			if (AtEnd) return Token.EOL;
 
-			Token result = new Token();
-			result.afterSpace = (position > oldPos);
-			int startPos = position;
-			char c = input[position++];
+			var result = new Token {afterSpace = (position > oldPos)};
+			var startPos = position;
+			var c = input[position++];
 
 			// Handle two-character operators first.
 			if (!AtEnd) {
@@ -233,7 +231,7 @@ namespace Miniscript {
 			// is not within a string literal.
 			int commentStart = startPos-2;
 			while (true) {
-				commentStart = source.IndexOf("//", commentStart + 2);
+				commentStart = source.IndexOf("//", commentStart + 2, StringComparison.Ordinal);
 				if (commentStart < 0) break;	// no comment found
 				if (!IsInStringLiteral(commentStart, source, startPos)) break;	// valid comment
 			}

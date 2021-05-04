@@ -1,6 +1,8 @@
 ﻿namespace Miniscript.sources.lexer {
 
     public class Token {
+        
+        public static Token EOL = new Token() {tokenType = TokenType.EOL};
 
         public TokenType tokenType;
         public string text; // may be null for things like operators, whose text is fixed
@@ -12,11 +14,8 @@
         }
 
         public override string ToString() {
-            if (text == null) return tokenType.ToString();
-            return $"{tokenType}({text})";
+            return text == null ? tokenType.ToString() : $"{tokenType}({text})";
         }
-
-        public static Token EOL = new Token() {tokenType = TokenType.EOL};
 
     }
 
