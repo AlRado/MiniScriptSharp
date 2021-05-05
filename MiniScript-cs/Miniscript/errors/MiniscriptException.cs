@@ -3,6 +3,7 @@
 namespace Miniscript.errors {
 
     public class MiniscriptException: Exception {
+        
         public SourceLoc location;
 		
         public MiniscriptException(string message) : base(message) {}
