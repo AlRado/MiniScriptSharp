@@ -41,6 +41,7 @@
         public const string INDEX = "index";
         
         public const string DUMP = "#DUMP";
+        public const string IS_A = "__isa";
     }
 
 }

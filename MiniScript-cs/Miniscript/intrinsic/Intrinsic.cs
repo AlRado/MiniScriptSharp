@@ -24,6 +24,7 @@ using Miniscript.errors;
 using Miniscript.keywords;
 using Miniscript.tac;
 using Miniscript.types;
+using static Miniscript.intrinsic.Consts;
 
 namespace Miniscript.intrinsic {
 		
@@ -32,26 +33,27 @@ namespace Miniscript.intrinsic {
 	/// </summary>
 	public class Intrinsic {
 		// name of this intrinsic (should be a valid Minisript identifier)
-		public string name;
+		private string name;
 		
 		// actual C# code invoked by the intrinsic
-		public IntrinsicCode code;
+		private IntrinsicCode code;
 		
 		// a numeric ID (used internally -- don't worry about this)
-		public int id { get; private set; }
+		public int Id { get; private set; }
 
 		// static map from Values to short names, used when displaying lists/maps;
 		// feel free to add to this any values (especially lists/maps) provided
 		// by your own intrinsics.
-		public static readonly Dictionary<Value, string> shortNames = new Dictionary<Value, string>();
+		public static readonly Dictionary<Value, string> ShortNames = new Dictionary<Value, string>();
 
 		private Function function;
 		private ValFunction valFunction;	// (cached wrapper for function)
 
-		public static readonly List<Intrinsic> all = new List<Intrinsic>() { null };
+		private static readonly List<Intrinsic> all = new List<Intrinsic>() { null };
 		private static readonly Dictionary<string, Intrinsic> nameMap = new Dictionary<string, Intrinsic>();
 		
-		private readonly ValString _self = new ValString("self");
+		private readonly ValString _self = new ValString(SELF);
+		
 		private static ValMap _functionType = null;
 		private static ValMap _listType = null;
 		private static ValMap _stringType = null;
@@ -67,10 +69,7 @@ namespace Miniscript.intrinsic {
 		/// <param name="name">intrinsic name</param>
 		/// <returns>freshly minted (but empty) static Intrinsic</returns>
 		public static Intrinsic Create(string name) {
-			Intrinsic result = new Intrinsic();
-			result.name = name;
-			result.id = all.Count;
-			result.function = new Function(null);
+			var result = new Intrinsic {name = name, Id = all.Count, function = new Function(null)};
 			result.valFunction = new ValFunction(result.function);
 			all.Add(result);
 			nameMap[name] = result;
@@ -128,8 +127,8 @@ namespace Miniscript.intrinsic {
 			if (string.IsNullOrEmpty(defaultValue)) defVal = ValString.Empty;
 			else
 				defVal = defaultValue switch {
-					"__isa" => ValString.MagicIsA,
-					"self" => _self,
+					IS_A => ValString.MagicIsA,
+					SELF => _self,
 					_ => new ValString(defaultValue)
 				};
 			function.Parameters.Add(new Param(name, defVal));
@@ -144,7 +143,7 @@ namespace Miniscript.intrinsic {
 				// Our little wrapper function is a single opcode: CallIntrinsicA.
 				// It really exists only to provide a local variable context for the parameters.
 				function.Code = new List<Line>();
-				function.Code.Add(new Line(TAC.LTemp(0), Line.Op.CallIntrinsicA, TAC.Num(id)));
+				function.Code.Add(new Line(TAC.LTemp(0), Line.Op.CallIntrinsicA, TAC.Num(Id)));
 			}
 			return valFunction;
 		}
@@ -302,7 +301,7 @@ namespace Miniscript.intrinsic {
 			// Example: "*".code		returns 42
 			// Example: code("*")		returns 42
 			f = Create("code");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
 				var codepoint = 0;
@@ -373,11 +372,11 @@ namespace Miniscript.intrinsic {
 			// Example: "foo".hasIndex(3)		returns 0
 			// See also: indexes
 			f = Create("hasIndex");
-			f.AddParam("self");
-			f.AddParam("index");
+			f.AddParam(SELF);
+			f.AddParam(INDEX);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
-				var index = context.GetVar("index");
+				var index = context.GetVar(INDEX);
 				switch (self) {
 					case ValList _ when !(index is ValNumber):
 						return Result.False;	// #3
@@ -407,7 +406,7 @@ namespace Miniscript.intrinsic {
 			// Example: "foo".indexes		returns [0, 1, 2]
 			// See also: hasIndex
 			f = Create("indexes");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
 				switch (self) {
@@ -448,7 +447,7 @@ namespace Miniscript.intrinsic {
 			// Example: "Hello World".indexOf("o", 4)		returns 7
 			// Example: "Hello World".indexOf("o", 7)		returns null			
 			f = Create("indexOf");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.AddParam("value");
 			f.AddParam("after");
 			f.code = (context, partialResult) => {
@@ -514,12 +513,12 @@ namespace Miniscript.intrinsic {
 			// Example: "Hello".insert(2, 42)		returns "He42llo"
 			// See also: remove
 			f = Create("insert");
-			f.AddParam("self");
-			f.AddParam("index");
+			f.AddParam(SELF);
+			f.AddParam(INDEX);
 			f.AddParam("value");
 			f.code = (context, partialResult) => {
 				var self = context.Self;
-				var index = context.GetVar("index");
+				var index = context.GetVar(INDEX);
 				var value = context.GetVar("value");
 				if (index == null) throw new RuntimeException("insert: index argument required");
 				if (!(index is ValNumber)) throw new RuntimeException("insert: number required for index argument");
@@ -552,7 +551,7 @@ namespace Miniscript.intrinsic {
 			// Example: [2,4,8].join("-")		returns "2-4-8"
 			// See also: split
 			f = Create("join");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.AddParam("delimiter", " ");
 			f.code = (context, partialResult) => {
 				var val = context.Self;
@@ -572,7 +571,7 @@ namespace Miniscript.intrinsic {
 			// Returns: length (number of elements) in self
 			// Example: "hello".len		returns 5
 			f = Create("len");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				return context.Self switch {
 					ValList valList => new Result(valList.Values.Count),
@@ -622,7 +621,7 @@ namespace Miniscript.intrinsic {
 			// Example: "Mo Spam".lower		returns "mo spam"
 			// See also: upper
 			f = Create("lower");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var val = context.Self;
 				if (!(val is ValString valString)) return new Result(val);
@@ -676,7 +675,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam("s", ValString.Empty);
 			f.code = (context, partialResult) => {
 				var s = context.GetVar("s");
-				context.Vm.StandardOutput(s != null ? s.ToString() : Consts.NULL);
+				context.Vm.StandardOutput(s != null ? s.ToString() : NULL);
 				return Result.Null;
 			};
 				
@@ -690,7 +689,7 @@ namespace Miniscript.intrinsic {
 			// Example: [1, 2, 3].pop		returns (and removes) 3
 			// See also: pull; push; remove
 			f = Create("pop");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
 				switch (self) {
@@ -722,7 +721,7 @@ namespace Miniscript.intrinsic {
 			// Example: [1, 2, 3].pull		returns (and removes) 1
 			// See also: pop; push; remove
 			f = Create("pull");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
 				switch (self) {
@@ -752,7 +751,7 @@ namespace Miniscript.intrinsic {
 			// Returns: self
 			// See also: pop, pull, insert
 			f = Create("push");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.AddParam("value");
 			f.code = (context, partialResult) => {
 				var self = context.Self;
@@ -823,7 +822,7 @@ namespace Miniscript.intrinsic {
 			// Example: "Spam".remove("S")		returns "pam"
 			// See also: indexOf
 			f = Create("remove");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.AddParam("k");
 			f.code = (context, partialResult) => {
 				var self = context.Self;
@@ -871,7 +870,7 @@ namespace Miniscript.intrinsic {
 			// Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [2, 42, 3, 42, 5]
 			// Example: d = {1: "one"}; d.replace("one", "ichi")		returns (and mutates to) {1: "ichi"}
 			f = Create("replace");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.AddParam("oldVal");
 			f.AddParam("newVal");
 			f.AddParam("maxCount");
@@ -1060,7 +1059,7 @@ namespace Miniscript.intrinsic {
 			// Example: a = [5,3,4,1,2]; a.sort		results in a == [1, 2, 3, 4, 5]
 			// See also: shuffle
 			f = Create("sort");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.AddParam("byKey");
 			f.AddParam("ascending", ValNumber.One);
 			f.code = (context, partialResult) => {
@@ -1122,7 +1121,7 @@ namespace Miniscript.intrinsic {
 			// Example: "foo bar baz".split("a", 2)		returns ["foo b", "r baz"]
 			// See also: join
 			f = Create("split");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.AddParam("delimiter", " ");
 			f.AddParam("maxCount", -1);
 			f.code = (context, partialResult) => {
@@ -1182,7 +1181,7 @@ namespace Miniscript.intrinsic {
 			// self (list or map): object to shuffle
 			// Returns: null
 			f = Create("shuffle");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
 				random ??= new Random();
@@ -1226,7 +1225,7 @@ namespace Miniscript.intrinsic {
 			// Returns: result of adding up all values in self
 			// Example: range(3).sum		returns 6 (3 + 2 + 1 + 0)
 			f = Create("sum");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var val = context.Self;
 				double sum = 0;
@@ -1265,7 +1264,7 @@ namespace Miniscript.intrinsic {
 			// Example: "Mo Spam".upper		returns "MO SPAM"
 			// See also: lower
 			f = Create("upper");
-			f.AddParam("self");
+			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var val = context.Self;
 				if (!(val is ValString)) return new Result(val);
@@ -1282,7 +1281,7 @@ namespace Miniscript.intrinsic {
 			// Example: "1234.56".val		returns 1234.56
 			// See also: str
 			f = Create("val");
-			f.AddParam("self", 0);
+			f.AddParam(SELF, 0);
 			f.code = (context, partialResult) => {
 				var val = context.Self;
 				switch (val) {
@@ -1306,7 +1305,7 @@ namespace Miniscript.intrinsic {
 			// Example: "abc".values		returns ["a", "b", "c"]
 			// See also: indexes
 			f = Create("values");
-            f.AddParam("self");
+            f.AddParam(SELF);
             f.code = (context, partialResult) => {
                 var self = context.Self;
                 switch (self) {

@@ -52,7 +52,7 @@ namespace Miniscript.tac {
 		}
 		
 		public static ValNumber IntrinsicByName(string name) {
-			return new ValNumber(Intrinsic.GetByName(name).id);
+			return new ValNumber(Intrinsic.GetByName(name).Id);
 		}
 		
 	}

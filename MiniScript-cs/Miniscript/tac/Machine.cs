@@ -190,7 +190,7 @@ namespace Miniscript.tac {
 					if (kv.Value == val && kv.Key != val) return kv.Key.ToString(this);
 				}
 
-				Intrinsic.shortNames.TryGetValue(val, out var result);
+				Intrinsic.ShortNames.TryGetValue(val, out var result);
 				return result;
 			}
 			

@@ -1,4 +1,5 @@
 ﻿using Miniscript.errors;
+using Miniscript.keywords;
 using Miniscript.tac;
 
 namespace Miniscript.types {
@@ -9,7 +10,7 @@ namespace Miniscript.types {
     public class ValString : Value {
         
         // Magic identifier for the is-a entry in the class system:
-        public static readonly ValString MagicIsA = new ValString("__isa");
+        public static readonly ValString MagicIsA = new ValString(Consts.IS_A);
 
         /// <summary>
         /// Handy accessor for an empty ValString.
