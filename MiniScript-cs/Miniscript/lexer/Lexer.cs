@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Miniscript.errors;
 using Miniscript.keywords;
 using Miniscript.tests;
+using static Miniscript.keywords.Consts;
 
 namespace Miniscript.lexer {
 				
@@ -134,7 +135,7 @@ namespace Miniscript.lexer {
 				}
 				result.Text = input.Substring(startPos, position - startPos);
 				result.TokenType = (Keywords.IsKeyword(result.Text) ? TokenType.Keyword : TokenType.Identifier);
-				if (result.Text == "end") {
+				if (result.Text == Consts.END) {
 					// As a special case: when we see "end", grab the next keyword (after whitespace)
 					// too, and conjoin it, so our token is "end if", "end function", etc.
 					Token nextWord = Dequeue();
@@ -144,13 +145,13 @@ namespace Miniscript.lexer {
 						// Oops, didn't find another keyword.  User error.
 						throw new LexerException("'end' without following keyword ('if', 'function', etc.)");
 					}
-				} else if (result.Text == "else") {
+				} else if (result.Text == Consts.ELSE) {
 					// And similarly, conjoin an "if" after "else" (to make "else if").
 					var p = position;
 					while (p < inputLength && (input[p]==' ' || input[p]=='\t')) p++;
-					if (p+1 < inputLength && input.Substring(p,2) == "if" &&
+					if (p+1 < inputLength && input.Substring(p,2) == Consts.IF &&
 							(p+2 >= inputLength || IsWhitespace(input[p+2]))) {
-						result.Text = "else if";
+						result.Text = ELSE_IF;
 						position = p + 2;
 					}
 				}

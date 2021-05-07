@@ -13,26 +13,26 @@ using System;
 namespace Miniscript.keywords {
 	public static class Keywords {
 		public static readonly string[] All = {
-			"break",
-			"continue",
-			"else",
-			"end",
-			"for",
-			"function",
-			"if",
-			"in",
-			"isa",
-			"new",
-			"null",
-			"then",
-			"repeat",
-			"return",
-			"while",
-			"and",
-			"or",
-			"not",
-			"true",
-			"false"
+			Consts.BREAK,
+			Consts.CONTINUE,
+			Consts.ELSE,
+			Consts.END,
+			Consts.FOR,
+			Consts.FUNCTION,
+			Consts.IF,
+			Consts.IN,
+			Consts.ISA,
+			Consts.NEW,
+			Consts.NULL,
+			Consts.THEN,
+			Consts.REPEAT,
+			Consts.RETURN,
+			Consts.WHILE,
+			Consts.AND,
+			Consts.OR,
+			Consts.NOT,
+			Consts.TRUE,
+			Consts.FALSE
 		};
 
 		public static bool IsKeyword(string text) {

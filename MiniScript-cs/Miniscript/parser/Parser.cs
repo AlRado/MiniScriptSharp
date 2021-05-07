@@ -18,6 +18,7 @@ using Miniscript.intrinsic;
 using Miniscript.lexer;
 using Miniscript.tac;
 using Miniscript.types;
+using static Miniscript.keywords.Consts;
 
 namespace Miniscript.parser {
 	public class Parser {
@@ -111,9 +112,9 @@ namespace Miniscript.parser {
 			} else if (output.BackPatches.Count > 0) {
 				var bp = output.BackPatches[output.BackPatches.Count - 1];
 				var msg = bp.WaitingFor switch {
-					"end for" => "'for' without matching 'end for'",
-					"end if" => "'if' without matching 'end if'",
-					"end while" => "'while' without matching 'end while'",
+					END_FOR => "'for' without matching 'end for'",
+					END_IF => "'if' without matching 'end if'",
+					END_WHILE => "'while' without matching 'end while'",
 					_ => "unmatched block opener"
 				};
 				throw new CompilerException(errorContext, tokens.LineNum, msg);
@@ -138,7 +139,7 @@ namespace Miniscript.parser {
 		/// <returns></returns>
 		public Function CreateImport() {
 			// Add one additional line to return `locals` as the function return value.
-			var locals = new ValVar("locals");
+			var locals = new ValVar(LOCALS);
 			output.Add(new Line(TAC.LTemp(0), Line.Op.ReturnA, locals));
 			// Then wrap the whole thing in a Function.
 			var result = new Function(output.Code);
@@ -174,7 +175,7 @@ namespace Miniscript.parser {
 				var location = new SourceLoc(errorContext, tokens.LineNum);
 
 				// Pop our context if we reach 'end function'.
-				if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == "end function") {
+				if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == END_FUNCTION) {
 					tokens.Dequeue();
 					if (outputStack.Count > 1) {
 						outputStack.Pop();
@@ -204,12 +205,12 @@ namespace Miniscript.parser {
 		}
 
 		private void ParseStatement(Lexer tokens, bool allowExtra=false) {
-			if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text != "not"
-				&& tokens.Peek().Text != "true" && tokens.Peek().Text != "false") {
+			if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text != NOT
+				&& tokens.Peek().Text != TRUE && tokens.Peek().Text != FALSE) {
 				// Handle statements that begin with a keyword.
 				var keyword = tokens.Dequeue().Text;
 				switch (keyword) {
-				case "return": {
+				case RETURN: {
 						Value returnValue = null;
 						if (tokens.Peek().TokenType != TokenType.EOL) {
 							returnValue = ParseExpr(tokens);
@@ -217,9 +218,9 @@ namespace Miniscript.parser {
 						output.Add(new Line(TAC.LTemp(0), Line.Op.ReturnA, returnValue));
 					}
 					break;
-				case "if": {
+				case IF: {
 						var condition = ParseExpr(tokens);
-						RequireToken(tokens, TokenType.Keyword, "then");
+						RequireToken(tokens, TokenType.Keyword, THEN);
 						// OK, now we need to emit a conditional branch, but keep track of this
 						// on a stack so that when we get the corresponding "else" or  "end if", 
 						// we can come back and patch that jump to the right place.
@@ -228,20 +229,20 @@ namespace Miniscript.parser {
 						// ...but if blocks also need a special marker in the backpack stack
 						// so we know where to stop when patching up (possibly multiple) 'end if' jumps.
 						// We'll push a special dummy backpatch here that we look for in PatchIfBlock.
-						output.AddBackpatch("if:MARK");
-						output.AddBackpatch("else");
+						output.AddBackpatch(IF_MARK);
+						output.AddBackpatch(ELSE);
 						
 						// Allow for the special one-statement if: if the next token after "then"
 						// is not EOL, then parse a statement, and do the same for any else or
 						// else-if blocks, until we get to EOL (and then implicitly do "end if").
 						if (tokens.Peek().TokenType != TokenType.EOL) {
 							ParseStatement(tokens, true);  // parses a single statement for the "then" body
-							if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == "else") {
+							if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == ELSE) {
 								tokens.Dequeue();	// skip "else"
 								StartElseClause();
 								ParseStatement(tokens, true);		// parse a single statement for the "else" body
 							} else {
-								RequireEitherToken(tokens, TokenType.Keyword, "else", TokenType.EOL);
+								RequireEitherToken(tokens, TokenType.Keyword, ELSE, TokenType.EOL);
 							}
 							output.PatchIfBlock();	// terminate the single-line if
 						} else {
@@ -249,24 +250,24 @@ namespace Miniscript.parser {
 						}
 				}
 					return;
-				case "else":
+				case ELSE:
 					StartElseClause();
 					break;
-				case "else if": {
+				case ELSE_IF: {
 						StartElseClause();
 						var condition = ParseExpr(tokens);
-						RequireToken(tokens, TokenType.Keyword, "then");
+						RequireToken(tokens, TokenType.Keyword, THEN);
 						output.Add(new Line(null, Line.Op.GotoAifNotB, null, condition));
-						output.AddBackpatch("else");
+						output.AddBackpatch(ELSE);
 					}
 					break;
-				case "end if":
+				case END_IF:
 					// OK, this is tricky.  We might have an open "else" block or we might not.
 					// And, we might have multiple open "end if" jumps (one for the if part,
 					// and another for each else-if part).  Patch all that as a special case.
 					output.PatchIfBlock();
 					break;
-				case "while": {
+				case WHILE: {
 						// We need to note the current line, so we can jump back up to it at the end.
 						output.AddJumpPoint(keyword);
 
@@ -277,24 +278,24 @@ namespace Miniscript.parser {
 						// on a stack so that when we get the corresponding "end while", 
 						// we can come back and patch that jump to the right place.
 						output.Add(new Line(null, Line.Op.GotoAifNotB, null, condition));
-						output.AddBackpatch("end while");
+						output.AddBackpatch(END_WHILE);
 					}
 					break;
-				case "end while": {
+				case END_WHILE: {
 						// Unconditional jump back to the top of the while loop.
-						var jump = output.CloseJumpPoint("while");
+						var jump = output.CloseJumpPoint(WHILE);
 						output.Add(new Line(null, Line.Op.GotoA, TAC.Num(jump.LineNum)));
 						// Then, backpatch the open "while" branch to here, right after the loop.
 						// And also patch any "break" branches emitted after that point.
 						output.Patch(keyword, true);
 					}
 					break;
-				case "for": {
+				case FOR: {
 						// Get the loop variable, "in" keyword, and expression to loop over.
 						// (Note that the expression is only evaluated once, before the loop.)
 						var loopVarTok = RequireToken(tokens, TokenType.Identifier);
 						var loopVar = new ValVar(loopVarTok.Text);
-						RequireToken(tokens, TokenType.Keyword, "in");
+						RequireToken(tokens, TokenType.Keyword, IN);
 						var stuff = ParseExpr(tokens);
 						if (stuff == null) {
 							throw new CompilerException(errorContext, tokens.LineNum,
@@ -316,28 +317,28 @@ namespace Miniscript.parser {
 						var isTooBig = new ValTemp(output.nextTempNum++);
 						output.Add(new Line(isTooBig, Line.Op.AGreatOrEqualB, idxVar, sizeOfSeq));
 						output.Add(new Line(null, Line.Op.GotoAifB, null, isTooBig));
-						output.AddBackpatch("end for");
+						output.AddBackpatch(END_FOR);
 
 						// Otherwise, get the sequence value into our loop variable.
 						output.Add(new Line(loopVar, Line.Op.ElemBofIterA, stuff, idxVar));
 					}
 					break;
-				case "end for": {
+				case END_FOR: {
 						// Unconditional jump back to the top of the for loop.
-						var jump = output.CloseJumpPoint("for");
+						var jump = output.CloseJumpPoint(FOR);
 						output.Add(new Line(null, Line.Op.GotoA, TAC.Num(jump.LineNum)));
 						// Then, backpatch the open "for" branch to here, right after the loop.
 						// And also patch any "break" branches emitted after that point.
 						output.Patch(keyword, true);
 					}
 					break;
-				case "break": {
+				case BREAK: {
 						// Emit a jump to the end, to get patched up later.
 						output.Add(new Line(null, Line.Op.GotoA));
-						output.AddBackpatch("break");
+						output.AddBackpatch(BREAK);
 					}
 					break;
-				case "continue": {
+				case CONTINUE: {
 						// Jump unconditionally back to the current open jump point.
 						if (output.JumpPoints.Count == 0) {
 							throw new CompilerException(errorContext, tokens.LineNum,
@@ -374,9 +375,9 @@ namespace Miniscript.parser {
 			// to the end of the else block (which we'll have to back-patch later).
 			output.Add(new Line(null, Line.Op.GotoA, null));
 			// Back-patch the previously open if-block to jump here (right past the goto).
-			output.Patch("else");
+			output.Patch(ELSE);
 			// And open a new back-patch for this goto (which will jump all the way to the end if).
-			output.AddBackpatch("end if");
+			output.AddBackpatch(END_IF);
 		}
 
 		private void ParseAssignment(Lexer tokens, bool allowExtra=false) {
@@ -385,7 +386,7 @@ namespace Miniscript.parser {
 			var peek = tokens.Peek();
 			switch (peek.TokenType) {
 				case TokenType.EOL:
-				case TokenType.Keyword when peek.Text == "else":
+				case TokenType.Keyword when peek.Text == ELSE:
 					// No explicit assignment; store an implicit result
 					rhs = FullyEvaluate(expr);
 					output.Add(new Line(null, Line.Op.AssignImplicit, rhs));
@@ -405,7 +406,7 @@ namespace Miniscript.parser {
 						output.Add(new Line(null, Line.Op.PushParam, arg));
 						argCount++;
 						if (tokens.Peek().TokenType == TokenType.EOL) break;
-						if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == "else") break;
+						if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == ELSE) break;
 						if (tokens.Peek().TokenType == TokenType.Comma) {
 							tokens.Dequeue();
 							AllowLineBreak(tokens);
@@ -460,7 +461,7 @@ namespace Miniscript.parser {
 		private Value ParseFunction(Lexer tokens, bool asLval=false, bool statementStart=false) {
 			ExpressionParsingMethod nextLevel = ParseOr;
 			var tok = tokens.Peek();
-			if (tok.TokenType != TokenType.Keyword || tok.Text != "function") return nextLevel(tokens, asLval, statementStart);
+			if (tok.TokenType != TokenType.Keyword || tok.Text != FUNCTION) return nextLevel(tokens, asLval, statementStart);
 			tokens.Dequeue();
 
 			RequireToken(tokens, TokenType.LParen);
@@ -506,7 +507,7 @@ namespace Miniscript.parser {
 			var val = nextLevel(tokens, asLval, statementStart);
 			List<Line> jumpLines = null;
 			var tok = tokens.Peek();
-			while (tok.TokenType == TokenType.Keyword && tok.Text == "or") {
+			while (tok.TokenType == TokenType.Keyword && tok.Text == OR) {
 				tokens.Dequeue();		// discard "or"
 				val = FullyEvaluate(val);
 
@@ -549,7 +550,7 @@ namespace Miniscript.parser {
 			var val = nextLevel(tokens, asLval, statementStart);
 			List<Line> jumpLines = null;
 			var tok = tokens.Peek();
-			while (tok.TokenType == TokenType.Keyword && tok.Text == "and") {
+			while (tok.TokenType == TokenType.Keyword && tok.Text == AND) {
 				tokens.Dequeue();		// discard "and"
 				val = FullyEvaluate(val);
 
@@ -588,7 +589,7 @@ namespace Miniscript.parser {
 			ExpressionParsingMethod nextLevel = ParseIsA;
 			var tok = tokens.Peek();
 			Value val;
-			if (tok.TokenType == TokenType.Keyword && tok.Text == "not") {
+			if (tok.TokenType == TokenType.Keyword && tok.Text == NOT) {
 				tokens.Dequeue();		// discard "not"
 
 				AllowLineBreak(tokens); // allow a line break after a unary operator
@@ -598,8 +599,7 @@ namespace Miniscript.parser {
 				output.Add(new Line(TAC.LTemp(tempNum), Line.Op.NotA, val));
 				val = TAC.RTemp(tempNum);
 			} else {
-				val = nextLevel(tokens, asLval, statementStart
-				);
+				val = nextLevel(tokens, asLval, statementStart);
 			}
 			return val;
 		}
@@ -607,7 +607,7 @@ namespace Miniscript.parser {
 		private Value ParseIsA(Lexer tokens, bool asLval=false, bool statementStart=false) {
 			ExpressionParsingMethod nextLevel = ParseComparisons;
 			var val = nextLevel(tokens, asLval, statementStart);
-			if (tokens.Peek().TokenType != TokenType.Keyword || tokens.Peek().Text != "isa") return val;
+			if (tokens.Peek().TokenType != TokenType.Keyword || tokens.Peek().Text != ISA) return val;
 			
 			tokens.Dequeue();		// discard the isa operator
 			AllowLineBreak(tokens); // allow a line break after a binary operator
@@ -738,7 +738,7 @@ namespace Miniscript.parser {
 
 		private Value ParseNew(Lexer tokens, bool asLval=false, bool statementStart=false) {
 			ExpressionParsingMethod nextLevel = ParseAddressOf;
-			if (tokens.Peek().TokenType != TokenType.Keyword || tokens.Peek().Text != "new") return nextLevel(tokens, asLval, statementStart);
+			if (tokens.Peek().TokenType != TokenType.Keyword || tokens.Peek().Text != NEW) return nextLevel(tokens, asLval, statementStart);
 			tokens.Dequeue();		// skip 'new'
 
 			AllowLineBreak(tokens); // allow a line break after a unary operator
@@ -1013,12 +1013,12 @@ namespace Miniscript.parser {
 				case TokenType.String:
 					return new ValString(tok.Text);
 				case TokenType.Identifier:
-					return tok.Text == "self" ? ValVar.Self : new ValVar(tok.Text);
+					return tok.Text == SELF ? ValVar.Self : new ValVar(tok.Text);
 				case TokenType.Keyword:
 					switch (tok.Text) {
-						case "null":	return null;
-						case "true":	return ValNumber.One;
-						case "false":	return ValNumber.Zero;
+						case NULL:	return null;
+						case TRUE:	return ValNumber.One;
+						case FALSE:	return ValNumber.Zero;
 					}
 
 					break;

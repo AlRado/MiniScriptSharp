@@ -4,6 +4,7 @@ using Miniscript.errors;
 using Miniscript.interpreter;
 using Miniscript.intrinsic;
 using Miniscript.types;
+using static Miniscript.keywords.Consts;
 
 namespace Miniscript.tac {
 
@@ -86,10 +87,10 @@ namespace Miniscript.tac {
 
 			public void SetVar(string identifier, Value value) {
 				switch (identifier) {
-					case "globals":
-					case "locals":
+					case GLOBALS:
+					case LOCALS:
 						throw new RuntimeException($"can't assign to {identifier}");
-					case "self":
+					case SELF:
 						Self = value;
 						break;
 				}
@@ -158,16 +159,16 @@ namespace Miniscript.tac {
 			public Value GetVar(string identifier) {
 				switch (identifier) {
 					// check for special built-in identifiers 'locals', 'globals', etc.
-					case "self":
+					case SELF:
 						return Self;
-					case "locals":
+					case LOCALS:
 						return Variables ??= new ValMap();
-					case "globals":
+					case GLOBALS:
 						return Root.Variables ?? (Root.Variables = new ValMap());
 					// return module variables, if we have them; else globals
-					case "outer" when OuterVars != null:
+					case OUTER when OuterVars != null:
 						return OuterVars;
-					case "outer":
+					case OUTER:
 						return Root.Variables ?? (Root.Variables = new ValMap());
 				}
 

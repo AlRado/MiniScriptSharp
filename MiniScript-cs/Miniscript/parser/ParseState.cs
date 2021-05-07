@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Miniscript.errors;
+using Miniscript.keywords;
 using Miniscript.tac;
 using Miniscript.types;
 
@@ -78,7 +79,7 @@ namespace Miniscript.parser {
 				for (int idx = BackPatches.Count - 1; idx >= 0 && !done; idx--) {
 					var patchIt = false;
 					if (BackPatches[idx].WaitingFor == keywordFound) patchIt = done = true;
-					else if (BackPatches[idx].WaitingFor == "break") {
+					else if (BackPatches[idx].WaitingFor == Consts.BREAK) {
 						// Not the expected keyword, but "break"; this is always OK,
 						// but we may or may not patch it depending on the call.
 						patchIt = alsoBreak;
@@ -106,17 +107,17 @@ namespace Miniscript.parser {
 				while (idx >= 0) {
 					var bp = BackPatches[idx];
 					switch (bp.WaitingFor) {
-						case "if:MARK":
+						case Consts.IF_MARK:
 							// There's the special marker that indicates the true start of this if block.
 							BackPatches.RemoveAt(idx);
 							return;
-						case "end if":
-						case "else":
+						case Consts.END_IF:
+						case Consts.ELSE:
 							Code[bp.LineNum].RhsA = target;
 							BackPatches.RemoveAt(idx);
 							break;
 						default: {
-							if (BackPatches[idx].WaitingFor == "break") {
+							if (BackPatches[idx].WaitingFor == Consts.BREAK) {
 								// Not the expected keyword, but "break"; this is always OK.
 							} else {
 								// Not the expected patch, and not "break"; we have a mismatched block start/end.

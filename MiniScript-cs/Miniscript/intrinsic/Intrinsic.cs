@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Miniscript.errors;
+using Miniscript.keywords;
 using Miniscript.tac;
 using Miniscript.types;
 
@@ -675,7 +676,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam("s", ValString.Empty);
 			f.code = (context, partialResult) => {
 				var s = context.GetVar("s");
-				context.Vm.StandardOutput(s != null ? s.ToString() : "null");
+				context.Vm.StandardOutput(s != null ? s.ToString() : Consts.NULL);
 				return Result.Null;
 			};
 				
