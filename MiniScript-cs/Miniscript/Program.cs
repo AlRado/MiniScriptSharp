@@ -13,7 +13,7 @@ namespace Miniscript {
 		private const string QuickTestFilePath = "../../../QuickTest.mscp";
 	
 		public static void Main(string[] args) {
-			HostInfo.name = "Test harness";
+			HostInfo.Name = "Test harness";
 		
 			Console.WriteLine("Miniscript test harness.\n");
 

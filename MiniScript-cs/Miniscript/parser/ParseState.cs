@@ -7,13 +7,13 @@ using Miniscript.types;
 namespace Miniscript.parser {
 
 		internal class ParseState {
-			public List<Line> code = new List<Line>();
-			public List<BackPatch> backpatches = new List<BackPatch>();
-			public List<JumpPoint> jumpPoints = new List<JumpPoint>();
+			public List<Line> Code = new List<Line>();
+			public List<BackPatch> BackPatches = new List<BackPatch>();
+			public List<JumpPoint> JumpPoints = new List<JumpPoint>();
 			public int nextTempNum = 0;
 
 			public void Add(Line line) {
-				code.Add(line);
+				Code.Add(line);
 			}
 
 			/// <summary>
@@ -22,33 +22,33 @@ namespace Miniscript.parser {
 			/// </summary>
 			/// <param name="waitFor">Wait for.</param>
 			public void AddBackpatch(string waitFor) {
-				backpatches.Add(new BackPatch() { lineNum=code.Count-1, waitingFor=waitFor });
+				BackPatches.Add(new BackPatch() { LineNum=Code.Count-1, WaitingFor=waitFor });
 			}
 
 			public void AddJumpPoint(string jumpKeyword) {
-				jumpPoints.Add(new JumpPoint() { lineNum = code.Count, keyword = jumpKeyword });
+				JumpPoints.Add(new JumpPoint() { LineNum = Code.Count, Keyword = jumpKeyword });
 			}
 
 			public JumpPoint CloseJumpPoint(string keyword) {
-				var idx = jumpPoints.Count - 1;
-				if (idx < 0 || jumpPoints[idx].keyword != keyword) {
+				var idx = JumpPoints.Count - 1;
+				if (idx < 0 || JumpPoints[idx].Keyword != keyword) {
 					throw new CompilerException($"'end {keyword}' without matching '{keyword}'");
 				}
-				var result = jumpPoints[idx];
-				jumpPoints.RemoveAt(idx);
+				var result = JumpPoints[idx];
+				JumpPoints.RemoveAt(idx);
 				return result;
 			}
 
 			// Return whether the given line is a jump target.
 			public bool IsJumpTarget(int lineNum) {
-				for (int i=0; i < code.Count; i++) {
-					var op = code[i].op;
+				for (int i=0; i < Code.Count; i++) {
+					var op = Code[i].op;
 					if ((op == Line.Op.GotoA || op == Line.Op.GotoAifB 
 					 || op == Line.Op.GotoAifNotB || op == Line.Op.GotoAifTrulyB)
-					 && code[i].rhsA is ValNumber && code[i].rhsA.IntValue() == lineNum) return true;
+					 && Code[i].RhsA is ValNumber && Code[i].RhsA.IntValue() == lineNum) return true;
 				}
-				for (int i=0; i<jumpPoints.Count(); i++) {
-					if (jumpPoints[i].lineNum == lineNum) return true;
+				for (int i=0; i<JumpPoints.Count(); i++) {
+					if (JumpPoints[i].LineNum == lineNum) return true;
 				}
 				return false;
 			}
@@ -73,22 +73,22 @@ namespace Miniscript.parser {
 			/// <param name="alsoBreak">If true, also patch "break"; otherwise skip it.</param> 
 			/// <param name="reservingLines">Extra lines (after the current position) to patch to.</param> 
 			public void Patch(string keywordFound, bool alsoBreak, int reservingLines=0) {
-				Value target = TAC.Num(code.Count + reservingLines);
+				Value target = TAC.Num(Code.Count + reservingLines);
 				var done = false;
-				for (int idx = backpatches.Count - 1; idx >= 0 && !done; idx--) {
+				for (int idx = BackPatches.Count - 1; idx >= 0 && !done; idx--) {
 					var patchIt = false;
-					if (backpatches[idx].waitingFor == keywordFound) patchIt = done = true;
-					else if (backpatches[idx].waitingFor == "break") {
+					if (BackPatches[idx].WaitingFor == keywordFound) patchIt = done = true;
+					else if (BackPatches[idx].WaitingFor == "break") {
 						// Not the expected keyword, but "break"; this is always OK,
 						// but we may or may not patch it depending on the call.
 						patchIt = alsoBreak;
 					} else {
 						// Not the expected patch, and not "break"; we have a mismatched block start/end.
-						throw new CompilerException("'" + keywordFound + "' skips expected '" + backpatches[idx].waitingFor + "'");
+						throw new CompilerException("'" + keywordFound + "' skips expected '" + BackPatches[idx].WaitingFor + "'");
 					}
 					if (patchIt) {
-						code[backpatches[idx].lineNum].rhsA = target;
-						backpatches.RemoveAt(idx);
+						Code[BackPatches[idx].LineNum].RhsA = target;
+						BackPatches.RemoveAt(idx);
 					}
 				}
 				// Make sure we found one...
@@ -100,23 +100,23 @@ namespace Miniscript.parser {
 			/// the last "else" block, as well as one or more "end if" jumps.
 			/// </summary>
 			public void PatchIfBlock() {
-				Value target = TAC.Num(code.Count);
+				Value target = TAC.Num(Code.Count);
 
-				var idx = backpatches.Count - 1;
+				var idx = BackPatches.Count - 1;
 				while (idx >= 0) {
-					var bp = backpatches[idx];
-					switch (bp.waitingFor) {
+					var bp = BackPatches[idx];
+					switch (bp.WaitingFor) {
 						case "if:MARK":
 							// There's the special marker that indicates the true start of this if block.
-							backpatches.RemoveAt(idx);
+							BackPatches.RemoveAt(idx);
 							return;
 						case "end if":
 						case "else":
-							code[bp.lineNum].rhsA = target;
-							backpatches.RemoveAt(idx);
+							Code[bp.LineNum].RhsA = target;
+							BackPatches.RemoveAt(idx);
 							break;
 						default: {
-							if (backpatches[idx].waitingFor == "break") {
+							if (BackPatches[idx].WaitingFor == "break") {
 								// Not the expected keyword, but "break"; this is always OK.
 							} else {
 								// Not the expected patch, and not "break"; we have a mismatched block start/end.

@@ -5,38 +5,38 @@ namespace Miniscript.types {
     public class ValVar : Value {
         
         // Special name for the implicit result variable we assign to on expression statements:
-        public static readonly ValVar implicitResult = new ValVar("_");
+        public static readonly ValVar ImplicitResult = new ValVar("_");
 
         // Special var for 'self'
-        public static readonly ValVar self = new ValVar("self");
+        public static readonly ValVar Self = new ValVar("self");
 
-        public string identifier;
+        public string Identifier;
         
-        public bool noInvoke; // reflects use of "@" (address-of) operator
+        public bool NoInvoke; // reflects use of "@" (address-of) operator
 
         public ValVar(string identifier) {
-            this.identifier = identifier;
+            Identifier = identifier;
         }
 
         public override Value Val(Context context) {
-            return this == self ? context.self : context.GetVar(identifier);
+            return this == Self ? context.Self : context.GetVar(Identifier);
         }
 
         public override Value Val(Context context, out ValMap valueFoundIn) {
             valueFoundIn = null;
-            return this == self ? context.self : context.GetVar(identifier);
+            return this == Self ? context.Self : context.GetVar(Identifier);
         }
 
         public override string ToString(Machine vm) {
-            return noInvoke ? $"@{identifier}" : identifier;
+            return NoInvoke ? $"@{Identifier}" : Identifier;
         }
 
         public override int Hash(int recursionDepth = 16) {
-            return identifier.GetHashCode();
+            return Identifier.GetHashCode();
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
-            return rhs is ValVar valVar && valVar.identifier == identifier ? 1 : 0;
+            return rhs is ValVar valVar && valVar.Identifier == Identifier ? 1 : 0;
         }
 
     }

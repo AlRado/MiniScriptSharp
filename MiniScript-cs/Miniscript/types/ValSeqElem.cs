@@ -6,13 +6,13 @@ namespace Miniscript.types {
 
     public class ValSeqElem : Value {
 
-        public Value sequence;
-        public Value index;
-        public bool noInvoke; // reflects use of "@" (address-of) operator
+        public Value Sequence;
+        public Value Index;
+        public bool NoInvoke; // reflects use of "@" (address-of) operator
 
         public ValSeqElem(Value sequence, Value index) {
-            this.sequence = sequence;
-            this.index = index;
+            Sequence = sequence;
+            Index = index;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Miniscript.types {
                     case ValMap map: {
                         // If the map contains this identifier, return its value.
                         var idVal = TempValString.Get(identifier);
-                        var found = map.map.TryGetValue(idVal, out var result);
+                        var found = map.Map.TryGetValue(idVal, out var result);
                         TempValString.Release(idVal);
                         if (found) {
                             valueFoundIn = map;
@@ -41,29 +41,29 @@ namespace Miniscript.types {
 
                         // Otherwise, if we have an __isa, try that next.
                         if (loopsLeft < 0) return null; // (unless we've hit the loop limit)
-                        if (!map.map.TryGetValue(ValString.magicIsA, out sequence)) {
+                        if (!map.Map.TryGetValue(ValString.MagicIsA, out sequence)) {
                             // ...and if we don't have an __isa, try the generic map type if allowed
                             if (!includeMapType) throw new KeyException(identifier);
-                            sequence = context.vm.mapType ?? Intrinsic.MapType();
+                            sequence = context.Vm.MapType ?? Intrinsic.MapType();
                             includeMapType = false;
                         }
 
                         break;
                     }
                     case ValList _:
-                        sequence = context.vm.listType ?? Intrinsic.ListType();
+                        sequence = context.Vm.ListType ?? Intrinsic.ListType();
                         includeMapType = false;
                         break;
                     case ValString _:
-                        sequence = context.vm.stringType ?? Intrinsic.StringType();
+                        sequence = context.Vm.StringType ?? Intrinsic.StringType();
                         includeMapType = false;
                         break;
                     case ValNumber _:
-                        sequence = context.vm.numberType ?? Intrinsic.NumberType();
+                        sequence = context.Vm.NumberType ?? Intrinsic.NumberType();
                         includeMapType = false;
                         break;
                     case ValFunction _:
-                        sequence = context.vm.functionType ?? Intrinsic.FunctionType();
+                        sequence = context.Vm.FunctionType ?? Intrinsic.FunctionType();
                         includeMapType = false;
                         break;
                     default:
@@ -81,21 +81,21 @@ namespace Miniscript.types {
         }
 
         public override Value Val(Context context, out ValMap valueFoundIn) {
-            var baseSeq = sequence;
-            if (sequence == ValVar.self) {
-                baseSeq = context.self;
+            var baseSeq = Sequence;
+            if (Sequence == ValVar.Self) {
+                baseSeq = context.Self;
             }
 
             valueFoundIn = null;
-            var idxVal = index?.Val(context);
-            if (idxVal is ValString s) return Resolve(baseSeq, s.value, context, out valueFoundIn);
+            var idxVal = Index?.Val(context);
+            if (idxVal is ValString s) return Resolve(baseSeq, s.Value, context, out valueFoundIn);
             // Ok, we're searching for something that's not a string;
             // this can only be Done in maps and lists (and lists, only with a numeric index).
             var baseVal = baseSeq.Val(context);
             switch (baseVal) {
                 case ValMap map: {
                     var result = map.Lookup(idxVal, out valueFoundIn);
-                    if (valueFoundIn == null) throw new KeyException(idxVal?.CodeForm(context.vm, 1));
+                    if (valueFoundIn == null) throw new KeyException(idxVal?.CodeForm(context.Vm, 1));
                     return result;
                 }
                 case ValList list when idxVal is ValNumber:
@@ -108,16 +108,16 @@ namespace Miniscript.types {
         }
 
         public override string ToString(Machine vm) {
-            return $"{(noInvoke ? "@" : "")}{sequence}[{index}]";
+            return $"{(NoInvoke ? "@" : "")}{Sequence}[{Index}]";
         }
 
         public override int Hash(int recursionDepth = 16) {
-            return sequence.Hash(recursionDepth - 1) ^ index.Hash(recursionDepth - 1);
+            return Sequence.Hash(recursionDepth - 1) ^ Index.Hash(recursionDepth - 1);
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
-            return rhs is ValSeqElem elem && elem.sequence == sequence
-                                          && elem.index == index
+            return rhs is ValSeqElem elem && elem.Sequence == Sequence
+                                          && elem.Index == Index
                 ? 1
                 : 0;
         }

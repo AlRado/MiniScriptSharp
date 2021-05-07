@@ -5,31 +5,31 @@ namespace Miniscript.types {
 
     public class ValTemp : Value {
 
-        public int tempNum;
+        public int TempNum;
 
         public ValTemp(int tempNum) {
-            this.tempNum = tempNum;
+            TempNum = tempNum;
         }
 
         public override Value Val(Context context) {
-            return context.GetTemp(tempNum);
+            return context.GetTemp(TempNum);
         }
 
         public override Value Val(Context context, out ValMap valueFoundIn) {
             valueFoundIn = null;
-            return context.GetTemp(tempNum);
+            return context.GetTemp(TempNum);
         }
 
         public override string ToString(Machine vm) {
-            return $"_{tempNum.ToString(CultureInfo.InvariantCulture)}";
+            return $"_{TempNum.ToString(CultureInfo.InvariantCulture)}";
         }
 
         public override int Hash(int recursionDepth = 16) {
-            return tempNum.GetHashCode();
+            return TempNum.GetHashCode();
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
-            return rhs is ValTemp temp && temp.tempNum == tempNum ? 1 : 0;
+            return rhs is ValTemp temp && temp.TempNum == TempNum ? 1 : 0;
         }
 
     }

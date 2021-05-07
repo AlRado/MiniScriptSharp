@@ -26,8 +26,8 @@ namespace Miniscript.tac {
 				Console.WriteLine(s + line);
 				if (line.op != Line.Op.BindAssignA) continue;
 				
-				var func = (ValFunction)line.rhsA;
-				Dump(func.function.code, -1, indent+1);
+				var func = (ValFunction)line.RhsA;
+				Dump(func.Function.Code, -1, indent+1);
 			}
 		}
 
@@ -36,7 +36,7 @@ namespace Miniscript.tac {
 		}
 		
 		public static ValVar LVar(string identifier) {
-			return identifier == "self" ? ValVar.self : new ValVar(identifier);
+			return identifier == "self" ? ValVar.Self : new ValVar(identifier);
 		}
 		
 		public static ValTemp RTemp(int tempNum) {

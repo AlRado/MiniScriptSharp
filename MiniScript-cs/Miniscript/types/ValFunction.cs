@@ -7,20 +7,20 @@ namespace Miniscript.types {
     /// </summary>
     public class ValFunction : Value {
 
-        public Function function;
-        public readonly ValMap outerVars; // local variables where the function was defined (usually, the module)
+        public Function Function;
+        public readonly ValMap OuterVars; // local variables where the function was defined (usually, the module)
 
         public ValFunction(Function function) {
-            this.function = function;
+            Function = function;
         }
 
         public ValFunction(Function function, ValMap outerVars) {
-            this.function = function;
-            this.outerVars = outerVars;
+            Function = function;
+            OuterVars = outerVars;
         }
 
         public override string ToString(Machine vm) {
-            return function.ToString(vm);
+            return Function.ToString(vm);
         }
 
         public override bool BoolValue() {
@@ -29,21 +29,21 @@ namespace Miniscript.types {
         }
 
         public override bool IsA(Value type, Machine vm) {
-            return type == vm.functionType;
+            return type == vm.FunctionType;
         }
 
         public override int Hash(int recursionDepth = 16) {
-            return function.GetHashCode();
+            return Function.GetHashCode();
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
             // Two Function values are equal only if they refer to the exact same function
             if (!(rhs is ValFunction other)) return 0;
-            return function == other.function ? 1 : 0;
+            return Function == other.Function ? 1 : 0;
         }
 
         public ValFunction BindAndCopy(ValMap contextVariables) {
-            return new ValFunction(function, contextVariables);
+            return new ValFunction(Function, contextVariables);
         }
 
     }

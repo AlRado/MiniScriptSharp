@@ -4,8 +4,8 @@
     // (typically, the top of a loop of some sort).
     internal class JumpPoint {
 
-        public int lineNum; // line number to jump to		
-        public string keyword; // jump type, by keyword: "while", "for", etc.
+        public int LineNum; // line number to jump to		
+        public string Keyword; // jump type, by keyword: "while", "for", etc.
 
     }
 

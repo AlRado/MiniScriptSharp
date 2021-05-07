@@ -2,19 +2,19 @@
 
     public class Token {
         
-        public static Token EOL = new Token() {tokenType = TokenType.EOL};
+        public static readonly Token EOL = new Token() {TokenType = TokenType.EOL};
 
-        public TokenType tokenType;
-        public string text; // may be null for things like operators, whose text is fixed
-        public bool afterSpace;
+        public TokenType TokenType;
+        public string Text; // may be null for things like operators, whose text is fixed
+        public bool AfterSpace;
 
         public Token(TokenType type = TokenType.Unknown, string text = null) {
-            this.tokenType = type;
-            this.text = text;
+            this.TokenType = type;
+            this.Text = text;
         }
 
         public override string ToString() {
-            return text == null ? tokenType.ToString() : $"{tokenType}({text})";
+            return Text == null ? TokenType.ToString() : $"{TokenType}({Text})";
         }
 
     }

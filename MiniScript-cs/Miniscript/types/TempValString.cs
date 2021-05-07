@@ -11,7 +11,7 @@
             this.next = null;
         }
 
-        private static TempValString _tempPoolHead = null;
+        private static TempValString _tempPoolHead;
         private static object lockObj = new object();
 
         public static TempValString Get(string s) {
@@ -22,7 +22,7 @@
                 else {
                     var result = _tempPoolHead;
                     _tempPoolHead = _tempPoolHead.next;
-                    result.value = s;
+                    result.Value = s;
                     return result;
                 }
             }

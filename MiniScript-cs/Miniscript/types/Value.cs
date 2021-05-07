@@ -158,8 +158,8 @@ namespace Miniscript.types {
 
             // If both arguments are numbers, compare numerically
             if (!(x is ValNumber xNumber) || !(y is ValNumber yNumber)) return 0;
-            var fx = xNumber.value;
-            var fy = yNumber.value;
+            var fx = xNumber.Value;
+            var fy = yNumber.Value;
             if (fx < fy) return -1;
             return fx > fy ? 1 : 0;
 

@@ -10,8 +10,8 @@ namespace Miniscript.intrinsic {
 		/// then your intrinsic will get invoked with this Result passed in as partialResult).
 		/// </summary>
 		public class Result {
-			public bool done;		// true if our work is complete; false if we need to Continue
-			public Value result;	// final result if Done; in-progress data if not Done
+			public readonly bool Done;		// true if our work is complete; false if we need to Continue
+			public readonly Value ResultValue;	// final result if Done; in-progress data if not Done
 			
 			/// <summary>
 			/// Result constructor taking a Value, and an optional Done flag.
@@ -19,24 +19,24 @@ namespace Miniscript.intrinsic {
 			/// <param name="result">result or partial result of the call</param>
 			/// <param name="done">whether our work is Done (optional, defaults to true)</param>
 			public Result(Value result, bool done=true) {
-				this.done = done;
-				this.result = result;
+				this.Done = done;
+				this.ResultValue = result;
 			}
 
 			/// <summary>
 			/// Result constructor for a simple numeric result.
 			/// </summary>
 			public Result(double resultNum) {
-				this.done = true;
-				this.result = new ValNumber(resultNum);
+				this.Done = true;
+				this.ResultValue = new ValNumber(resultNum);
 			}
 
 			/// <summary>
 			/// Result constructor for a simple string result.
 			/// </summary>
 			public Result(string resultStr) {
-				this.done = true;
-				this.result = string.IsNullOrEmpty(resultStr) ? ValString.empty : new ValString(resultStr);
+				this.Done = true;
+				this.ResultValue = string.IsNullOrEmpty(resultStr) ? ValString.Empty : new ValString(resultStr);
 			}
 			
 			/// <summary>
@@ -47,17 +47,17 @@ namespace Miniscript.intrinsic {
 			/// <summary>
 			/// Result.EmptyString: static Result representing "" (empty string).
 			/// </summary>
-			public static readonly Result EmptyString  = new Result(ValString.empty);
+			public static readonly Result EmptyString  = new Result(ValString.Empty);
 
 			/// <summary>
 			/// Result.True: static Result representing true (1.0).
 			/// </summary>
-			public static readonly Result True = new Result(ValNumber.one, true);
+			public static readonly Result True = new Result(ValNumber.One, true);
 
 			/// <summary>
 			/// Result.True: static Result representing false (0.0).
 			/// </summary>
-			public static readonly Result False = new Result(ValNumber.zero, true);
+			public static readonly Result False = new Result(ValNumber.Zero, true);
 
 			/// <summary>
 			/// Result.Waiting: static Result representing a need to wait,

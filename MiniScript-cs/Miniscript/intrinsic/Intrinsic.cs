@@ -98,7 +98,7 @@ namespace Miniscript.intrinsic {
 		/// <param name="name">parameter name</param>
 		/// <param name="defaultValue">default value, if any</param>
 		public void AddParam(string name, Value defaultValue=null) {
-			function.parameters.Add(new Function.Param(name, defaultValue));
+			function.Parameters.Add(new Function.Param(name, defaultValue));
 		}
 		
 		/// <summary>
@@ -109,11 +109,11 @@ namespace Miniscript.intrinsic {
 		/// <param name="defaultValue">default value for this parameter</param>
 		public void AddParam(string name, double defaultValue) {
 			Value defVal = defaultValue switch {
-				0 => ValNumber.zero,
-				1 => ValNumber.one,
+				0 => ValNumber.Zero,
+				1 => ValNumber.One,
 				_ => TAC.Num(defaultValue)
 			};
-			function.parameters.Add(new Function.Param(name, defVal));
+			function.Parameters.Add(new Function.Param(name, defVal));
 		}
 
 		/// <summary>
@@ -124,14 +124,14 @@ namespace Miniscript.intrinsic {
 		/// <param name="defaultValue">default value for this parameter</param>
 		public void AddParam(string name, string defaultValue) {
 			Value defVal;
-			if (string.IsNullOrEmpty(defaultValue)) defVal = ValString.empty;
+			if (string.IsNullOrEmpty(defaultValue)) defVal = ValString.Empty;
 			else
 				defVal = defaultValue switch {
-					"__isa" => ValString.magicIsA,
+					"__isa" => ValString.MagicIsA,
 					"self" => _self,
 					_ => new ValString(defaultValue)
 				};
-			function.parameters.Add(new Function.Param(name, defVal));
+			function.Parameters.Add(new Function.Param(name, defVal));
 		}
 		
 		/// <summary>
@@ -139,11 +139,11 @@ namespace Miniscript.intrinsic {
 		/// that makes an intrinsic call.
 		/// </summary>
 		public ValFunction GetFunc() {
-			if (function.code == null) {
+			if (function.Code == null) {
 				// Our little wrapper function is a single opcode: CallIntrinsicA.
 				// It really exists only to provide a local variable context for the parameters.
-				function.code = new List<Line>();
-				function.code.Add(new Line(TAC.LTemp(0), Line.Op.CallIntrinsicA, TAC.Num(id)));
+				function.Code = new List<Line>();
+				function.Code.Add(new Line(TAC.LTemp(0), Line.Op.CallIntrinsicA, TAC.Num(id)));
 			}
 			return valFunction;
 		}
@@ -303,7 +303,7 @@ namespace Miniscript.intrinsic {
 			f = Create("code");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				var codepoint = 0;
 				if (self != null) codepoint = char.ConvertToUtf32(self.ToString(), 0);
 				return new Result(codepoint);
@@ -339,8 +339,8 @@ namespace Miniscript.intrinsic {
 			// See also: number, string, list, map
 			f = Create("funcRef");
 			f.code = (context, partialResult) => {
-				context.vm.functionType ??= FunctionType().EvalCopy(context.vm.globalContext);
-				return new Result(context.vm.functionType);
+				context.Vm.FunctionType ??= FunctionType().EvalCopy(context.Vm.GlobalContext);
+				return new Result(context.Vm.FunctionType);
 			};
 			
 			// hash
@@ -375,18 +375,18 @@ namespace Miniscript.intrinsic {
 			f.AddParam("self");
 			f.AddParam("index");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				var index = context.GetVar("index");
 				switch (self) {
 					case ValList _ when !(index is ValNumber):
 						return Result.False;	// #3
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						var i = index.IntValue();
 						return new Result(ValNumber.Truth(i >= -list.Count && i < list.Count));
 					}
 					case ValString valString: {
-						var str = valString.value;
+						var str = valString.Value;
 						var i = index.IntValue();
 						return new Result(ValNumber.Truth(i >= -str.Length && i < str.Length));
 					}
@@ -408,16 +408,16 @@ namespace Miniscript.intrinsic {
 			f = Create("indexes");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				switch (self) {
 					case ValMap valMap: {
 						var map = valMap;
-						var keys = new List<Value>(map.map.Keys);
+						var keys = new List<Value>(map.Map.Keys);
 						for (int i = 0; i < keys.Count; i++) if (keys[i] is ValNull) keys[i] = null;
 						return new Result(new ValList(keys));
 					}
 					case ValString valString: {
-						var str = valString.value;
+						var str = valString.Value;
 						var indexes = new List<Value>(str.Length);
 						for (int i = 0; i < str.Length; i++) {
 							indexes.Add(TAC.Num(i));
@@ -425,7 +425,7 @@ namespace Miniscript.intrinsic {
 						return new Result(new ValList(indexes));
 					}
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						var indexes = new List<Value>(list.Count);
 						for (int i = 0; i < list.Count; i++) {
 							indexes.Add(TAC.Num(i));
@@ -451,12 +451,12 @@ namespace Miniscript.intrinsic {
 			f.AddParam("value");
 			f.AddParam("after");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				var value = context.GetVar("value");
 				var after = context.GetVar("after");
 				switch (self) {
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						int idx;
 						if (after == null) idx = list.FindIndex(x => 
 							x == null ? value == null : x.Equality(value) == 1);
@@ -471,7 +471,7 @@ namespace Miniscript.intrinsic {
 						break;
 					}
 					case ValString valString: {
-						var str = valString.value;
+						var str = valString.Value;
 						if (value == null) return Result.Null;
 						var s = value.ToString();
 						int idx;
@@ -487,11 +487,11 @@ namespace Miniscript.intrinsic {
 					}
 					case ValMap valMap: {
 						bool sawAfter = (after == null);
-						foreach (Value k in valMap.map.Keys) {
+						foreach (Value k in valMap.Map.Keys) {
 							if (!sawAfter) {
 								if (k.Equality(after) == 1) sawAfter = true;
 							} else {
-								if (valMap.map[k].Equality(value) == 1) return new Result(k);
+								if (valMap.Map[k].Equality(value) == 1) return new Result(k);
 							}
 						}
 
@@ -517,7 +517,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam("index");
 			f.AddParam("value");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				var index = context.GetVar("index");
 				var value = context.GetVar("value");
 				if (index == null) throw new RuntimeException("insert: index argument required");
@@ -525,7 +525,7 @@ namespace Miniscript.intrinsic {
 				var idx = index.IntValue();
 				switch (self) {
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						if (idx < 0) idx += list.Count + 1;	// +1 because we are inserting AND counting from the end.
 						Check.Range(idx, 0, list.Count);	// and allowing all the way up to .Count here, because insert.
 						list.Insert(idx, value);
@@ -554,11 +554,11 @@ namespace Miniscript.intrinsic {
 			f.AddParam("self");
 			f.AddParam("delimiter", " ");
 			f.code = (context, partialResult) => {
-				var val = context.self;
+				var val = context.Self;
 				var delimiter = context.GetVar("delimiter").ToString();
 				if (!(val is ValList valList)) return new Result(val);
-				var list = new List<string>(valList.values.Count);
-				list.AddRange(valList.values.Select(t => t?.ToString()));
+				var list = new List<string>(valList.Values.Count);
+				list.AddRange(valList.Values.Select(t => t?.ToString()));
 				var result = string.Join(delimiter, list.ToArray());
 				return new Result(result);
 			};
@@ -573,9 +573,9 @@ namespace Miniscript.intrinsic {
 			f = Create("len");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				return context.self switch {
-					ValList valList => new Result(valList.values.Count),
-					ValString valString => new Result(valString.value.Length),
+				return context.Self switch {
+					ValList valList => new Result(valList.Values.Count),
+					ValString valString => new Result(valString.Value.Length),
 					ValMap map => new Result(map.Count),
 					_ => Result.Null
 				};
@@ -590,8 +590,8 @@ namespace Miniscript.intrinsic {
 			// See also: number, string, map, funcRef
 			f = Create("list");
 			f.code = (context, partialResult) => {
-				context.vm.listType ??= ListType().EvalCopy(context.vm.globalContext);
-				return new Result(context.vm.listType);
+				context.Vm.ListType ??= ListType().EvalCopy(context.Vm.GlobalContext);
+				return new Result(context.Vm.ListType);
 			};
 			
 			// log(x, base)
@@ -623,9 +623,9 @@ namespace Miniscript.intrinsic {
 			f = Create("lower");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var val = context.self;
+				var val = context.Self;
 				if (!(val is ValString valString)) return new Result(val);
-				var str = valString.value;
+				var str = valString.Value;
 				return new Result(str.ToLower());
 			};
 
@@ -638,8 +638,8 @@ namespace Miniscript.intrinsic {
 			// See also: number, string, list, funcRef
 			f = Create("map");
 			f.code = (context, partialResult) => {
-				context.vm.mapType ??= MapType().EvalCopy(context.vm.globalContext);
-				return new Result(context.vm.mapType);
+				context.Vm.MapType ??= MapType().EvalCopy(context.Vm.GlobalContext);
+				return new Result(context.Vm.MapType);
 			};
 			
 			// number type
@@ -653,8 +653,8 @@ namespace Miniscript.intrinsic {
 			// See also: string, list, map, funcRef
 			f = Create("number");
 			f.code = (context, partialResult) => {
-				context.vm.numberType ??= NumberType().EvalCopy(context.vm.globalContext);
-				return new Result(context.vm.numberType);
+				context.Vm.NumberType ??= NumberType().EvalCopy(context.Vm.GlobalContext);
+				return new Result(context.Vm.NumberType);
 			};
 			
 			// pi
@@ -672,10 +672,10 @@ namespace Miniscript.intrinsic {
 			// Returns: null
 			// Example: print 6*7
 			f = Create("print");
-			f.AddParam("s", ValString.empty);
+			f.AddParam("s", ValString.Empty);
 			f.code = (context, partialResult) => {
 				var s = context.GetVar("s");
-				context.vm.standardOutput(s != null ? s.ToString() : "null");
+				context.Vm.StandardOutput(s != null ? s.ToString() : "null");
 				return Result.Null;
 			};
 				
@@ -691,19 +691,19 @@ namespace Miniscript.intrinsic {
 			f = Create("pop");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				switch (self) {
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						if (list.Count < 1) return Result.Null;
 						var result = list[list.Count-1];
 						list.RemoveAt(list.Count-1);
 						return new Result(result);
 					}
 					case ValMap valMap: {
-						if (valMap.map.Count < 1) return Result.Null;
-						var result = valMap.map.Keys.First();
-						valMap.map.Remove(result);
+						if (valMap.Map.Count < 1) return Result.Null;
+						var result = valMap.Map.Keys.First();
+						valMap.Map.Remove(result);
 						return new Result(result);
 					}
 					default:
@@ -723,19 +723,19 @@ namespace Miniscript.intrinsic {
 			f = Create("pull");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				switch (self) {
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						if (list.Count < 1) return Result.Null;
 						var result = list[0];
 						list.RemoveAt(0);
 						return new Result(result);
 					}
 					case ValMap valMap: {
-						if (valMap.map.Count < 1) return Result.Null;
-						var result = valMap.map.Keys.First();
-						valMap.map.Remove(result);
+						if (valMap.Map.Count < 1) return Result.Null;
+						var result = valMap.Map.Keys.First();
+						valMap.Map.Remove(result);
 						return new Result(result);
 					}
 					default:
@@ -754,16 +754,16 @@ namespace Miniscript.intrinsic {
 			f.AddParam("self");
 			f.AddParam("value");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				var value = context.GetVar("value");
 				switch (self) {
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						list.Add(value);
 						return new Result(valList);
 					}
 					case ValMap valMap: {
-						valMap.map[value] = ValNumber.one;
+						valMap.Map[value] = ValNumber.One;
 						return new Result(valMap);
 					}
 					default:
@@ -788,10 +788,10 @@ namespace Miniscript.intrinsic {
 				var toVal = context.GetVar("to").DoubleValue();
 				double step = (toVal >= fromVal ? 1 : -1);
 				var p2 = context.GetVar("step");
-				if (p2 is ValNumber number) step = number.value;
+				if (p2 is ValNumber number) step = number.Value;
 				if (step == 0) throw new RuntimeException("range() error (step==0)");
 				var count = (int)((toVal - fromVal) / step) + 1;
-				if (count > ValList.maxSize) throw new RuntimeException("list too large");
+				if (count > ValList.MaxSize) throw new RuntimeException("list too large");
 				try {
 					values = new List<Value>(count);
 					for (double v = fromVal; step > 0 ? (v <= toVal) : (v >= toVal); v += step) {
@@ -825,30 +825,30 @@ namespace Miniscript.intrinsic {
 			f.AddParam("self");
 			f.AddParam("k");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				var k = context.GetVar("k");
 				switch (self) {
 					case ValMap valMap: {
-						k ??= ValNull.instance;
-						if (!valMap.map.ContainsKey(k)) return Result.False;
-						valMap.map.Remove(k);
+						k ??= ValNull.Instance;
+						if (!valMap.Map.ContainsKey(k)) return Result.False;
+						valMap.Map.Remove(k);
 						return Result.True;
 					}
 					case ValList _ when k == null:
 						throw new RuntimeException("argument to 'remove' must not be null");
 					case ValList valList: {
 						var idx = k.IntValue();
-						if (idx < 0) idx += valList.values.Count;
-						Check.Range(idx, 0, valList.values.Count-1);
-						valList.values.RemoveAt(idx);
+						if (idx < 0) idx += valList.Values.Count;
+						Check.Range(idx, 0, valList.Values.Count-1);
+						valList.Values.RemoveAt(idx);
 						return Result.Null;
 					}
 					case ValString _ when k == null:
 						throw new RuntimeException("argument to 'remove' must not be null");
 					case ValString valString: {
 						var substr = k.ToString();
-						var foundPos = valString.value.IndexOf(substr, StringComparison.Ordinal);
-						return foundPos < 0 ? new Result(valString) : new Result(valString.value.Remove(foundPos, substr.Length));
+						var foundPos = valString.Value.IndexOf(substr, StringComparison.Ordinal);
+						return foundPos < 0 ? new Result(valString) : new Result(valString.Value.Remove(foundPos, substr.Length));
 					}
 					default:
 						throw new TypeException("Type Error: 'remove' requires map, list, or string");
@@ -875,7 +875,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam("newVal");
 			f.AddParam("maxCount");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				if (self == null) throw new RuntimeException("argument to 'replace' must not be null");
 				var oldVal = context.GetVar("oldVal");
 				var newVal = context.GetVar("newVal");
@@ -892,7 +892,7 @@ namespace Miniscript.intrinsic {
 						// over the keys.  So gather the keys to change, then change
 						// them afterwards.
 						List<Value> keysToChange = null;
-						foreach (var k in selfMap.map.Keys.Where(k => selfMap.map[k].Equality(oldVal) == 1)) {
+						foreach (var k in selfMap.Map.Keys.Where(k => selfMap.Map[k].Equality(oldVal) == 1)) {
 							keysToChange ??= new List<Value>();
 							keysToChange.Add(k);
 							count++;
@@ -902,7 +902,7 @@ namespace Miniscript.intrinsic {
 						if (keysToChange == null) return new Result(selfMap);
 						{
 							foreach (var k in keysToChange) {
-								selfMap.map[k] = newVal;
+								selfMap.Map[k] = newVal;
 							}
 						}
 
@@ -911,9 +911,9 @@ namespace Miniscript.intrinsic {
 					case ValList selfList: {
 						var idx = -1;
 						while (true) {
-							idx = selfList.values.FindIndex(idx+1, x => x.Equality(oldVal) == 1);
+							idx = selfList.Values.FindIndex(idx+1, x => x.Equality(oldVal) == 1);
 							if (idx < 0) break;
-							selfList.values[idx] = newVal;
+							selfList.Values[idx] = newVal;
 							count++;
 							if (maxCount > 0 && count == maxCount) break;
 						}
@@ -1016,7 +1016,7 @@ namespace Miniscript.intrinsic {
 				if (toVal != null) toIdx = toVal.IntValue();
 				switch (seq) {
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						if (fromIdx < 0) fromIdx += list.Count;
 						if (fromIdx < 0) fromIdx = 0;
 						if (toVal == null) toIdx = list.Count;
@@ -1025,13 +1025,13 @@ namespace Miniscript.intrinsic {
 						var slice = new ValList();
 						if (fromIdx < list.Count && toIdx > fromIdx) {
 							for (int i = fromIdx; i < toIdx; i++) {
-								slice.values.Add(list[i]);
+								slice.Values.Add(list[i]);
 							}
 						}
 						return new Result(slice);
 					}
 					case ValString valString: {
-						var str = valString.value;
+						var str = valString.Value;
 						if (fromIdx < 0) fromIdx += str.Length;
 						if (fromIdx < 0) fromIdx = 0;
 						if (toVal == null) toIdx = str.Length;
@@ -1061,25 +1061,25 @@ namespace Miniscript.intrinsic {
 			f = Create("sort");
 			f.AddParam("self");
 			f.AddParam("byKey");
-			f.AddParam("ascending", ValNumber.one);
+			f.AddParam("ascending", ValNumber.One);
 			f.code = (context, partialResult) => {
-				var self = context.self;
-				if (!(self is ValList list) || list.values.Count < 2) return new Result(self);
+				var self = context.Self;
+				if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
 
 				IComparer<Value> sorter;
-				if (context.GetVar("ascending").BoolValue()) sorter = ValueSorter.instance;
-				else sorter = ValueReverseSorter.instance;
+				if (context.GetVar("ascending").BoolValue()) sorter = ValueSorter.Instance;
+				else sorter = ValueReverseSorter.Instance;
 
 				var byKey = context.GetVar("byKey");
 				if (byKey == null) {
 					// Simple case: sort the values as themselves
-					list.values = list.values.OrderBy((arg) => arg, sorter).ToList();
+					list.Values = list.Values.OrderBy((arg) => arg, sorter).ToList();
 				} else {
 					// Harder case: sort by a key.
-					var count = list.values.Count;
+					var count = list.Values.Count;
 					var arr = new KeyedValue[count];
 					for (int i=0; i<count; i++) {
-						arr[i].value = list.values[i];
+						arr[i].Value = list.Values[i];
 						//arr[i].valueIndex = i;
 					}
 					// The key for each item will be the item itself, unless it is a map, in which
@@ -1087,24 +1087,24 @@ namespace Miniscript.intrinsic {
 					// index is an integer.)
 					var byKeyInt = byKey.IntValue();
 					for (int i=0; i<count; i++) {
-						var item = list.values[i];
+						var item = list.Values[i];
 						switch (item) {
 							case ValMap map:
-								arr[i].sortKey = map.Lookup(byKey);
+								arr[i].SortKey = map.Lookup(byKey);
 								break;
 							case ValList valList: {
-								if (byKeyInt > -valList.values.Count && byKeyInt < valList.values.Count) arr[i].sortKey = valList.values[byKeyInt];
-								else arr[i].sortKey = null;
+								if (byKeyInt > -valList.Values.Count && byKeyInt < valList.Values.Count) arr[i].SortKey = valList.Values[byKeyInt];
+								else arr[i].SortKey = null;
 								break;
 							}
 						}
 					}
 					// Now sort our list of keyed values, by key
-					var sortedArr = arr.OrderBy((arg) => arg.sortKey, sorter);
+					var sortedArr = arr.OrderBy((arg) => arg.SortKey, sorter);
 					// And finally, convert that back into our list
 					var idx=0;
 					foreach (var kv in sortedArr) {
-						list.values[idx++] = kv.value;
+						list.Values[idx++] = kv.Value;
 					}
 				}
 				return new Result(list);
@@ -1125,20 +1125,20 @@ namespace Miniscript.intrinsic {
 			f.AddParam("delimiter", " ");
 			f.AddParam("maxCount", -1);
 			f.code = (context, partialResult) => {
-				var self = context.self.ToString();
+				var self = context.Self.ToString();
 				var delim = context.GetVar("delimiter").ToString();
 				var maxCount = context.GetVar("maxCount").IntValue();
 				var result = new ValList();
 				var pos = 0;
 				while (pos < self.Length) {
 					int nextPos;
-					if (maxCount >= 0 && result.values.Count == maxCount - 1) nextPos = self.Length;
+					if (maxCount >= 0 && result.Values.Count == maxCount - 1) nextPos = self.Length;
 					else if (delim.Length == 0) nextPos = pos+1;
 					else nextPos = self.IndexOf(delim, pos, StringComparison.InvariantCulture);
 					if (nextPos < 0) nextPos = self.Length;
-					result.values.Add(new ValString(self.Substring(pos, nextPos - pos)));
+					result.Values.Add(new ValString(self.Substring(pos, nextPos - pos)));
 					pos = nextPos + delim.Length;
-					if (pos == self.Length && delim.Length > 0) result.values.Add(ValString.empty);
+					if (pos == self.Length && delim.Length > 0) result.Values.Add(ValString.Empty);
 				}
 				return new Result(result);
 			};
@@ -1159,7 +1159,7 @@ namespace Miniscript.intrinsic {
 			// Example: str(42)		returns "42"
 			// See also: val
 			f = Create("str");
-			f.AddParam("x", ValString.empty);
+			f.AddParam("x", ValString.Empty);
 			f.code = (context, partialResult) => new Result(context.GetVar("x").ToString());
 
 			// string type
@@ -1171,8 +1171,8 @@ namespace Miniscript.intrinsic {
 			// See also: number, list, map, funcRef
 			f = Create("string");
 			f.code = (context, partialResult) => {
-				context.vm.stringType ??= StringType().EvalCopy(context.vm.globalContext);
-				return new Result(context.vm.stringType);
+				context.Vm.StringType ??= StringType().EvalCopy(context.Vm.GlobalContext);
+				return new Result(context.Vm.StringType);
 			};
 
 			// shuffle
@@ -1183,11 +1183,11 @@ namespace Miniscript.intrinsic {
 			f = Create("shuffle");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var self = context.self;
+				var self = context.Self;
 				random ??= new Random();
 				switch (self) {
 					case ValList valList: {
-						var list = valList.values;
+						var list = valList.Values;
 						// We'll do a Fisher-Yates shuffle, i.e., swap each element
 						// with a randomly selected one.
 						for (int i=list.Count-1; i >= 1; i--) {
@@ -1200,7 +1200,7 @@ namespace Miniscript.intrinsic {
 						break;
 					}
 					case ValMap valMap: {
-						var map = valMap.map;
+						var map = valMap.Map;
 						// Fisher-Yates again, but this time, what we're swapping
 						// is the values associated with the keys, not the keys themselves.
 						var keys = map.Keys.ToList();
@@ -1227,15 +1227,15 @@ namespace Miniscript.intrinsic {
 			f = Create("sum");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var val = context.self;
+				var val = context.Self;
 				double sum = 0;
 				switch (val) {
 					case ValList valList: {
-						sum += valList.values.Sum(v => v.DoubleValue());
+						sum += valList.Values.Sum(v => v.DoubleValue());
 						break;
 					}
 					case ValMap valMap: {
-						sum += valMap.map.Values.Sum(v => v.DoubleValue());
+						sum += valMap.Map.Values.Sum(v => v.DoubleValue());
 						break;
 					}
 				}
@@ -1254,7 +1254,7 @@ namespace Miniscript.intrinsic {
 			// time
 			//	Returns the number of seconds since the script started running.
 			f = Create("time");
-			f.code = (context, partialResult) => new Result(context.vm.runTime);
+			f.code = (context, partialResult) => new Result(context.Vm.RunTime);
 			
 			// upper
 			//	Return an upper-case (all capitals) version of a string.
@@ -1266,9 +1266,9 @@ namespace Miniscript.intrinsic {
 			f = Create("upper");
 			f.AddParam("self");
 			f.code = (context, partialResult) => {
-				var val = context.self;
+				var val = context.Self;
 				if (!(val is ValString)) return new Result(val);
-				var str = ((ValString)val).value;
+				var str = ((ValString)val).Value;
 				return new Result(str.ToUpper());
 			};
 			
@@ -1283,7 +1283,7 @@ namespace Miniscript.intrinsic {
 			f = Create("val");
 			f.AddParam("self", 0);
 			f.code = (context, partialResult) => {
-				var val = context.self;
+				var val = context.Self;
 				switch (val) {
 					case ValNumber _:
 						return new Result(val);
@@ -1307,14 +1307,14 @@ namespace Miniscript.intrinsic {
 			f = Create("values");
             f.AddParam("self");
             f.code = (context, partialResult) => {
-                var self = context.self;
+                var self = context.Self;
                 switch (self) {
 	                case ValMap valMap: {
-		                var values = new List<Value>(valMap.map.Values);
+		                var values = new List<Value>(valMap.Map.Values);
 		                return new Result(new ValList(values));
 	                }
 	                case ValString valString: {
-		                var str = valString.value;
+		                var str = valString.Value;
 		                var values = new List<Value>(str.Length);
 		                for (int i = 0; i < str.Length; i++) {
 			                values.Add(TAC.Str(str[i].ToString()));
@@ -1338,7 +1338,7 @@ namespace Miniscript.intrinsic {
 			f = Create("version");
 			var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			f.code = (context, partialResult) => {
-				if (context.vm.versionMap != null) return new Result(context.vm.versionMap);
+				if (context.Vm.VersionMap != null) return new Result(context.Vm.VersionMap);
 
 				var d = new ValMap {["miniscript"] = new ValString("1.5")};
 
@@ -1350,12 +1350,12 @@ namespace Miniscript.intrinsic {
 				
 				d["buildDate"] = new ValString(buildDate.ToString("yyyy-MM-dd"));
 
-				d["host"] = new ValNumber(HostInfo.version);
-				d["hostName"] = new ValString(HostInfo.name);
-				d["hostInfo"] = new ValString(HostInfo.info);
+				d["host"] = new ValNumber(HostInfo.Version);
+				d["hostName"] = new ValString(HostInfo.Name);
+				d["hostInfo"] = new ValString(HostInfo.Info);
 
-				context.vm.versionMap = d;
-				return new Result(context.vm.versionMap);
+				context.Vm.VersionMap = d;
+				return new Result(context.Vm.VersionMap);
 			};
 
 			// wait
@@ -1366,14 +1366,14 @@ namespace Miniscript.intrinsic {
 			f = Create("wait");
 			f.AddParam("seconds", 1);
 			f.code = (context, partialResult) => {
-				var now = context.vm.runTime;
+				var now = context.Vm.RunTime;
 				if (partialResult == null) {
 					// Just starting our wait; calculate end time and return as partial result
 					var interval = context.GetVar("seconds").DoubleValue();
 					return new Result(new ValNumber(now + interval), false);
 				} else {
 					// Continue until current time exceeds the time in the partial result
-					return now > partialResult.result.DoubleValue() ? Result.Null : partialResult;
+					return now > partialResult.ResultValue.DoubleValue() ? Result.Null : partialResult;
 				}
 			};
 
@@ -1385,7 +1385,7 @@ namespace Miniscript.intrinsic {
 			//	polite to the host app or other scripts.
 			f = Create("yield");
 			f.code = (context, partialResult) => {
-				context.vm.yielding = true;
+				context.Vm.Yielding = true;
 				return Result.Null;
 			};
 

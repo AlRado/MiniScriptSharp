@@ -9,56 +9,56 @@ namespace Miniscript.types {
     public class ValString : Value {
         
         // Magic identifier for the is-a entry in the class system:
-        public static readonly ValString magicIsA = new ValString("__isa");
+        public static readonly ValString MagicIsA = new ValString("__isa");
 
         /// <summary>
         /// Handy accessor for an empty ValString.
         /// IMPORTANT: do not alter the value of the object returned!
         /// </summary>
-        public static readonly ValString empty = new ValString("");
+        public static readonly ValString Empty = new ValString("");
 
-        public static long maxSize = 0xFFFFFF; // about 16M elements
+        public const long MaxSize = 0xFFFFFF; // about 16M elements
         
-        public string value;
+        public string Value;
 
         public ValString(string value) {
-            this.value = value ?? empty.value;
+            Value = value ?? Empty.Value;
         }
 
         public override string ToString(Machine vm) {
-            return value;
+            return Value;
         }
 
         public override string CodeForm(Machine vm, int recursionLimit = -1) {
-            return "\"" + value.Replace("\"", "\"\"") + "\"";
+            return "\"" + Value.Replace("\"", "\"\"") + "\"";
         }
 
         public override bool BoolValue() {
             // Any nonempty string is considered true.
-            return !string.IsNullOrEmpty(value);
+            return !string.IsNullOrEmpty(Value);
         }
 
         public override bool IsA(Value type, Machine vm) {
-            return type == vm.stringType;
+            return type == vm.StringType;
         }
 
         public override int Hash(int recursionDepth = 16) {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
             // String equality is treated the same as in C#.
-            return rhs is ValString valString && valString.value == value ? 1 : 0;
+            return rhs is ValString valString && valString.Value == Value ? 1 : 0;
         }
 
         public Value GetElem(Value index) {
             var i = index.IntValue();
-            if (i < 0) i += value.Length;
-            if (i < 0 || i >= value.Length) {
+            if (i < 0) i += Value.Length;
+            if (i < 0 || i >= Value.Length) {
                 throw new IndexException("Index Error (string index " + index + " out of range)");
             }
 
-            return new ValString(value.Substring(i, 1));
+            return new ValString(Value.Substring(i, 1));
         }
 
     }

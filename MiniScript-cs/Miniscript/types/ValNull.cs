@@ -11,7 +11,7 @@ namespace Miniscript.types {
         /// <summary>
         /// Handy accessor to a shared "instance".
         /// </summary>
-        public static readonly ValNull instance = new ValNull();
+        public static readonly ValNull Instance = new ValNull();
 
         private ValNull() {
         }

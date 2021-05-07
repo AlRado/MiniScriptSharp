@@ -17,34 +17,34 @@ namespace Miniscript.types {
         /// </summary>
         public class Param {
 
-            public string name;
-            public Value defaultValue;
+            public string Name;
+            public Value DefaultValue;
 
             public Param(string name, Value defaultValue) {
-                this.name = name;
-                this.defaultValue = defaultValue;
+                Name = name;
+                DefaultValue = defaultValue;
             }
 
         }
 
         // Function parameters
-        public List<Param> parameters;
+        public List<Param> Parameters;
 
         // Function code (compiled down to TAC form)
-        public List<Line> code;
+        public List<Line> Code;
 
         public Function(List<Line> code) {
-            this.code = code;
-            parameters = new List<Param>();
+            Code = code;
+            Parameters = new List<Param>();
         }
 
         public string ToString(Machine vm) {
             var s = new System.Text.StringBuilder();
             s.Append("FUNCTION(");
-            for (var i = 0; i < parameters.Count(); i++) {
+            for (var i = 0; i < Parameters.Count(); i++) {
                 if (i > 0) s.Append(", ");
-                s.Append(parameters[i].name);
-                if (parameters[i].defaultValue != null) s.Append("=" + parameters[i].defaultValue.CodeForm(vm));
+                s.Append(Parameters[i].Name);
+                if (Parameters[i].DefaultValue != null) s.Append("=" + Parameters[i].DefaultValue.CodeForm(vm));
             }
 
             s.Append(")");

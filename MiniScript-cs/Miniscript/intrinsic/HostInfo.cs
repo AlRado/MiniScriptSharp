@@ -6,9 +6,9 @@
     /// </summary>
     public static class HostInfo {
 
-        public static string name; // name of the host program
-        public static string info; // URL or other short info about the host
-        public static double version; // host program version number
+        public static string Name; // name of the host program
+        public static string Info; // URL or other short info about the host
+        public static double Version; // host program version number
 
     }
 

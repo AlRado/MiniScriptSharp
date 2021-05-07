@@ -9,66 +9,66 @@ namespace Miniscript.types {
     /// </summary>
     public class ValNumber : Value {
         
-        public double value;
+        public double Value;
 
         public ValNumber(double value) {
-            this.value = value;
+            Value = value;
         }
 
         public override string ToString(Machine vm) {
             // Convert to a string in the standard Minisript way.
-            if (value % 1.0 == 0.0) {
+            if (Value % 1.0 == 0.0) {
                 // integer values as integers
-                return value.ToString("0", CultureInfo.InvariantCulture);
+                return Value.ToString("0", CultureInfo.InvariantCulture);
             }
-            else if (value > 1E10 || value < -1E10 || (value < 1E-6 && value > -1E-6)) {
+            else if (Value > 1E10 || Value < -1E10 || (Value < 1E-6 && Value > -1E-6)) {
                 // very large/small numbers in exponential form
-                var s = value.ToString("E6", CultureInfo.InvariantCulture);
+                var s = Value.ToString("E6", CultureInfo.InvariantCulture);
                 s = s.Replace("E-00", "E-0");
                 return s;
             }
             else {
                 // all others in decimal form, with 1-6 digits past the decimal point
-                return value.ToString("0.0#####", CultureInfo.InvariantCulture);
+                return Value.ToString("0.0#####", CultureInfo.InvariantCulture);
             }
         }
 
         public override int IntValue() {
-            return (int) value;
+            return (int) Value;
         }
 
         public override double DoubleValue() {
-            return value;
+            return Value;
         }
 
         public override bool BoolValue() {
             // Any nonzero value is considered true, when treated as a bool.
-            return value != 0;
+            return Value != 0;
         }
 
         public override bool IsA(Value type, Machine vm) {
-            return type == vm.numberType;
+            return type == vm.NumberType;
         }
 
         public override int Hash(int recursionDepth = 16) {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         public override double Equality(Value rhs, int recursionDepth = 16) {
-            return rhs is ValNumber number && number.value == value ? 1 : 0;
+            return rhs is ValNumber number && number.Value == Value ? 1 : 0;
         }
         
         /// <summary>
         /// Handy accessor to a shared "zero" (0) value.
         /// IMPORTANT: do not alter the value of the object returned!
         /// </summary>
-        public static readonly ValNumber zero = new ValNumber(0);
+        public static readonly ValNumber Zero = new ValNumber(0);
 
         /// <summary>
         /// Handy accessor to a shared "one" (1) value.
         /// IMPORTANT: do not alter the value of the object returned!
         /// </summary>
-        public static readonly ValNumber one = new ValNumber(1);
+        public static readonly ValNumber One = new ValNumber(1);
 
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Miniscript.types {
         /// <param name="truthValue">whether to return 1 (true) or 0 (false)</param>
         /// <returns>ValNumber.one or ValNumber.zero</returns>
         public static ValNumber Truth(bool truthValue) {
-            return truthValue ? one : zero;
+            return truthValue ? One : Zero;
         }
 
         /// <summary>
@@ -91,8 +91,8 @@ namespace Miniscript.types {
         /// </summary>
         public static ValNumber Truth(double truthValue) {
             return truthValue switch {
-                0.0 => zero,
-                1.0 => one,
+                0.0 => Zero,
+                1.0 => One,
                 _ => new ValNumber(truthValue)
             };
         }
