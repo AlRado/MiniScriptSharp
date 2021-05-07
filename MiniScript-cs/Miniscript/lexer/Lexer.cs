@@ -38,7 +38,7 @@ namespace Miniscript.lexer {
 		public Token Peek() {
 			if (pending.Count != 0) return pending.Peek();
 			
-			if (AtEnd) return Token.EOL;
+			if (AtEnd) return Token.Eol;
 			
 			pending.Enqueue(Dequeue());
 			return pending.Peek();
@@ -50,7 +50,7 @@ namespace Miniscript.lexer {
 			var oldPos = position;
 			SkipWhitespaceAndComment();
 
-			if (AtEnd) return Token.EOL;
+			if (AtEnd) return Token.Eol;
 
 			var result = new Token {AfterSpace = (position > oldPos)};
 			var startPos = position;
@@ -90,13 +90,13 @@ namespace Miniscript.lexer {
 			else if (c == '>') result.TokenType = TokenType.OpGreater;
 			else if (c == '@') result.TokenType = TokenType.AddressOf;
 			else if (c == ';' || c == '\n') {
-				result.TokenType = TokenType.EOL;
+				result.TokenType = TokenType.Eol;
 				result.Text = c == ';' ? ";" : "\n";
 				if (c != ';') LineNum++;
 			}
 			if (c == '\r') {
 				// Careful; DOS may use \r\n, so we need to check for that too.
-				result.TokenType = TokenType.EOL;
+				result.TokenType = TokenType.Eol;
 				if (position < inputLength && input[position] == '\n') {
 					position++;
 					result.Text = "\r\n";
@@ -259,7 +259,7 @@ namespace Miniscript.lexer {
 			// Walk back from end of string or start of comment, skipping whitespace.
 			int endPos = (commentStart >= 0 ? commentStart-1 : source.Length - 1);
 			while (endPos >= 0 && IsWhitespace(source[endPos])) endPos--;
-			if (endPos < 0) return Token.EOL;
+			if (endPos < 0) return Token.Eol;
 			
 			// Find the start of that last token.
 			// There are several cases to consider here.
@@ -324,7 +324,7 @@ namespace Miniscript.lexer {
 			Check(lex.Dequeue(), TokenType.Identifier, "foo");
 			Check(lex.Dequeue(), TokenType.RParen);
 			Check(lex.Dequeue(), TokenType.Keyword, "end if");
-			Check(lex.Dequeue(), TokenType.EOL);
+			Check(lex.Dequeue(), TokenType.Eol);
 			UnitTest.ErrorIf(!lex.AtEnd, "AtEnd not set when it should be");
 			CheckLineNum(lex.LineNum, 1);
 
@@ -337,16 +337,16 @@ namespace Miniscript.lexer {
 			lex = new Lexer("foo\nbar\rbaz\r\nbamf");
 			Check(lex.Dequeue(), TokenType.Identifier, "foo");
 			CheckLineNum(lex.LineNum, 1);
-			Check(lex.Dequeue(), TokenType.EOL);
+			Check(lex.Dequeue(), TokenType.Eol);
 			Check(lex.Dequeue(), TokenType.Identifier, "bar");
 			CheckLineNum(lex.LineNum, 2);
-			Check(lex.Dequeue(), TokenType.EOL);
+			Check(lex.Dequeue(), TokenType.Eol);
 			Check(lex.Dequeue(), TokenType.Identifier, "baz");
 			CheckLineNum(lex.LineNum, 3);
-			Check(lex.Dequeue(), TokenType.EOL);
+			Check(lex.Dequeue(), TokenType.Eol);
 			Check(lex.Dequeue(), TokenType.Identifier, "bamf");
 			CheckLineNum(lex.LineNum, 4);
-			Check(lex.Dequeue(), TokenType.EOL);
+			Check(lex.Dequeue(), TokenType.Eol);
 			UnitTest.ErrorIf(!lex.AtEnd, "AtEnd not set when it should be");
 			
 			Check(LastToken("x=42 // foo"), TokenType.Number, "42");

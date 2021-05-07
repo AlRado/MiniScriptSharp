@@ -22,7 +22,7 @@ namespace Miniscript.parser {
 			/// (in rhsA) when we encounter a line with the given waitFor.
 			/// </summary>
 			/// <param name="waitFor">Wait for.</param>
-			public void AddBackpatch(string waitFor) {
+			public void AddBackPatch(string waitFor) {
 				BackPatches.Add(new BackPatch() { LineNum=Code.Count-1, WaitingFor=waitFor });
 			}
 

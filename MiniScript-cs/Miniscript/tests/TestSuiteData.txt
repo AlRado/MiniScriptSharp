@@ -958,7 +958,7 @@ x = 1
 x = 5$&@*!
 x = 3
 ----------------------------------------------------------------------
-Compiler Error: got Unknown($) where EOL is required [line 2]
+Compiler Error: got Unknown($) where Eol is required [line 2]
 ======================================================================
 ==== Run-time error reporting test.
 x = 1

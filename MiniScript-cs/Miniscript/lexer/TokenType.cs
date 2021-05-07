@@ -31,7 +31,7 @@
         Dot,
         Colon,
         Comment,
-        EOL
+        Eol
 
     }
 

@@ -39,6 +39,8 @@
         public const string OUTER = "outer";
         
         public const string INDEX = "index";
+        
+        public const string DUMP = "#DUMP";
     }
 
 }

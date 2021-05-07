@@ -12,6 +12,7 @@ For details, see Chapters 1-3 of the Minisript Integration Guide.
 using System;
 using System.Collections.Generic;
 using Miniscript.errors;
+using Miniscript.keywords;
 using Miniscript.parser;
 using Miniscript.tac;
 using Miniscript.types;
@@ -222,8 +223,8 @@ namespace Miniscript.interpreter {
                 _parser.PartialReset();
             }
 
-            if (sourceLine == "#DUMP") {
-                _vm.DumpTopContext();
+            if (sourceLine == Consts.DUMP) {
+                DumpTopContext();
                 return;
             }
 
