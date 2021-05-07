@@ -359,7 +359,7 @@ namespace Miniscript.parser {
 			if (!allowExtra) RequireToken(tokens, TokenType.EOL);
 
 			// Finally, if we have a pending state, because we encountered a function(),
-			// then push it onto our stack now that we're done with that statement.
+			// then push it onto our stack now that we're Done with that statement.
 			if (pendingState == null) return;
 			
 			output = pendingState;
@@ -725,7 +725,7 @@ namespace Miniscript.parser {
 
 			var val = nextLevel(tokens);
 			if (val is ValNumber valnum) {
-				// If what follows is a numeric literal, just invert it and be done!
+				// If what follows is a numeric literal, just invert it and be Done!
 				valnum.value = -valnum.value;
 				return valnum;
 			}

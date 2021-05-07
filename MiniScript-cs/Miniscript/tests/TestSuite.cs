@@ -52,12 +52,12 @@ namespace Miniscript.tests {
             while (!file.EndOfStream) sourceLines.Add(file.ReadLine());
 
             var miniscript = new Interpreter(sourceLines);
-            miniscript.standardOutput = miniscript.implicitOutput = Console.WriteLine;
+            miniscript.StandardOutput = miniscript.ImplicitOutput = Console.WriteLine;
             miniscript.Compile();
 
-            if (dumpTAC) miniscript.vm.DumpTopContext();
+            if (dumpTAC) miniscript.DumpTopContext();
 
-            while (!miniscript.done) miniscript.RunUntilDone();
+            while (!miniscript.Done) miniscript.RunUntilDone();
         }
 
         private static void Test(List<string> sourceLines, int sourceLineNum, List<string> expectedOutput,
@@ -71,9 +71,9 @@ namespace Miniscript.tests {
 
             Interpreter miniscript = new Interpreter(sourceLines);
             List<string> actualOutput = new List<string>();
-            miniscript.standardOutput = (string s) => actualOutput.Add(s);
-            miniscript.errorOutput = miniscript.standardOutput;
-            miniscript.implicitOutput = miniscript.standardOutput;
+            miniscript.StandardOutput = (string s) => actualOutput.Add(s);
+            miniscript.ErrorOutput = miniscript.StandardOutput;
+            miniscript.ImplicitOutput = miniscript.StandardOutput;
             miniscript.RunUntilDone(60, false);
 
 //		Console.WriteLine("ACTUAL OUTPUT:");

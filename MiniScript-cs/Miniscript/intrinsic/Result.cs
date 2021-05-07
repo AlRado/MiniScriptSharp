@@ -4,20 +4,20 @@ namespace Miniscript.intrinsic {
 
 		/// <summary>
 		/// Result represents the result of an intrinsic call.  An intrinsic will either
-		/// be done with its work, or not yet done (e.g. because it's waiting for something).
-		/// If it's done, set done=true, and store the result Value in result.
-		/// If it's not done, set done=false, and store any partial result in result (and 
+		/// be Done with its work, or not yet Done (e.g. because it's waiting for something).
+		/// If it's Done, set Done=true, and store the result Value in result.
+		/// If it's not Done, set Done=false, and store any partial result in result (and 
 		/// then your intrinsic will get invoked with this Result passed in as partialResult).
 		/// </summary>
 		public class Result {
 			public bool done;		// true if our work is complete; false if we need to Continue
-			public Value result;	// final result if done; in-progress data if not done
+			public Value result;	// final result if Done; in-progress data if not Done
 			
 			/// <summary>
-			/// Result constructor taking a Value, and an optional done flag.
+			/// Result constructor taking a Value, and an optional Done flag.
 			/// </summary>
 			/// <param name="result">result or partial result of the call</param>
-			/// <param name="done">whether our work is done (optional, defaults to true)</param>
+			/// <param name="done">whether our work is Done (optional, defaults to true)</param>
 			public Result(Value result, bool done=true) {
 				this.done = done;
 				this.result = result;

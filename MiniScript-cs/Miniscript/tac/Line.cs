@@ -206,7 +206,7 @@ namespace Miniscript.tac {
 									context.partialResult = null;
 									return result.result;
 								}
-								// OK, this intrinsic function is not yet done with its work.
+								// OK, this intrinsic function is not yet Done with its work.
 								// We need to stay on this same line and call it again with 
 								// the partial result, until it reports that its job is complete.
 								context.partialResult = result;

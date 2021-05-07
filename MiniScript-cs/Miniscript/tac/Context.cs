@@ -248,7 +248,7 @@ namespace Miniscript.tac {
 			/// <param name="func">Function to call.</param>
 			/// <param name="argCount">How many arguments to pop off the stack.</param>
 			/// <param name="gotSelf">Whether this method was called with dot syntax.</param> 
-			/// <param name="resultStorage">Value to stuff the result into when done.</param>
+			/// <param name="resultStorage">Value to stuff the result into when Done.</param>
 			public Context NextCallContext(Function func, int argCount, bool gotSelf, Value resultStorage) {
 				var result = new Context(func.code) {
 					code = func.code, resultStorage = resultStorage, parent = this, vm = vm

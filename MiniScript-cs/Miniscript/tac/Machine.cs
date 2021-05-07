@@ -63,7 +63,7 @@ namespace Miniscript.tac {
 				}
 				var context = stack.Peek();
 				while (context.done) {
-					if (stack.Count == 1) return;	// all done (can't pop the global context)
+					if (stack.Count == 1) return;	// all Done (can't pop the global context)
 					PopContext();
 					context = stack.Peek();
 				}
@@ -167,7 +167,7 @@ namespace Miniscript.tac {
 			}
 
 			private void PopContext() {
-				// Our top context is done; pop it off, and copy the return value in temp 0.
+				// Our top context is Done; pop it off, and copy the return value in temp 0.
 				if (stack.Count == 1) return;	// down to just the global stack (which we keep)
 				
 				var context = stack.Pop();

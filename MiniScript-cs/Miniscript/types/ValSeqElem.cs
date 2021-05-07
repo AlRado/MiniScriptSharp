@@ -90,7 +90,7 @@ namespace Miniscript.types {
             var idxVal = index?.Val(context);
             if (idxVal is ValString s) return Resolve(baseSeq, s.value, context, out valueFoundIn);
             // Ok, we're searching for something that's not a string;
-            // this can only be done in maps and lists (and lists, only with a numeric index).
+            // this can only be Done in maps and lists (and lists, only with a numeric index).
             var baseVal = baseSeq.Val(context);
             switch (baseVal) {
                 case ValMap map: {

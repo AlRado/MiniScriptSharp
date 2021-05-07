@@ -38,7 +38,7 @@ namespace Miniscript {
 			}
 		
 			var interpreter = new Interpreter();
-			interpreter.implicitOutput = interpreter.standardOutput;
+			interpreter.ImplicitOutput = interpreter.StandardOutput;
 
 			Console.WriteLine("MiniScript REPL is ready to use:\n");
 			while (true) {
