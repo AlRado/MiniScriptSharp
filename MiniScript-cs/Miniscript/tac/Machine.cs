@@ -27,9 +27,9 @@ namespace Miniscript.tac {
 			public ValMap VersionMap;
 			
 			// contains global variables
-			public Context GlobalContext { get; private set; }
+			public Context GlobalContext { get; }
 
-			public bool Done => (stack.Count <= 1 && stack.Peek().Done);
+			public bool Done => stack.Count <= 1 && stack.Peek().Done;
 
 			public double RunTime => stopwatch?.Elapsed.TotalSeconds ?? 0;
 

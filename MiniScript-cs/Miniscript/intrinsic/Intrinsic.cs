@@ -98,7 +98,7 @@ namespace Miniscript.intrinsic {
 		/// <param name="name">parameter name</param>
 		/// <param name="defaultValue">default value, if any</param>
 		public void AddParam(string name, Value defaultValue=null) {
-			function.Parameters.Add(new Function.Param(name, defaultValue));
+			function.Parameters.Add(new Param(name, defaultValue));
 		}
 		
 		/// <summary>
@@ -113,7 +113,7 @@ namespace Miniscript.intrinsic {
 				1 => ValNumber.One,
 				_ => TAC.Num(defaultValue)
 			};
-			function.Parameters.Add(new Function.Param(name, defVal));
+			function.Parameters.Add(new Param(name, defVal));
 		}
 
 		/// <summary>
@@ -131,7 +131,7 @@ namespace Miniscript.intrinsic {
 					"self" => _self,
 					_ => new ValString(defaultValue)
 				};
-			function.Parameters.Add(new Function.Param(name, defVal));
+			function.Parameters.Add(new Param(name, defVal));
 		}
 		
 		/// <summary>

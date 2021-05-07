@@ -479,7 +479,7 @@ namespace Miniscript.parser {
 					tokens.Dequeue();	// skip '='
 					defaultValue = ParseExpr(tokens);
 				}
-				func.Parameters.Add(new Function.Param(id.Text, defaultValue));
+				func.Parameters.Add(new Param(id.Text, defaultValue));
 				if (tokens.Peek().TokenType == TokenType.RParen) break;
 				RequireToken(tokens, TokenType.Comma);
 			}

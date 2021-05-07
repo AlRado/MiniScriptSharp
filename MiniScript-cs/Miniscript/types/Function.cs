@@ -12,21 +12,6 @@ namespace Miniscript.types {
     /// </summary>
     public class Function {
 
-        /// <summary>
-        /// Param: helper class representing a function parameter.
-        /// </summary>
-        public class Param {
-
-            public string Name;
-            public Value DefaultValue;
-
-            public Param(string name, Value defaultValue) {
-                Name = name;
-                DefaultValue = defaultValue;
-            }
-
-        }
-
         // Function parameters
         public List<Param> Parameters;
 
