@@ -54,10 +54,10 @@ namespace Miniscript.intrinsic {
 		
 		private readonly ValString _self = new ValString(SELF);
 		
-		private static ValMap _functionType = null;
-		private static ValMap _listType = null;
-		private static ValMap _stringType = null;
-		private static ValMap _mapType = null;
+		private static ValMap functionType;
+		private static ValMap listType;
+		private static ValMap stringType;
+		private static ValMap mapType;
 		
 		private static Random random;	// TODO: consider storing this on the context, instead of global!
 		
@@ -168,7 +168,7 @@ namespace Miniscript.intrinsic {
 			//	Returns the absolute value of the given number.
 			// x (number, default 0): number to take the absolute value of.
 			// Example: abs(-42)		returns 42
-			var f = Create("abs");
+			var f = Create(ABS);
 			f.AddParam("x", 0);
 			f.code = (context, partialResult) => new Result(Math.Abs(context.GetVar("x").DoubleValue()));
 
@@ -178,7 +178,7 @@ namespace Miniscript.intrinsic {
 			// x (number, default 0): cosine of the angle to find.
 			// Returns: angle, in radians, whose cosine is x.
 			// Example: acos(0) 		returns 1.570796
-			f = Create("acos");
+			f = Create(ACOS);
 			f.AddParam("x", 0);
 			f.code = (context, partialResult) => new Result(Math.Acos(context.GetVar("x").DoubleValue()));
 
@@ -188,7 +188,7 @@ namespace Miniscript.intrinsic {
 			// x (number, default 0): cosine of the angle to find.
 			// Returns: angle, in radians, whose cosine is x.
 			// Example: asin(1) return 1.570796
-			f = Create("asin");
+			f = Create(ASIN);
 			f.AddParam("x", 0);
 			f.code = (context, partialResult) => new Result(Math.Asin(context.GetVar("x").DoubleValue()));
 
@@ -204,7 +204,7 @@ namespace Miniscript.intrinsic {
 			// x (number, default 1): length of the side adjacent the angle
 			// Returns: angle, in radians, whose tangent is y/x
 			// Example: atan(1, -1)		returns 2.356194
-			f = Create("atan");
+			f = Create(ATAN);
 			f.AddParam("y", 0);
 			f.AddParam("x", 1);
 			f.code = (context, partialResult) => {
@@ -222,7 +222,7 @@ namespace Miniscript.intrinsic {
 			// Returns: bitwise `and` of i and j
 			// Example: bitAnd(14, 7)		returns 6
 			// See also: bitOr; bitXor
-			f = Create("bitAnd");
+			f = Create(BIT_AND);
 			f.AddParam("i", 0);
 			f.AddParam("j", 0);
 			f.code = (context, partialResult) => {
@@ -240,7 +240,7 @@ namespace Miniscript.intrinsic {
 			// Returns: bitwise `or` of i and j
 			// Example: bitOr(14, 7)		returns 15
 			// See also: bitAnd; bitXor
-			f = Create("bitOr");
+			f = Create(BIT_OR);
 			f.AddParam("i", 0);
 			f.AddParam("j", 0);
 			f.code = (context, partialResult) => {
@@ -258,7 +258,7 @@ namespace Miniscript.intrinsic {
 			// Returns: bitwise `and` of i and j
 			// Example: bitAnd(14, 7)		returns 9
 			// See also: bitAnd; bitOr
-			f = Create("bitXor");
+			f = Create(BIT_XOR);
 			f.AddParam("i", 0);
 			f.AddParam("j", 0);
 			f.code = (context, partialResult) => {
@@ -273,7 +273,7 @@ namespace Miniscript.intrinsic {
 			// Returns: string containing the specified character
 			// Example: char(42)		returns "*"
 			// See also: code
-			f = Create("char");
+			f = Create(CHAR);
 			f.AddParam("codePoint", 65);
 			f.code = (context, partialResult) => {
 				var codepoint = context.GetLocalInt("codePoint");
@@ -288,7 +288,7 @@ namespace Miniscript.intrinsic {
 			// Returns: closest whole number not less than x
 			// Example: ceil(41.2)		returns 42
 			// See also: floor
-			f = Create("ceil");
+			f = Create(CEIL);
 			f.AddParam("x", 0);
 			f.code = (context, partialResult) => new Result(Math.Ceiling(context.GetVar("x").DoubleValue()));
 			
@@ -300,7 +300,7 @@ namespace Miniscript.intrinsic {
 			// Returns: Unicode code point of the first character of self
 			// Example: "*".code		returns 42
 			// Example: code("*")		returns 42
-			f = Create("code");
+			f = Create(CODE);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
@@ -314,7 +314,7 @@ namespace Miniscript.intrinsic {
 			// radians (number): angle, in radians, to get the cosine of
 			// Returns: cosine of the given angle
 			// Example: cos(0)		returns 1
-			f = Create("cos");
+			f = Create(COS);
 			f.AddParam("radians", 0);
 			f.code = (context, partialResult) => new Result(Math.Cos(context.GetVar("radians").DoubleValue()));
 
@@ -325,7 +325,7 @@ namespace Miniscript.intrinsic {
 			// Returns: closest whole number not more than x
 			// Example: floor(42.9)		returns 42
 			// See also: floor
-			f = Create("floor");
+			f = Create(FLOOR);
 			f.AddParam("x", 0);
 			f.code = (context, partialResult) => new Result(Math.Floor(context.GetVar("x").DoubleValue()));
 
@@ -337,7 +337,7 @@ namespace Miniscript.intrinsic {
 			//	the result).
 			// Example: @floor isa funcRef		returns 1
 			// See also: number, string, list, map
-			f = Create("funcRef");
+			f = Create(FUNC_REF);
 			f.code = (context, partialResult) => {
 				context.Vm.FunctionType ??= FunctionType().EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.FunctionType);
@@ -351,7 +351,7 @@ namespace Miniscript.intrinsic {
 			//	across different Minisript implementations.
 			// obj (any type): value to hash
 			// Returns: integer hash of the given value
-			f = Create("hash");
+			f = Create(HASH);
 			f.AddParam("obj");
 			f.code = (context, partialResult) => {
 				var val = context.GetVar("obj");
@@ -371,7 +371,7 @@ namespace Miniscript.intrinsic {
 			// Example: "foo".hasIndex(2)		returns 1
 			// Example: "foo".hasIndex(3)		returns 0
 			// See also: indexes
-			f = Create("hasIndex");
+			f = Create(HAS_INDEX);
 			f.AddParam(SELF);
 			f.AddParam(INDEX);
 			f.code = (context, partialResult) => {
@@ -405,7 +405,7 @@ namespace Miniscript.intrinsic {
 			// Returns: a list of valid indexes for self
 			// Example: "foo".indexes		returns [0, 1, 2]
 			// See also: hasIndex
-			f = Create("indexes");
+			f = Create(INDEXES);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
@@ -446,7 +446,7 @@ namespace Miniscript.intrinsic {
 			// Example: "Hello World".indexOf("o")		returns 4
 			// Example: "Hello World".indexOf("o", 4)		returns 7
 			// Example: "Hello World".indexOf("o", 7)		returns null			
-			f = Create("indexOf");
+			f = Create(INDEX_OF);
 			f.AddParam(SELF);
 			f.AddParam("value");
 			f.AddParam("after");
@@ -512,7 +512,7 @@ namespace Miniscript.intrinsic {
 			// Returns: modified list, new string
 			// Example: "Hello".insert(2, 42)		returns "He42llo"
 			// See also: remove
-			f = Create("insert");
+			f = Create(INSERT);
 			f.AddParam(SELF);
 			f.AddParam(INDEX);
 			f.AddParam("value");
@@ -550,7 +550,7 @@ namespace Miniscript.intrinsic {
 			// Returns: string built by joining elements of self with delimiter
 			// Example: [2,4,8].join("-")		returns "2-4-8"
 			// See also: split
-			f = Create("join");
+			f = Create(JOIN);
 			f.AddParam(SELF);
 			f.AddParam("delimiter", " ");
 			f.code = (context, partialResult) => {
@@ -570,7 +570,7 @@ namespace Miniscript.intrinsic {
 			// self (list, string, or map): object to get the length of
 			// Returns: length (number of elements) in self
 			// Example: "hello".len		returns 5
-			f = Create("len");
+			f = Create(LEN);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				return context.Self switch {
@@ -588,7 +588,7 @@ namespace Miniscript.intrinsic {
 			//	assign new methods here to make them available to all lists.
 			// Example: [1, 2, 3] isa list		returns 1
 			// See also: number, string, map, funcRef
-			f = Create("list");
+			f = Create(LIST);
 			f.code = (context, partialResult) => {
 				context.Vm.ListType ??= ListType().EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.ListType);
@@ -601,7 +601,7 @@ namespace Miniscript.intrinsic {
 			// base (number, default 10): logarithm base
 			// Returns: a number that, when base is raised to it, produces x
 			// Example: log(1000)		returns 3 (because 10^3 == 1000)
-			f = Create("log");
+			f = Create(LOG);
 			f.AddParam("x", 0);
 			f.AddParam("base", 10);
 			f.code = (context, partialResult) => {
@@ -620,7 +620,7 @@ namespace Miniscript.intrinsic {
 			// Returns: string with all capital letters converted to lowercase
 			// Example: "Mo Spam".lower		returns "mo spam"
 			// See also: upper
-			f = Create("lower");
+			f = Create(LOWER);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var val = context.Self;
@@ -636,7 +636,7 @@ namespace Miniscript.intrinsic {
 			//	assign new methods here to make them available to all maps.
 			// Example: {1:"one"} isa map		returns 1
 			// See also: number, string, list, funcRef
-			f = Create("map");
+			f = Create(MAP);
 			f.code = (context, partialResult) => {
 				context.Vm.MapType ??= MapType().EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.MapType);
@@ -651,7 +651,7 @@ namespace Miniscript.intrinsic {
 			//	methods do not work on numeric literals).
 			// Example: 42 isa number		returns 1
 			// See also: string, list, map, funcRef
-			f = Create("number");
+			f = Create(NUMBER);
 			f.code = (context, partialResult) => {
 				context.Vm.NumberType ??= NumberType().EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.NumberType);
@@ -661,7 +661,7 @@ namespace Miniscript.intrinsic {
 			//	Returns the universal constant π, that is, the ratio of
 			//	a circle's circumference to its diameter.
 			// Example: pi		returns 3.141593
-			f = Create("pi");
+			f = Create(PI);
 			f.code = (context, partialResult) => new Result(Math.PI);
 
 			// print
@@ -671,7 +671,7 @@ namespace Miniscript.intrinsic {
 			// s (any): value to print (converted to a string as needed)
 			// Returns: null
 			// Example: print 6*7
-			f = Create("print");
+			f = Create(PRINT);
 			f.AddParam("s", ValString.Empty);
 			f.code = (context, partialResult) => {
 				var s = context.GetVar("s");
@@ -688,7 +688,7 @@ namespace Miniscript.intrinsic {
 			// Returns: value removed, or null
 			// Example: [1, 2, 3].pop		returns (and removes) 3
 			// See also: pull; push; remove
-			f = Create("pop");
+			f = Create(POP);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
@@ -720,7 +720,7 @@ namespace Miniscript.intrinsic {
 			// Returns: value removed, or null
 			// Example: [1, 2, 3].pull		returns (and removes) 1
 			// See also: pop; push; remove
-			f = Create("pull");
+			f = Create(PULL);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
@@ -750,7 +750,7 @@ namespace Miniscript.intrinsic {
 			// self (list or map): object to append an element to
 			// Returns: self
 			// See also: pop, pull, insert
-			f = Create("push");
+			f = Create(PUSH);
 			f.AddParam(SELF);
 			f.AddParam("value");
 			f.code = (context, partialResult) => {
@@ -778,7 +778,7 @@ namespace Miniscript.intrinsic {
 			// step (number, optional): amount to add to the previous number on each step;
 			//	defaults to 1 if to > from, or -1 if to < from
 			// Example: range(50, 5, -10)		returns [50, 40, 30, 20, 10]
-			f = Create("range");
+			f = Create(RANGE);
 			f.AddParam("from", 0);
 			f.AddParam("to", 0);
 			f.AddParam("step");
@@ -821,7 +821,7 @@ namespace Miniscript.intrinsic {
 			// Example: d={"ichi":"one"}; d.remove "ni"		returns 0
 			// Example: "Spam".remove("S")		returns "pam"
 			// See also: indexOf
-			f = Create("remove");
+			f = Create(REMOVE);
 			f.AddParam(SELF);
 			f.AddParam("k");
 			f.code = (context, partialResult) => {
@@ -869,7 +869,7 @@ namespace Miniscript.intrinsic {
 			// Example: "Happy Pappy".replace("app", "ol")		returns "Holy Poly"
 			// Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [2, 42, 3, 42, 5]
 			// Example: d = {1: "one"}; d.replace("one", "ichi")		returns (and mutates to) {1: "ichi"}
-			f = Create("replace");
+			f = Create(REPLACE);
 			f.AddParam(SELF);
 			f.AddParam("oldVal");
 			f.AddParam("newVal");
@@ -948,7 +948,7 @@ namespace Miniscript.intrinsic {
 			// decimalPlaces (number, defaults to 0): how many places past the decimal point to round to
 			// Example: round(pi, 2)		returns 3.14
 			// Example: round(12345, -3)		returns 12000
-			f = Create("round");
+			f = Create(ROUND);
 			f.AddParam("x", 0);
 			f.AddParam("decimalPlaces", 0);
 			f.code = (context, partialResult) => {
@@ -966,7 +966,7 @@ namespace Miniscript.intrinsic {
 			//	initialized automatically, generating a unique sequence on each run.
 			// seed (number, optional): if given, reset the sequence with this value
 			// Returns: pseudorandom number in the range [0,1)
-			f = Create("rnd");
+			f = Create(RND);
 			f.AddParam("seed");
 			f.code = (context, partialResult) => {
 				random ??= new Random();
@@ -980,7 +980,7 @@ namespace Miniscript.intrinsic {
 			// x (number): number to get the sign of
 			// Returns: sign of the number
 			// Example: sign(-42.6)		returns -1
-			f = Create("sign");
+			f = Create(SIGN);
 			f.AddParam("x", 0);
 			f.code = (context, partialResult) => new Result(Math.Sign(context.GetVar("x").DoubleValue()));
 
@@ -989,7 +989,7 @@ namespace Miniscript.intrinsic {
 			// radians (number): angle, in radians, to get the sine of
 			// Returns: sine of the given angle
 			// Example: sin(pi/2)		returns 1
-			f = Create("sin");
+			f = Create(SIN);
 			f.AddParam("radians", 0);
 			f.code = (context, partialResult) => new Result(Math.Sin(context.GetVar("radians").DoubleValue()));
 				
@@ -1004,7 +1004,7 @@ namespace Miniscript.intrinsic {
 			// Returns: substring or sublist
 			// Example: slice("Hello", -2)		returns "lo"
 			// Example: slice(["a","b","c","d"], 1, 3)		returns ["b", "c"]
-			f = Create("slice");
+			f = Create(SLICE);
 			f.AddParam("seq");
 			f.AddParam("from", 0);
 			f.AddParam("to");
@@ -1058,7 +1058,7 @@ namespace Miniscript.intrinsic {
 			// Returns: self (which has been sorted in place)
 			// Example: a = [5,3,4,1,2]; a.sort		results in a == [1, 2, 3, 4, 5]
 			// See also: shuffle
-			f = Create("sort");
+			f = Create(SORT);
 			f.AddParam(SELF);
 			f.AddParam("byKey");
 			f.AddParam("ascending", ValNumber.One);
@@ -1120,7 +1120,7 @@ namespace Miniscript.intrinsic {
 			// Example: "foo bar baz".split		returns ["foo", "bar", "baz"]
 			// Example: "foo bar baz".split("a", 2)		returns ["foo b", "r baz"]
 			// See also: join
-			f = Create("split");
+			f = Create(SPLIT);
 			f.AddParam(SELF);
 			f.AddParam("delimiter", " ");
 			f.AddParam("maxCount", -1);
@@ -1148,7 +1148,7 @@ namespace Miniscript.intrinsic {
 			// x (number): number to get the square root of
 			// Returns: square root of x
 			// Example: sqrt(1764)		returns 42
-			f = Create("sqrt");
+			f = Create(SQRT);
 			f.AddParam("x", 0);
 			f.code = (context, partialResult) => new Result(Math.Sqrt(context.GetVar("x").DoubleValue()));
 
@@ -1158,7 +1158,7 @@ namespace Miniscript.intrinsic {
 			// Returns: string representation of the given value
 			// Example: str(42)		returns "42"
 			// See also: val
-			f = Create("str");
+			f = Create(STR);
 			f.AddParam("x", ValString.Empty);
 			f.code = (context, partialResult) => new Result(context.GetVar("x").ToString());
 
@@ -1169,7 +1169,7 @@ namespace Miniscript.intrinsic {
 			//	assign new methods here to make them available to all strings.
 			// Example: "Hello" isa string		returns 1
 			// See also: number, list, map, funcRef
-			f = Create("string");
+			f = Create(STRING);
 			f.code = (context, partialResult) => {
 				context.Vm.StringType ??= StringType().EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.StringType);
@@ -1180,7 +1180,7 @@ namespace Miniscript.intrinsic {
 			//	keys to values in a map.  This is Done in place.
 			// self (list or map): object to shuffle
 			// Returns: null
-			f = Create("shuffle");
+			f = Create(SHUFFLE);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
@@ -1224,7 +1224,7 @@ namespace Miniscript.intrinsic {
 			// self (list or map): object to sum
 			// Returns: result of adding up all values in self
 			// Example: range(3).sum		returns 6 (3 + 2 + 1 + 0)
-			f = Create("sum");
+			f = Create(SUM);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var val = context.Self;
@@ -1247,13 +1247,13 @@ namespace Miniscript.intrinsic {
 			// radians (number): angle, in radians, to get the tangent of
 			// Returns: tangent of the given angle
 			// Example: tan(pi/4)		returns 1
-			f = Create("tan");
+			f = Create(TAN);
 			f.AddParam("radians", 0);
 			f.code = (context, partialResult) => new Result(Math.Tan(context.GetVar("radians").DoubleValue()));
 
 			// time
 			//	Returns the number of seconds since the script started running.
-			f = Create("time");
+			f = Create(TIME);
 			f.code = (context, partialResult) => new Result(context.Vm.RunTime);
 			
 			// upper
@@ -1263,7 +1263,7 @@ namespace Miniscript.intrinsic {
 			// Returns: string with all lowercase letters converted to capitals
 			// Example: "Mo Spam".upper		returns "MO SPAM"
 			// See also: lower
-			f = Create("upper");
+			f = Create(UPPER);
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var val = context.Self;
@@ -1280,7 +1280,7 @@ namespace Miniscript.intrinsic {
 			// Returns: numeric value of the given string
 			// Example: "1234.56".val		returns 1234.56
 			// See also: str
-			f = Create("val");
+			f = Create(VAL);
 			f.AddParam(SELF, 0);
 			f.code = (context, partialResult) => {
 				var val = context.Self;
@@ -1304,7 +1304,7 @@ namespace Miniscript.intrinsic {
 			// Example: d={1:"one", 2:"two"}; d.values		returns ["one", "two"]
 			// Example: "abc".values		returns ["a", "b", "c"]
 			// See also: indexes
-			f = Create("values");
+			f = Create(VALUES);
             f.AddParam(SELF);
             f.code = (context, partialResult) => {
                 var self = context.Self;
@@ -1335,7 +1335,7 @@ namespace Miniscript.intrinsic {
 			//		host: a number for the host major and minor version, like 0.9
 			//		hostName: name of the host application, e.g. "Mini Micro"
 			//		hostInfo: URL or other short info about the host app
-			f = Create("version");
+			f = Create(VERSION);
 			var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 			f.code = (context, partialResult) => {
 				if (context.Vm.VersionMap != null) return new Result(context.Vm.VersionMap);
@@ -1363,7 +1363,7 @@ namespace Miniscript.intrinsic {
 			// seconds (default 1.0): how many seconds to wait
 			// Example: wait 2.5		pauses the script for 2.5 seconds
 			// See also: time, yield
-			f = Create("wait");
+			f = Create(WAIT);
 			f.AddParam("seconds", 1);
 			f.code = (context, partialResult) => {
 				var now = context.Vm.RunTime;
@@ -1383,7 +1383,7 @@ namespace Miniscript.intrinsic {
 			//	the next 60Hz frame.  Exact meaning may very, but generally
 			//	if you're doing something in a tight loop, calling yield is
 			//	polite to the host app or other scripts.
-			f = Create("yield");
+			f = Create(YIELD);
 			f.code = (context, partialResult) => {
 				context.Vm.Yielding = true;
 				return Result.Null;
@@ -1404,7 +1404,7 @@ namespace Miniscript.intrinsic {
 		/// FunctionType: a static map that represents the Function type.
 		/// </summary>
 		public static ValMap FunctionType() {
-			return _functionType ??= new ValMap();
+			return functionType ??= new ValMap();
 		}
 		
 		/// <summary>
@@ -1412,26 +1412,26 @@ namespace Miniscript.intrinsic {
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
 		public static ValMap ListType() {
-			if (_listType != null) return _listType;
+			if (listType != null) return listType;
 
-			_listType = new ValMap {
-				["hasIndex"] = GetByName("hasIndex").GetFunc(),
-				["indexes"] = GetByName("indexes").GetFunc(),
-				["indexOf"] = GetByName("indexOf").GetFunc(),
-				["insert"] = GetByName("insert").GetFunc(),
-				["join"] = GetByName("join").GetFunc(),
-				["len"] = GetByName("len").GetFunc(),
-				["pop"] = GetByName("pop").GetFunc(),
-				["pull"] = GetByName("pull").GetFunc(),
-				["push"] = GetByName("push").GetFunc(),
-				["shuffle"] = GetByName("shuffle").GetFunc(),
-				["sort"] = GetByName("sort").GetFunc(),
-				["sum"] = GetByName("sum").GetFunc(),
-				["remove"] = GetByName("remove").GetFunc(),
-				["replace"] = GetByName("replace").GetFunc(),
-				["values"] = GetByName("values").GetFunc()
+			listType = new ValMap {
+				[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc(),
+				[INDEXES] = GetByName(INDEXES).GetFunc(),
+				[INDEX_OF] = GetByName(INDEX_OF).GetFunc(),
+				[INSERT] = GetByName(INSERT).GetFunc(),
+				[JOIN] = GetByName(JOIN).GetFunc(),
+				[LEN] = GetByName(LEN).GetFunc(),
+				[POP] = GetByName(POP).GetFunc(),
+				[PULL] = GetByName(PULL).GetFunc(),
+				[PUSH] = GetByName(PUSH).GetFunc(),
+				[SHUFFLE] = GetByName(SHUFFLE).GetFunc(),
+				[SORT] = GetByName(SORT).GetFunc(),
+				[SUM] = GetByName(SUM).GetFunc(),
+				[REMOVE] = GetByName(REMOVE).GetFunc(),
+				[REPLACE] = GetByName(REPLACE).GetFunc(),
+				[VALUES] = GetByName(VALUES).GetFunc()
 			};
-			return _listType;
+			return listType;
 		}
 		
 		/// <summary>
@@ -1439,24 +1439,24 @@ namespace Miniscript.intrinsic {
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
 		public static ValMap StringType() {
-			if (_stringType != null) return _stringType;
+			if (stringType != null) return stringType;
 
-			_stringType = new ValMap {
-				["hasIndex"] = GetByName("hasIndex").GetFunc(),
-				["indexes"] = GetByName("indexes").GetFunc(),
-				["indexOf"] = GetByName("indexOf").GetFunc(),
-				["insert"] = GetByName("insert").GetFunc(),
-				["code"] = GetByName("code").GetFunc(),
-				["len"] = GetByName("len").GetFunc(),
-				["lower"] = GetByName("lower").GetFunc(),
-				["val"] = GetByName("val").GetFunc(),
-				["remove"] = GetByName("remove").GetFunc(),
-				["replace"] = GetByName("replace").GetFunc(),
-				["split"] = GetByName("split").GetFunc(),
-				["upper"] = GetByName("upper").GetFunc(),
-				["values"] = GetByName("values").GetFunc()
+			stringType = new ValMap {
+				[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc(),
+				[INDEXES] = GetByName(INDEXES).GetFunc(),
+				[INDEX_OF] = GetByName(INDEX_OF).GetFunc(),
+				[INSERT] = GetByName(INSERT).GetFunc(),
+				[CODE] = GetByName(CODE).GetFunc(),
+				[LEN] = GetByName(LEN).GetFunc(),
+				[LOWER] = GetByName(LOWER).GetFunc(),
+				[VAL] = GetByName(VAL).GetFunc(),
+				[REMOVE] = GetByName(REMOVE).GetFunc(),
+				[REPLACE] = GetByName(REPLACE).GetFunc(),
+				[SPLIT] = GetByName(SPLIT).GetFunc(),
+				[UPPER] = GetByName(UPPER).GetFunc(),
+				[VALUES] = GetByName(VALUES).GetFunc()
 			};
-			return _stringType;
+			return stringType;
 		}
 		
 		/// <summary>
@@ -1464,22 +1464,22 @@ namespace Miniscript.intrinsic {
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
 		public static ValMap MapType() {
-			if (_mapType != null) return _mapType;
+			if (mapType != null) return mapType;
 
-			_mapType = new ValMap {
-				["hasIndex"] = GetByName("hasIndex").GetFunc(),
-				["indexes"] = GetByName("indexes").GetFunc(),
-				["indexOf"] = GetByName("indexOf").GetFunc(),
-				["len"] = GetByName("len").GetFunc(),
-				["pop"] = GetByName("pop").GetFunc(),
-				["push"] = GetByName("push").GetFunc(),
-				["shuffle"] = GetByName("shuffle").GetFunc(),
-				["sum"] = GetByName("sum").GetFunc(),
-				["remove"] = GetByName("remove").GetFunc(),
-				["replace"] = GetByName("replace").GetFunc(),
-				["values"] = GetByName("values").GetFunc()
+			mapType = new ValMap {
+				[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc(),
+				[INDEXES] = GetByName(INDEXES).GetFunc(),
+				[INDEX_OF] = GetByName(INDEX_OF).GetFunc(),
+				[LEN] = GetByName(LEN).GetFunc(),
+				[POP] = GetByName(POP).GetFunc(),
+				[PUSH] = GetByName(PUSH).GetFunc(),
+				[SHUFFLE] = GetByName(SHUFFLE).GetFunc(),
+				[SUM] = GetByName(SUM).GetFunc(),
+				[REMOVE] = GetByName(REMOVE).GetFunc(),
+				[REPLACE] = GetByName(REPLACE).GetFunc(),
+				[VALUES] = GetByName(VALUES).GetFunc()
 			};
-			return _mapType;
+			return mapType;
 		}
 
 		/// <summary>
@@ -1490,7 +1490,6 @@ namespace Miniscript.intrinsic {
 		}
 
 		private static ValMap _numberType = null;
-		
 		
 	}
 }
