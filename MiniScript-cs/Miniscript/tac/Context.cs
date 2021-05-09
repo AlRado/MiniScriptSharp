@@ -107,7 +107,7 @@ namespace Miniscript.tac {
 			/// Used mainly by host apps to easily look up an argument to an
 			/// intrinsic function call by the parameter name.
 			/// </summary>
-			public Value GetLocal(string identifier, Value defaultValue=null) {
+			public Value GetLocal(string identifier, Value defaultValue = null) {
 				if (Variables != null && Variables.TryGetValue(identifier, out var result)) {
 					return result;
 				}
@@ -116,29 +116,35 @@ namespace Miniscript.tac {
 			
 			public int GetLocalInt(string identifier, int defaultValue = 0) {
 				if (Variables != null && Variables.TryGetValue(identifier, out var result)) {
-					return result?.IntValue() ?? 0;
+					return result?.IntValue() ?? defaultValue;
+				}
+				return defaultValue;
+			}
+			
+			public double GetLocalDouble(string identifier, double defaultValue = 0) {
+				if (Variables != null && Variables.TryGetValue(identifier, out var result)) {
+					return result?.DoubleValue() ?? defaultValue;
 				}
 				return defaultValue;
 			}
 
 			public bool GetLocalBool(string identifier, bool defaultValue = false) {
 				if (Variables != null && Variables.TryGetValue(identifier, out var result)) {
-					return result != null && result.BoolValue();
+					return result?.BoolValue() ?? defaultValue;
 				}
 				return defaultValue;
 			}
 
 			public float GetLocalFloat(string identifier, float defaultValue = 0) {
-				if (Variables == null || !Variables.TryGetValue(identifier, out var result)) return defaultValue;
-				
-				if (result == null) return 0;	// variable found, but its value was null!
-				
-				return result.FloatValue();
+				if (Variables != null && Variables.TryGetValue(identifier, out var result)) {
+					return result?.FloatValue() ?? defaultValue;
+				}
+				return defaultValue;
 			}
 
 			public string GetLocalString(string identifier, string defaultValue = null) {
 				if (Variables != null && Variables.TryGetValue(identifier, out var result)) {
-					return result?.ToString();
+					return result?.ToString() ?? defaultValue;
 				}
 				return defaultValue;
 			}
