@@ -259,7 +259,7 @@ namespace Miniscript.tac {
 				// into local variables corresponding to parameter names.
 				// As a special case, skip over the first parameter if it is named 'self'
 				// and we were invoked with dot syntax.
-				var selfParam = (gotSelf && func.Parameters.Count > 0 && func.Parameters[0].Name == "self" ? 1 : 0);
+				var selfParam = (gotSelf && func.Parameters.Count > 0 && func.Parameters[0].Name == SELF ? 1 : 0);
 				for (int i = 0; i < argCount; i++) {
 					// Careful -- when we pop them off, they're in reverse order.
 					var argument = args.Pop();
@@ -268,7 +268,7 @@ namespace Miniscript.tac {
 						throw new TooManyArgumentsException();
 					}
 					var param = func.Parameters[paramNum].Name;
-					if (param == "self") result.Self = argument;
+					if (param == SELF) result.Self = argument;
 					else result.SetVar(param, argument);
 				}
 				// And fill in the rest with default values

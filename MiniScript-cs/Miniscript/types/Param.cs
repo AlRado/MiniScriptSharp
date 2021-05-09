@@ -5,8 +5,8 @@
     /// </summary>
     public class Param {
 
-        public string Name;
-        public Value DefaultValue;
+        public readonly string Name;
+        public readonly Value DefaultValue;
 
         public Param(string name, Value defaultValue) {
             Name = name;

@@ -6,6 +6,7 @@ using Miniscript.errors;
 using Miniscript.interpreter;
 using Miniscript.intrinsic;
 using Miniscript.types;
+using Consts = Miniscript.keywords.Consts;
 
 namespace Miniscript.tac {
 
@@ -121,14 +122,14 @@ namespace Miniscript.tac {
 								// bind "self" to the object used to invoke the call, except
 								// when invoking via "super"
 								var seq = elem.Sequence;
-								if (seq is ValVar @var && @var.Identifier == "super") self = context.Self;
+								if (seq is ValVar @var && @var.Identifier == Consts.SUPER) self = context.Self;
 								else self = context.ValueInContext(seq);
 							}
 
 							var argCount = line.RhsB.IntValue();
 							var nextContext = context.NextCallContext(func.Function, argCount, self != null, line.Lhs);
 							nextContext.OuterVars = func.OuterVars;
-							if (valueFoundIn != null) nextContext.SetVar("super", super);
+							if (valueFoundIn != null) nextContext.SetVar(Consts.SUPER, super);
 							if (self != null) nextContext.Self = self;	// (set only if bound above)
 							stack.Push(nextContext);
 						} else {

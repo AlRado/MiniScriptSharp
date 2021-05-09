@@ -798,7 +798,7 @@ namespace Miniscript.parser {
 					if (valVar.NoInvoke) return valVar;
 					// Don't invoke super; leave as-is so we can do special handling
 					// of it at runtime.  Also, as an optimization, same for "self".
-					if (valVar.Identifier == "super" || valVar.Identifier == "self") return valVar;
+					if (valVar.Identifier == SUPER || valVar.Identifier == SELF) return valVar;
 					// Evaluate a variable (which might be a function we need to call).				
 					var temp = new ValTemp(output.nextTempNum++);
 					output.Add(new Line(temp, Line.Op.CallFunctionA, valVar, ValNumber.Zero));

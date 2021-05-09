@@ -26,6 +26,7 @@
         
         public const string SELF = "self";
         public const string IF_MARK = "if:MARK";
+        public const string SUPER = "super";
         
         public const string END_IF = "end if";
         public const string END_FOR = "end for";
