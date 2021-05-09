@@ -210,145 +210,145 @@ namespace Miniscript.parser {
 				// Handle statements that begin with a keyword.
 				var keyword = tokens.Dequeue().Text;
 				switch (keyword) {
-				case RETURN: {
-						Value returnValue = null;
-						if (tokens.Peek().TokenType != TokenType.Eol) {
-							returnValue = ParseExpr(tokens);
-						}
-						output.Add(new Line(TAC.LTemp(0), Line.Op.ReturnA, returnValue));
-					}
-					break;
-				case IF: {
-						var condition = ParseExpr(tokens);
-						RequireToken(tokens, TokenType.Keyword, THEN);
-						// OK, now we need to emit a conditional branch, but keep track of this
-						// on a stack so that when we get the corresponding "else" or  "end if", 
-						// we can come back and patch that jump to the right place.
-						output.Add(new Line(null, Line.Op.GotoAifNotB, null, condition));
-
-						// ...but if blocks also need a special marker in the backpack stack
-						// so we know where to stop when patching up (possibly multiple) 'end if' jumps.
-						// We'll push a special dummy backpatch here that we look for in PatchIfBlock.
-						output.AddBackPatch(IF_MARK);
-						output.AddBackPatch(ELSE);
-						
-						// Allow for the special one-statement if: if the next token after "then"
-						// is not EOL, then parse a statement, and do the same for any else or
-						// else-if blocks, until we get to EOL (and then implicitly do "end if").
-						if (tokens.Peek().TokenType != TokenType.Eol) {
-							ParseStatement(tokens, true);  // parses a single statement for the "then" body
-							if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == ELSE) {
-								tokens.Dequeue();	// skip "else"
-								StartElseClause();
-								ParseStatement(tokens, true);		// parse a single statement for the "else" body
-							} else {
-								RequireEitherToken(tokens, TokenType.Keyword, ELSE, TokenType.Eol);
+					case RETURN: {
+							Value returnValue = null;
+							if (tokens.Peek().TokenType != TokenType.Eol) {
+								returnValue = ParseExpr(tokens);
 							}
-							output.PatchIfBlock();	// terminate the single-line if
-						} else {
-							tokens.Dequeue();	// skip EOL
+							output.Add(new Line(TAC.LTemp(0), Line.Op.ReturnA, returnValue));
 						}
-				}
-					return;
-				case ELSE:
-					StartElseClause();
-					break;
-				case ELSE_IF: {
+						break;
+					case IF: {
+							var condition = ParseExpr(tokens);
+							RequireToken(tokens, TokenType.Keyword, THEN);
+							// OK, now we need to emit a conditional branch, but keep track of this
+							// on a stack so that when we get the corresponding "else" or  "end if", 
+							// we can come back and patch that jump to the right place.
+							output.Add(new Line(null, Line.Op.GotoAifNotB, null, condition));
+
+							// ...but if blocks also need a special marker in the backpack stack
+							// so we know where to stop when patching up (possibly multiple) 'end if' jumps.
+							// We'll push a special dummy backpatch here that we look for in PatchIfBlock.
+							output.AddBackPatch(IF_MARK);
+							output.AddBackPatch(ELSE);
+							
+							// Allow for the special one-statement if: if the next token after "then"
+							// is not EOL, then parse a statement, and do the same for any else or
+							// else-if blocks, until we get to EOL (and then implicitly do "end if").
+							if (tokens.Peek().TokenType != TokenType.Eol) {
+								ParseStatement(tokens, true);  // parses a single statement for the "then" body
+								if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == ELSE) {
+									tokens.Dequeue();	// skip "else"
+									StartElseClause();
+									ParseStatement(tokens, true);		// parse a single statement for the "else" body
+								} else {
+									RequireEitherToken(tokens, TokenType.Keyword, ELSE, TokenType.Eol);
+								}
+								output.PatchIfBlock();	// terminate the single-line if
+							} else {
+								tokens.Dequeue();	// skip EOL
+							}
+					}
+						return;
+					case ELSE:
 						StartElseClause();
-						var condition = ParseExpr(tokens);
-						RequireToken(tokens, TokenType.Keyword, THEN);
-						output.Add(new Line(null, Line.Op.GotoAifNotB, null, condition));
-						output.AddBackPatch(ELSE);
-					}
-					break;
-				case END_IF:
-					// OK, this is tricky.  We might have an open "else" block or we might not.
-					// And, we might have multiple open "end if" jumps (one for the if part,
-					// and another for each else-if part).  Patch all that as a special case.
-					output.PatchIfBlock();
-					break;
-				case WHILE: {
-						// We need to note the current line, so we can jump back up to it at the end.
-						output.AddJumpPoint(keyword);
-
-						// Then parse the condition.
-						var condition = ParseExpr(tokens);
-
-						// OK, now we need to emit a conditional branch, but keep track of this
-						// on a stack so that when we get the corresponding "end while", 
-						// we can come back and patch that jump to the right place.
-						output.Add(new Line(null, Line.Op.GotoAifNotB, null, condition));
-						output.AddBackPatch(END_WHILE);
-					}
-					break;
-				case END_WHILE: {
-						// Unconditional jump back to the top of the while loop.
-						var jump = output.CloseJumpPoint(WHILE);
-						output.Add(new Line(null, Line.Op.GotoA, TAC.Num(jump.LineNum)));
-						// Then, backpatch the open "while" branch to here, right after the loop.
-						// And also patch any "break" branches emitted after that point.
-						output.Patch(keyword, true);
-					}
-					break;
-				case FOR: {
-						// Get the loop variable, "in" keyword, and expression to loop over.
-						// (Note that the expression is only evaluated once, before the loop.)
-						var loopVarTok = RequireToken(tokens, TokenType.Identifier);
-						var loopVar = new ValVar(loopVarTok.Text);
-						RequireToken(tokens, TokenType.Keyword, IN);
-						var stuff = ParseExpr(tokens);
-						if (stuff == null) {
-							throw new CompilerException(errorContext, tokens.LineNum,
-								"sequence expression expected for 'for' loop");
+						break;
+					case ELSE_IF: {
+							StartElseClause();
+							var condition = ParseExpr(tokens);
+							RequireToken(tokens, TokenType.Keyword, THEN);
+							output.Add(new Line(null, Line.Op.GotoAifNotB, null, condition));
+							output.AddBackPatch(ELSE);
 						}
+						break;
+					case END_IF:
+						// OK, this is tricky.  We might have an open "else" block or we might not.
+						// And, we might have multiple open "end if" jumps (one for the if part,
+						// and another for each else-if part).  Patch all that as a special case.
+						output.PatchIfBlock();
+						break;
+					case WHILE: {
+							// We need to note the current line, so we can jump back up to it at the end.
+							output.AddJumpPoint(keyword);
 
-						// Create an index variable to iterate over the sequence, initialized to -1.
-						var idxVar = new ValVar("__" + loopVarTok.Text + "_idx");
-						output.Add(new Line(idxVar, Line.Op.AssignA, TAC.Num(-1)));
+							// Then parse the condition.
+							var condition = ParseExpr(tokens);
 
-						// We need to note the current line, so we can jump back up to it at the end.
-						output.AddJumpPoint(keyword);
-
-						// Now increment the index variable, and branch to the end if it's too big.
-						// (We'll have to backpatch this branch later.)
-						output.Add(new Line(idxVar, Line.Op.APlusB, idxVar, TAC.Num(1)));
-						var sizeOfSeq = new ValTemp(output.nextTempNum++);
-						output.Add(new Line(sizeOfSeq, Line.Op.LengthOfA, stuff));
-						var isTooBig = new ValTemp(output.nextTempNum++);
-						output.Add(new Line(isTooBig, Line.Op.AGreatOrEqualB, idxVar, sizeOfSeq));
-						output.Add(new Line(null, Line.Op.GotoAifB, null, isTooBig));
-						output.AddBackPatch(END_FOR);
-
-						// Otherwise, get the sequence value into our loop variable.
-						output.Add(new Line(loopVar, Line.Op.ElemBofIterA, stuff, idxVar));
-					}
-					break;
-				case END_FOR: {
-						// Unconditional jump back to the top of the for loop.
-						var jump = output.CloseJumpPoint(FOR);
-						output.Add(new Line(null, Line.Op.GotoA, TAC.Num(jump.LineNum)));
-						// Then, backpatch the open "for" branch to here, right after the loop.
-						// And also patch any "break" branches emitted after that point.
-						output.Patch(keyword, true);
-					}
-					break;
-				case BREAK: {
-						// Emit a jump to the end, to get patched up later.
-						output.Add(new Line(null, Line.Op.GotoA));
-						output.AddBackPatch(BREAK);
-					}
-					break;
-				case CONTINUE: {
-						// Jump unconditionally back to the current open jump point.
-						if (output.JumpPoints.Count == 0) {
-							throw new CompilerException(errorContext, tokens.LineNum, "'continue' without open loop block");
+							// OK, now we need to emit a conditional branch, but keep track of this
+							// on a stack so that when we get the corresponding "end while", 
+							// we can come back and patch that jump to the right place.
+							output.Add(new Line(null, Line.Op.GotoAifNotB, null, condition));
+							output.AddBackPatch(END_WHILE);
 						}
-						JumpPoint jump = output.JumpPoints.Last();
-						output.Add(new Line(null, Line.Op.GotoA, TAC.Num(jump.LineNum)));
-					}
-					break;
-				default:
-					throw new CompilerException(errorContext, tokens.LineNum, $"unexpected keyword '{keyword}' at start of line");
+						break;
+					case END_WHILE: {
+							// Unconditional jump back to the top of the while loop.
+							var jump = output.CloseJumpPoint(WHILE);
+							output.Add(new Line(null, Line.Op.GotoA, TAC.Num(jump.LineNum)));
+							// Then, backpatch the open "while" branch to here, right after the loop.
+							// And also patch any "break" branches emitted after that point.
+							output.Patch(keyword, true);
+						}
+						break;
+					case FOR: {
+							// Get the loop variable, "in" keyword, and expression to loop over.
+							// (Note that the expression is only evaluated once, before the loop.)
+							var loopVarTok = RequireToken(tokens, TokenType.Identifier);
+							var loopVar = new ValVar(loopVarTok.Text);
+							RequireToken(tokens, TokenType.Keyword, IN);
+							var stuff = ParseExpr(tokens);
+							if (stuff == null) {
+								throw new CompilerException(errorContext, tokens.LineNum,
+									"sequence expression expected for 'for' loop");
+							}
+
+							// Create an index variable to iterate over the sequence, initialized to -1.
+							var idxVar = new ValVar("__" + loopVarTok.Text + "_idx");
+							output.Add(new Line(idxVar, Line.Op.AssignA, TAC.Num(-1)));
+
+							// We need to note the current line, so we can jump back up to it at the end.
+							output.AddJumpPoint(keyword);
+
+							// Now increment the index variable, and branch to the end if it's too big.
+							// (We'll have to backpatch this branch later.)
+							output.Add(new Line(idxVar, Line.Op.APlusB, idxVar, TAC.Num(1)));
+							var sizeOfSeq = new ValTemp(output.nextTempNum++);
+							output.Add(new Line(sizeOfSeq, Line.Op.LengthOfA, stuff));
+							var isTooBig = new ValTemp(output.nextTempNum++);
+							output.Add(new Line(isTooBig, Line.Op.AGreatOrEqualB, idxVar, sizeOfSeq));
+							output.Add(new Line(null, Line.Op.GotoAifB, null, isTooBig));
+							output.AddBackPatch(END_FOR);
+
+							// Otherwise, get the sequence value into our loop variable.
+							output.Add(new Line(loopVar, Line.Op.ElemBofIterA, stuff, idxVar));
+						}
+						break;
+					case END_FOR: {
+							// Unconditional jump back to the top of the for loop.
+							var jump = output.CloseJumpPoint(FOR);
+							output.Add(new Line(null, Line.Op.GotoA, TAC.Num(jump.LineNum)));
+							// Then, backpatch the open "for" branch to here, right after the loop.
+							// And also patch any "break" branches emitted after that point.
+							output.Patch(keyword, true);
+						}
+						break;
+					case BREAK: {
+							// Emit a jump to the end, to get patched up later.
+							output.Add(new Line(null, Line.Op.GotoA));
+							output.AddBackPatch(BREAK);
+						}
+						break;
+					case CONTINUE: {
+							// Jump unconditionally back to the current open jump point.
+							if (output.JumpPoints.Count == 0) {
+								throw new CompilerException(errorContext, tokens.LineNum, "'continue' without open loop block");
+							}
+							JumpPoint jump = output.JumpPoints.Last();
+							output.Add(new Line(null, Line.Op.GotoA, TAC.Num(jump.LineNum)));
+						}
+						break;
+					default:
+						throw new CompilerException(errorContext, tokens.LineNum, $"unexpected keyword '{keyword}' at start of line");
 				}
 			} else {
 				ParseAssignment(tokens, allowExtra);
@@ -364,7 +364,6 @@ namespace Miniscript.parser {
 			output = pendingState;
 			outputStack.Push(output);
 			pendingState = null;
-
 		}
 
 		private void StartElseClause() {
@@ -1023,8 +1022,7 @@ namespace Miniscript.parser {
 			}
 			throw new CompilerException($"got {tok} where number, string, or identifier is required");
 		}
-
-
+		
 		/// <summary>
 		/// The given token type and text is required. So, consume the next token,
 		/// and if it doesn't match, throw an error.

@@ -310,6 +310,4 @@ namespace Miniscript.tac {
 				return $"Context[{LineNum}/{Code.Count}]";
 			}
 		}
-		
-
 }

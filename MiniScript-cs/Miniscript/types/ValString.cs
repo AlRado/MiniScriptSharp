@@ -1,4 +1,5 @@
-﻿using Miniscript.errors;
+﻿using System;
+using Miniscript.errors;
 using Miniscript.keywords;
 using Miniscript.tac;
 
@@ -16,7 +17,7 @@ namespace Miniscript.types {
         /// Handy accessor for an empty ValString.
         /// IMPORTANT: do not alter the value of the object returned!
         /// </summary>
-        public static readonly ValString Empty = new ValString("");
+        public static readonly ValString Empty = new ValString(string.Empty);
 
         public const long MaxSize = 0xFFFFFF; // about 16M elements
         
@@ -56,7 +57,7 @@ namespace Miniscript.types {
             var i = index.IntValue();
             if (i < 0) i += Value.Length;
             if (i < 0 || i >= Value.Length) {
-                throw new IndexException("Index Error (string index " + index + " out of range)");
+                throw new IndexException($"Index Error (string index {index} out of range)");
             }
 
             return new ValString(Value.Substring(i, 1));

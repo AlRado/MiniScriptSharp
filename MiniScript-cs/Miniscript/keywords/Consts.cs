@@ -42,6 +42,10 @@
         
         public const string DUMP = "#DUMP";
         public const string IS_A = "__isa";
+
+        public const string KEY = "key";
+        public const string VALUE = "value";
+
     }
 
 }

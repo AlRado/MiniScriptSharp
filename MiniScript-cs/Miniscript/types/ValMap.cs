@@ -2,6 +2,7 @@
 using System.Linq;
 using Miniscript.errors;
 using Miniscript.tac;
+using static Miniscript.keywords.Consts;
 
 namespace Miniscript.types {
 
@@ -19,11 +20,11 @@ namespace Miniscript.types {
 
         public AssignOverrideFunc AssignOverride;
         
-        private static readonly ValString KeyStr = new ValString("key");
-        private static readonly ValString ValStr = new ValString("value");
+        private static readonly ValString KeyStr = new ValString(KEY);
+        private static readonly ValString ValStr = new ValString(VALUE);
 
         public ValMap() {
-            Map = new Dictionary<Value, Value>(RValueEqualityComparer.instance);
+            Map = new Dictionary<Value, Value>(RValueEqualityComparer.Instance);
         }
 
         public override bool BoolValue() {
@@ -72,10 +73,8 @@ namespace Miniscript.types {
         /// </summary>
         /// <param name="identifier">string key to get/set</param>
         /// <returns>value associated with that key</returns>
-        public Value this[string identifier]
-        {
-            get
-            {
+        public Value this[string identifier] {
+            get {
                 var idVal = TempValString.Get(identifier);
                 var result = Lookup(idVal);
                 TempValString.Release(idVal);
@@ -191,7 +190,7 @@ namespace Miniscript.types {
                 var nextRecurLimit = recursionLimit - 1;
                 if (kv.Key == ValString.MagicIsA) nextRecurLimit = 1;
                 strs[i++] =
-                    $"{kv.Key.CodeForm(vm, nextRecurLimit)}: {(kv.Value == null ? "null" : kv.Value.CodeForm(vm, nextRecurLimit))}";
+                    $"{kv.Key.CodeForm(vm, nextRecurLimit)}: {(kv.Value == null ? NULL : kv.Value.CodeForm(vm, nextRecurLimit))}";
             }
 
             return "{" + string.Join(", ", strs) + "}";
@@ -275,7 +274,7 @@ namespace Miniscript.types {
         public ValMap GetKeyValuePair(int index) {
             var keys = Map.Keys;
             if (index < 0 || index >= keys.Count) {
-                throw new IndexException("index " + index + " out of range for map");
+                throw new IndexException($"index {index} out of range for map");
             }
 
             var key = keys.ElementAt<Value>(index); // (TODO: consider more efficient methods here)

@@ -1,4 +1,5 @@
-﻿using Miniscript.tac;
+﻿using Miniscript.keywords;
+using Miniscript.tac;
 
 namespace Miniscript.types {
 
@@ -8,7 +9,7 @@ namespace Miniscript.types {
         public static readonly ValVar ImplicitResult = new ValVar("_");
 
         // Special var for 'self'
-        public static readonly ValVar Self = new ValVar("self");
+        public static readonly ValVar Self = new ValVar(Consts.SELF);
 
         public string Identifier;
         

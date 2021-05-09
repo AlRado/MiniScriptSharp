@@ -1,4 +1,5 @@
-﻿using Miniscript.tac;
+﻿using Miniscript.keywords;
+using Miniscript.tac;
 
 namespace Miniscript.types {
 
@@ -17,7 +18,7 @@ namespace Miniscript.types {
         }
 
         public override string ToString(Machine machine) {
-            return "null";
+            return Consts.NULL;
         }
 
         public override bool IsA(Value type, Machine vm) {

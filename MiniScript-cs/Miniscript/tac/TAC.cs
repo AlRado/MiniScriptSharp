@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using Miniscript.intrinsic;
 using Miniscript.types;
+using Consts = Miniscript.keywords.Consts;
 
 namespace Miniscript.tac {
 
@@ -36,7 +37,7 @@ namespace Miniscript.tac {
 		}
 		
 		public static ValVar LVar(string identifier) {
-			return identifier == "self" ? ValVar.Self : new ValVar(identifier);
+			return identifier == Consts.SELF ? ValVar.Self : new ValVar(identifier);
 		}
 		
 		public static ValTemp RTemp(int tempNum) {

@@ -12,9 +12,7 @@ namespace Miniscript.types {
             return val.Hash();
         }
 
-        static RValueEqualityComparer _instance = null;
-
-        public static RValueEqualityComparer instance => _instance ??= new RValueEqualityComparer();
+        public static readonly RValueEqualityComparer Instance = new RValueEqualityComparer();
 
     }
 

@@ -11,17 +11,17 @@
             this.next = null;
         }
 
-        private static TempValString _tempPoolHead;
+        private static TempValString tempPoolHead;
         private static object lockObj = new object();
 
         public static TempValString Get(string s) {
             lock (lockObj) {
-                if (_tempPoolHead == null) {
+                if (tempPoolHead == null) {
                     return new TempValString(s);
                 }
                 else {
-                    var result = _tempPoolHead;
-                    _tempPoolHead = _tempPoolHead.next;
+                    var result = tempPoolHead;
+                    tempPoolHead = tempPoolHead.next;
                     result.Value = s;
                     return result;
                 }
@@ -30,8 +30,8 @@
 
         public static void Release(TempValString temp) {
             lock (lockObj) {
-                temp.next = _tempPoolHead;
-                _tempPoolHead = temp;
+                temp.next = tempPoolHead;
+                tempPoolHead = temp;
             }
         }
 
