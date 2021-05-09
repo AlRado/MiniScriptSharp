@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Miniscript.errors;
-using Miniscript.keywords;
 using Miniscript.tac;
 using Miniscript.types;
 using static Miniscript.intrinsic.Consts;
@@ -32,6 +31,40 @@ namespace Miniscript.intrinsic {
 	/// Intrinsic: represents an intrinsic function available to Minisript code.
 	/// </summary>
 	public class Intrinsic {
+		
+		/// <summary>
+		/// FunctionType: a static map that represents the Function type.
+		/// </summary>
+		public static readonly ValMap FunctionType;
+
+		/// <summary>
+		/// ListType: a static map that represents the List type, and provides
+		/// intrinsic methods that can be invoked on it via dot syntax.
+		/// </summary>
+		public static readonly ValMap ListType;
+
+		/// <summary>
+		/// StringType: a static map that represents the String type, and provides
+		/// intrinsic methods that can be invoked on it via dot syntax.
+		/// </summary>
+		public static readonly ValMap StringType;
+
+		/// <summary>
+		/// MapType: a static map that represents the Map type, and provides
+		/// intrinsic methods that can be invoked on it via dot syntax.
+		/// </summary>
+		public static readonly ValMap MapType;
+
+		/// <summary>
+		/// NumberType: a static map that represents the Number type.
+		/// </summary>
+		public static readonly ValMap NumberType;
+
+		// static map from Values to short names, used when displaying lists/maps;
+		// feel free to add to this any values (especially lists/maps) provided
+		// by your own intrinsics.
+		public static readonly Dictionary<Value, string> ShortNames = new Dictionary<Value, string>();
+		
 		// name of this intrinsic (should be a valid Minisript identifier)
 		private string name;
 		
@@ -41,11 +74,6 @@ namespace Miniscript.intrinsic {
 		// a numeric ID (used internally -- don't worry about this)
 		public int Id { get; private set; }
 
-		// static map from Values to short names, used when displaying lists/maps;
-		// feel free to add to this any values (especially lists/maps) provided
-		// by your own intrinsics.
-		public static readonly Dictionary<Value, string> ShortNames = new Dictionary<Value, string>();
-
 		private Function function;
 		private ValFunction valFunction;	// (cached wrapper for function)
 
@@ -53,11 +81,6 @@ namespace Miniscript.intrinsic {
 		private static readonly Dictionary<string, Intrinsic> nameMap = new Dictionary<string, Intrinsic>();
 		
 		private readonly ValString _self = new ValString(SELF);
-		
-		private static ValMap functionType;
-		private static ValMap listType;
-		private static ValMap stringType;
-		private static ValMap mapType;
 		
 		private static Random random;	// TODO: consider storing this on the context, instead of global!
 		
@@ -164,6 +187,12 @@ namespace Miniscript.intrinsic {
 		/// than once, no matter how many times this method is called.
 		/// </summary>
 		static Intrinsic() {
+			FunctionType = new ValMap();
+			NumberType = new ValMap();
+			ListType = new ValMap();
+			StringType = new ValMap();
+			MapType = new ValMap();
+			
 			// abs
 			//	Returns the absolute value of the given number.
 			// x (number, default 0): number to take the absolute value of.
@@ -339,7 +368,7 @@ namespace Miniscript.intrinsic {
 			// See also: number, string, list, map
 			f = Create(FUNC_REF);
 			f.code = (context, partialResult) => {
-				context.Vm.FunctionType ??= FunctionType().EvalCopy(context.Vm.GlobalContext);
+				context.Vm.FunctionType ??= FunctionType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.FunctionType);
 			};
 			
@@ -590,7 +619,7 @@ namespace Miniscript.intrinsic {
 			// See also: number, string, map, funcRef
 			f = Create(LIST);
 			f.code = (context, partialResult) => {
-				context.Vm.ListType ??= ListType().EvalCopy(context.Vm.GlobalContext);
+				context.Vm.ListType ??= ListType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.ListType);
 			};
 			
@@ -638,7 +667,7 @@ namespace Miniscript.intrinsic {
 			// See also: number, string, list, funcRef
 			f = Create(MAP);
 			f.code = (context, partialResult) => {
-				context.Vm.MapType ??= MapType().EvalCopy(context.Vm.GlobalContext);
+				context.Vm.MapType ??= MapType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.MapType);
 			};
 			
@@ -653,7 +682,7 @@ namespace Miniscript.intrinsic {
 			// See also: string, list, map, funcRef
 			f = Create(NUMBER);
 			f.code = (context, partialResult) => {
-				context.Vm.NumberType ??= NumberType().EvalCopy(context.Vm.GlobalContext);
+				context.Vm.NumberType ??= NumberType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.NumberType);
 			};
 			
@@ -1171,7 +1200,7 @@ namespace Miniscript.intrinsic {
 			// See also: number, list, map, funcRef
 			f = Create(STRING);
 			f.code = (context, partialResult) => {
-				context.Vm.StringType ??= StringType().EvalCopy(context.Vm.GlobalContext);
+				context.Vm.StringType ??= StringType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.StringType);
 			};
 
@@ -1389,6 +1418,47 @@ namespace Miniscript.intrinsic {
 				return Result.Null;
 			};
 
+			ListType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
+			ListType[INDEXES] = GetByName(INDEXES).GetFunc();
+			ListType[INDEX_OF] = GetByName(INDEX_OF).GetFunc();
+			ListType[INSERT] = GetByName(INSERT).GetFunc();
+			ListType[JOIN] = GetByName(JOIN).GetFunc();
+			ListType[LEN] = GetByName(LEN).GetFunc();
+			ListType[POP] = GetByName(POP).GetFunc();
+			ListType[PULL] = GetByName(PULL).GetFunc();
+			ListType[PUSH] = GetByName(PUSH).GetFunc();
+			ListType[SHUFFLE] = GetByName(SHUFFLE).GetFunc();
+			ListType[SORT] = GetByName(SORT).GetFunc();
+			ListType[SUM] = GetByName(SUM).GetFunc();
+			ListType[REMOVE] = GetByName(REMOVE).GetFunc();
+			ListType[REPLACE] = GetByName(REPLACE).GetFunc();
+			ListType[VALUES] = GetByName(VALUES).GetFunc();
+
+			StringType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
+			StringType[INDEXES] = GetByName(INDEXES).GetFunc();
+			StringType[INDEX_OF] = GetByName(INDEX_OF).GetFunc();
+			StringType[INSERT] = GetByName(INSERT).GetFunc();
+			StringType[CODE] = GetByName(CODE).GetFunc();
+			StringType[LEN] = GetByName(LEN).GetFunc();
+			StringType[LOWER] = GetByName(LOWER).GetFunc();
+			StringType[VAL] = GetByName(VAL).GetFunc();
+			StringType[REMOVE] = GetByName(REMOVE).GetFunc();
+			StringType[REPLACE] = GetByName(REPLACE).GetFunc();
+			StringType[SPLIT] = GetByName(SPLIT).GetFunc();
+			StringType[UPPER] = GetByName(UPPER).GetFunc();
+			StringType[VALUES] = GetByName(VALUES).GetFunc();
+
+			MapType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
+			MapType[INDEXES] = GetByName(INDEXES).GetFunc();
+			MapType[INDEX_OF] = GetByName(INDEX_OF).GetFunc();
+			MapType[LEN] = GetByName(LEN).GetFunc();
+			MapType[POP] = GetByName(POP).GetFunc();
+			MapType[PUSH] = GetByName(PUSH).GetFunc();
+			MapType[SHUFFLE] = GetByName(SHUFFLE).GetFunc();
+			MapType[SUM] = GetByName(SUM).GetFunc();
+			MapType[REMOVE] = GetByName(REMOVE).GetFunc();
+			MapType[REPLACE] = GetByName(REPLACE).GetFunc();
+			MapType[VALUES] = GetByName(VALUES).GetFunc();
 		}
 
 		// Helper method to compile a call to Slice (when invoked directly via slice syntax).
@@ -1399,97 +1469,6 @@ namespace Miniscript.intrinsic {
 			var func = GetByName("slice").GetFunc();
 			code.Add(new Line(TAC.LTemp(resultTempNum), Line.Op.CallFunctionA, func, TAC.Num(3)));
 		}
-		
-		/// <summary>
-		/// FunctionType: a static map that represents the Function type.
-		/// </summary>
-		public static ValMap FunctionType() {
-			return functionType ??= new ValMap();
-		}
-		
-		/// <summary>
-		/// ListType: a static map that represents the List type, and provides
-		/// intrinsic methods that can be invoked on it via dot syntax.
-		/// </summary>
-		public static ValMap ListType() {
-			if (listType != null) return listType;
-
-			listType = new ValMap {
-				[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc(),
-				[INDEXES] = GetByName(INDEXES).GetFunc(),
-				[INDEX_OF] = GetByName(INDEX_OF).GetFunc(),
-				[INSERT] = GetByName(INSERT).GetFunc(),
-				[JOIN] = GetByName(JOIN).GetFunc(),
-				[LEN] = GetByName(LEN).GetFunc(),
-				[POP] = GetByName(POP).GetFunc(),
-				[PULL] = GetByName(PULL).GetFunc(),
-				[PUSH] = GetByName(PUSH).GetFunc(),
-				[SHUFFLE] = GetByName(SHUFFLE).GetFunc(),
-				[SORT] = GetByName(SORT).GetFunc(),
-				[SUM] = GetByName(SUM).GetFunc(),
-				[REMOVE] = GetByName(REMOVE).GetFunc(),
-				[REPLACE] = GetByName(REPLACE).GetFunc(),
-				[VALUES] = GetByName(VALUES).GetFunc()
-			};
-			return listType;
-		}
-		
-		/// <summary>
-		/// StringType: a static map that represents the String type, and provides
-		/// intrinsic methods that can be invoked on it via dot syntax.
-		/// </summary>
-		public static ValMap StringType() {
-			if (stringType != null) return stringType;
-
-			stringType = new ValMap {
-				[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc(),
-				[INDEXES] = GetByName(INDEXES).GetFunc(),
-				[INDEX_OF] = GetByName(INDEX_OF).GetFunc(),
-				[INSERT] = GetByName(INSERT).GetFunc(),
-				[CODE] = GetByName(CODE).GetFunc(),
-				[LEN] = GetByName(LEN).GetFunc(),
-				[LOWER] = GetByName(LOWER).GetFunc(),
-				[VAL] = GetByName(VAL).GetFunc(),
-				[REMOVE] = GetByName(REMOVE).GetFunc(),
-				[REPLACE] = GetByName(REPLACE).GetFunc(),
-				[SPLIT] = GetByName(SPLIT).GetFunc(),
-				[UPPER] = GetByName(UPPER).GetFunc(),
-				[VALUES] = GetByName(VALUES).GetFunc()
-			};
-			return stringType;
-		}
-		
-		/// <summary>
-		/// MapType: a static map that represents the Map type, and provides
-		/// intrinsic methods that can be invoked on it via dot syntax.
-		/// </summary>
-		public static ValMap MapType() {
-			if (mapType != null) return mapType;
-
-			mapType = new ValMap {
-				[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc(),
-				[INDEXES] = GetByName(INDEXES).GetFunc(),
-				[INDEX_OF] = GetByName(INDEX_OF).GetFunc(),
-				[LEN] = GetByName(LEN).GetFunc(),
-				[POP] = GetByName(POP).GetFunc(),
-				[PUSH] = GetByName(PUSH).GetFunc(),
-				[SHUFFLE] = GetByName(SHUFFLE).GetFunc(),
-				[SUM] = GetByName(SUM).GetFunc(),
-				[REMOVE] = GetByName(REMOVE).GetFunc(),
-				[REPLACE] = GetByName(REPLACE).GetFunc(),
-				[VALUES] = GetByName(VALUES).GetFunc()
-			};
-			return mapType;
-		}
-
-		/// <summary>
-		/// NumberType: a static map that represents the Number type.
-		/// </summary>
-		public static ValMap NumberType() {
-			return _numberType ??= new ValMap();
-		}
-
-		private static ValMap _numberType = null;
 		
 	}
 }

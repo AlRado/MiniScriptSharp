@@ -44,26 +44,26 @@ namespace Miniscript.types {
                         if (!map.Map.TryGetValue(ValString.MagicIsA, out sequence)) {
                             // ...and if we don't have an __isa, try the generic map type if allowed
                             if (!includeMapType) throw new KeyException(identifier);
-                            sequence = context.Vm.MapType ?? Intrinsic.MapType();
+                            sequence = context.Vm.MapType ?? Intrinsic.MapType;
                             includeMapType = false;
                         }
 
                         break;
                     }
                     case ValList _:
-                        sequence = context.Vm.ListType ?? Intrinsic.ListType();
+                        sequence = context.Vm.ListType ?? Intrinsic.ListType;
                         includeMapType = false;
                         break;
                     case ValString _:
-                        sequence = context.Vm.StringType ?? Intrinsic.StringType();
+                        sequence = context.Vm.StringType ?? Intrinsic.StringType;
                         includeMapType = false;
                         break;
                     case ValNumber _:
-                        sequence = context.Vm.NumberType ?? Intrinsic.NumberType();
+                        sequence = context.Vm.NumberType ?? Intrinsic.NumberType;
                         includeMapType = false;
                         break;
                     case ValFunction _:
-                        sequence = context.Vm.FunctionType ?? Intrinsic.FunctionType();
+                        sequence = context.Vm.FunctionType ?? Intrinsic.FunctionType;
                         includeMapType = false;
                         break;
                     default:
