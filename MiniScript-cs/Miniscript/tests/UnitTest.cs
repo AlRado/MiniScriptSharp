@@ -35,16 +35,12 @@ namespace Miniscript.tests {
             if (obj != null) ReportError("Expected null, but got non-null");
         }
 
-        public static void ErrorIfNotEqual(string actual, string expected, string desc = "Expected {1}, got {0}") {
-            if (actual == expected) return;
-
-            ReportError(string.Format(desc, actual, expected));
+        public static void ErrorIfNotEqual(string actual, string expected) {
+             if (actual != expected) ReportError($"Expected {expected}, got {actual}");
         }
 
-        public static void ErrorIfNotEqual(float actual, float expected, string desc = "Expected {1}, got {0}") {
-            if (actual == expected) return;
-
-            ReportError(string.Format(desc, actual, expected));
+        public static void ErrorIfNotEqual(float actual, float expected) {
+             if (actual != expected) ReportError($"Expected {expected}, got {actual}");
         }
 
         public static void Run() {
