@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Miniscript.errors;
 using Miniscript.intrinsic;
 using Miniscript.types;
@@ -357,8 +358,8 @@ namespace Miniscript.tac {
 								var list2 = ((ValList)opB).Values;
 								if (list.Count + list2.Count > ValList.MaxSize) throw new LimitExceededException("list too large");
 								var result = new List<Value>(list.Count + list2.Count);
-								foreach (var v in list) result.Add(context.ValueInContext(v));
-								foreach (var v in list2) result.Add(context.ValueInContext(v));
+								result.AddRange(list.Select(context.ValueInContext));
+								result.AddRange(list2.Select(context.ValueInContext));
 								return new ValList(result);
 							}
 							case Op.ATimesB:
@@ -394,7 +395,7 @@ namespace Miniscript.tac {
 						// map lookup
 						// (note, cases where opB is a string are handled above, along with
 						// all the other types; so we'll only get here for non-string cases)
-						ValSeqElem se = new ValSeqElem(opA, opB);
+						var se = new ValSeqElem(opA, opB);
 						return se.Val(context);
 						// (This ensures we walk the "__isa" chain in the standard way.)
 					}
@@ -422,9 +423,9 @@ namespace Miniscript.tac {
 						return ValNumber.Truth(!opA.BoolValue());
 					case ValMap _:
 						break;
-					case ValFunction function when opB is ValFunction: {
+					case ValFunction function when opB is ValFunction valFunction: {
 						var fA = function.Function;
-						var fB = ((ValFunction)opB).Function;
+						var fB = valFunction.Function;
 						switch (op) {
 							case Op.AEqualB:
 								return ValNumber.Truth(fA == fB);
