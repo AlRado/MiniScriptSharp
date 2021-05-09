@@ -43,9 +43,9 @@ namespace Miniscript.parser {
 			// Return whether the given line is a jump target.
 			public bool IsJumpTarget(int lineNum) {
 				for (int i=0; i < Code.Count; i++) {
-					var op = Code[i].op;
-					if ((op == Line.Op.GotoA || op == Line.Op.GotoAifB 
-					 || op == Line.Op.GotoAifNotB || op == Line.Op.GotoAifTrulyB)
+					var op = Code[i].Op;
+					if ((op == Op.GotoA || op == Op.GotoAifB 
+					 || op == Op.GotoAifNotB || op == Op.GotoAifTrulyB)
 					 && Code[i].RhsA is ValNumber && Code[i].RhsA.IntValue() == lineNum) return true;
 				}
 				for (int i=0; i<JumpPoints.Count(); i++) {

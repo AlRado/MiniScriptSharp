@@ -8,66 +8,33 @@ using Miniscript.types;
 namespace Miniscript.tac {
 
 		public class Line {
-			public enum Op {
-				Noop = 0,
-				AssignA,
-				AssignImplicit,
-				APlusB,
-				AMinusB,
-				ATimesB,
-				ADividedByB,
-				AModB,
-				APowB,
-				AEqualB,
-				ANotEqualB,
-				AGreaterThanB,
-				AGreatOrEqualB,
-				ALessThanB,
-				ALessOrEqualB,
-				AisaB,
-				AAndB,
-				AOrB,
-				BindAssignA,
-				CopyA,
-				NotA,
-				GotoA,
-				GotoAifB,
-				GotoAifTrulyB,
-				GotoAifNotB,
-				PushParam,
-				CallFunctionA,
-				CallIntrinsicA,
-				ReturnA,
-				ElemBofA,
-				ElemBofIterA,
-				LengthOfA
-			}
-
 			public Value Lhs;
-			public Op op;
+			public Op Op;
 			public Value RhsA;
 			public Value RhsB;
+			
 			public SourceLoc Location;
 
 			public Line(Value lhs, Op op, Value rhsA=null, Value rhsB=null) {
 				this.Lhs = lhs;
-				this.op = op;
+				this.Op = op;
 				this.RhsA = rhsA;
 				this.RhsB = rhsB;
 			}
 			
 			public override int GetHashCode() {
-				return Lhs.GetHashCode() ^ op.GetHashCode() ^ RhsA.GetHashCode() ^ RhsB.GetHashCode() ^ Location.GetHashCode();
+				return Lhs.GetHashCode() ^ Op.GetHashCode() ^ RhsA.GetHashCode() ^ RhsB.GetHashCode() ^ Location.GetHashCode();
 			}
 			
 			public override bool Equals(object obj) {
 				if (!(obj is Line)) return false;
-				Line b = (Line)obj;
-				return op == b.op && Lhs == b.Lhs && RhsA == b.RhsA && RhsB == b.RhsB && Location == b.Location;
+				
+				var b = (Line)obj;
+				return Op == b.Op && Lhs == b.Lhs && RhsA == b.RhsA && RhsB == b.RhsB && Location == b.Location;
 			}
 			
 			public override string ToString() {
-				var text = op switch {
+				var text = Op switch {
 					Op.AssignA => $"{Lhs} := {RhsA}",
 					Op.AssignImplicit => $"_ := {RhsA}",
 					Op.APlusB => $"{Lhs} := {RhsA} + {RhsB}",
@@ -99,7 +66,7 @@ namespace Miniscript.tac {
 					Op.ElemBofA => $"{Lhs} = {RhsA}[{RhsB}]",
 					Op.ElemBofIterA => $"{Lhs} = {RhsA} iter {RhsB}",
 					Op.LengthOfA => $"{Lhs} = len({RhsA})",
-					_ => throw new RuntimeException("unknown opcode: " + op)
+					_ => throw new RuntimeException("unknown opcode: " + Op)
 				};
 				if (Location != null) text = text + "\t// " + Location;
 				
@@ -111,7 +78,7 @@ namespace Miniscript.tac {
 			/// into the lhs.
 			/// </summary>
 			public Value Evaluate(Context context) {
-				switch (op) {
+				switch (Op) {
 					case Op.AssignA:
 					case Op.ReturnA:
 					case Op.AssignImplicit: {
@@ -147,7 +114,7 @@ namespace Miniscript.tac {
 				var opA = RhsA?.Val(context);
 				var opB = RhsB?.Val(context);
 
-				switch (op) {
+				switch (Op) {
 					case Op.AisaB:
 						return opA == null ? ValNumber.Truth(opB == null) : ValNumber.Truth(opA.IsA(opB, context.Vm));
 					case Op.ElemBofA when opB is ValString valString: {
@@ -164,7 +131,7 @@ namespace Miniscript.tac {
 
 				// check for implicit coersion of other types to string; this happens
 				// when either side is a string and the operator is addition.
-				if ((opA is ValString || opB is ValString) && op == Op.APlusB) {
+				if ((opA is ValString || opB is ValString) && Op == Op.APlusB) {
 					if (opA == null) return opB;
 					if (opB == null) return opA;
 					var sA = opA.ToString(context.Vm);
@@ -176,7 +143,7 @@ namespace Miniscript.tac {
 				switch (opA) {
 					case ValNumber number: {
 						var fA = number.Value;
-						switch (op) {
+						switch (Op) {
 							case Op.GotoA:
 								context.LineNum = (int)fA;
 								return null;
@@ -219,7 +186,7 @@ namespace Miniscript.tac {
 						
 						if (opB is ValNumber || opB == null) {
 							var fB = ((ValNumber) opB)?.Value ?? 0;
-							switch (op) {
+							switch (Op) {
 								case Op.APlusB:
 									return new ValNumber(fA + fB);
 								case Op.AMinusB:
@@ -256,17 +223,17 @@ namespace Miniscript.tac {
 						}
 						// Handle equality testing between a number (opA) and a non-number (opB).
 						// These are always considered unequal.
-						if (op == Op.AEqualB) return ValNumber.Zero;
-						if (op == Op.ANotEqualB) return ValNumber.One;
+						if (Op == Op.AEqualB) return ValNumber.Zero;
+						if (Op == Op.ANotEqualB) return ValNumber.One;
 						break;
 					}
 					case ValString valString: {
 						var sA = valString.Value;
-						switch (op) {
+						switch (Op) {
 							case Op.ATimesB:
 							case Op.ADividedByB: {
 								double factor = 0;
-								if (op == Op.ATimesB) {
+								if (Op == Op.ATimesB) {
 									Check.Type(opB, typeof(ValNumber), "string replication");
 									factor = ((ValNumber)opB).Value;
 								} else {
@@ -293,7 +260,7 @@ namespace Miniscript.tac {
 
 						if (opB == null || opB is ValString) {
 							var sB = opB?.ToString(context.Vm);
-							switch (op) {
+							switch (Op) {
 								case Op.AMinusB: {
 									if (opB == null) return valString;
 									if (sA.EndsWith(sB)) sA = sA.Substring(0, sA.Length - sB.Length);
@@ -320,7 +287,7 @@ namespace Miniscript.tac {
 									break;
 							}
 						} else {
-							switch (op) {
+							switch (Op) {
 								// RHS is neither null nor a string.
 								// We no longer automatically coerce in all these cases; about
 								// all we can do is equal or unequal testing.
@@ -337,7 +304,7 @@ namespace Miniscript.tac {
 					
 					case ValList valList: {
 						var list = valList.Values;
-						switch (op) {
+						switch (Op) {
 							case Op.ElemBofA:
 							case Op.ElemBofIterA: {
 								// list indexing
@@ -366,7 +333,7 @@ namespace Miniscript.tac {
 							case Op.ADividedByB: {
 								// list replication (or division)
 								double factor = 0;
-								if (op == Op.ATimesB) {
+								if (Op == Op.ATimesB) {
 									Check.Type(opB, typeof(ValNumber), "list replication");
 									factor = ((ValNumber)opB).Value;
 								} else {
@@ -391,7 +358,7 @@ namespace Miniscript.tac {
 						break;
 					}
 					
-					case ValMap _ when op == Op.ElemBofA: {
+					case ValMap _ when Op == Op.ElemBofA: {
 						// map lookup
 						// (note, cases where opB is a string are handled above, along with
 						// all the other types; so we'll only get here for non-string cases)
@@ -399,17 +366,17 @@ namespace Miniscript.tac {
 						return se.Val(context);
 						// (This ensures we walk the "__isa" chain in the standard way.)
 					}
-					case ValMap map when op == Op.ElemBofIterA:
+					case ValMap map when Op == Op.ElemBofIterA:
 						// With a map, ElemBofIterA is different from ElemBofA.  This one
 						// returns a mini-map containing a key/value pair.
 						return map.GetKeyValuePair(opB.IntValue());
-					case ValMap map when op == Op.LengthOfA:
+					case ValMap map when Op == Op.LengthOfA:
 						return new ValNumber(map.Count);
-					case ValMap map when op == Op.AEqualB:
+					case ValMap map when Op == Op.AEqualB:
 						return ValNumber.Truth(map.Equality(opB));
-					case ValMap map when op == Op.ANotEqualB:
+					case ValMap map when Op == Op.ANotEqualB:
 						return ValNumber.Truth(1.0 - map.Equality(opB));
-					case ValMap valMap when op == Op.APlusB: {
+					case ValMap valMap when Op == Op.APlusB: {
 						// map combination
 						var map = valMap.Map;
 						Check.Type(opB, typeof(ValMap), "map combination");
@@ -419,14 +386,14 @@ namespace Miniscript.tac {
 						foreach (var kv in map2) result.Map[kv.Key] = context.ValueInContext(kv.Value);
 						return result;
 					}
-					case ValMap _ when op == Op.NotA:
+					case ValMap _ when Op == Op.NotA:
 						return ValNumber.Truth(!opA.BoolValue());
 					case ValMap _:
 						break;
 					case ValFunction function when opB is ValFunction valFunction: {
 						var fA = function.Function;
 						var fB = valFunction.Function;
-						switch (op) {
+						switch (Op) {
 							case Op.AEqualB:
 								return ValNumber.Truth(fA == fB);
 							case Op.ANotEqualB:
@@ -437,7 +404,7 @@ namespace Miniscript.tac {
 					}
 					default:
 						// opA is something else... perhaps null
-						switch (op) {
+						switch (Op) {
 							case Op.BindAssignA: {
 								context.Variables ??= new ValMap();
 								var valFunc = (ValFunction)opA;
@@ -450,7 +417,7 @@ namespace Miniscript.tac {
 						break;
 				}
 
-				if (op != Op.AAndB && op != Op.AOrB) return null;
+				if (Op != Op.AAndB && Op != Op.AOrB) return null;
 				{
 					// We already handled the case where opA was a number above;
 					// this code handles the case where opA is something else.
@@ -459,7 +426,7 @@ namespace Miniscript.tac {
 					if (opB is ValNumber number) fB = number.Value;
 					else fB = opB != null && opB.BoolValue() ? 1 : 0;
 					double result;
-					if (op == Op.AAndB) {
+					if (Op == Op.AAndB) {
 						result = fA * fB;
 					} else {
 						result = 1.0 - (1.0 - AbsClamp01(fA)) * (1.0 - AbsClamp01(fB));

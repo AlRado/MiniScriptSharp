@@ -25,7 +25,7 @@ namespace Miniscript.tac {
 			foreach (var line in lines) {
 				var s = (lineNum == lineNumToHighlight ? "> " : "  ") + (lineNum++) + ". ";
 				Console.WriteLine(s + line);
-				if (line.op != Line.Op.BindAssignA) continue;
+				if (line.Op != Op.BindAssignA) continue;
 				
 				var func = (ValFunction)line.RhsA;
 				Dump(func.Function.Code, -1, indent+1);

@@ -101,15 +101,15 @@ namespace Miniscript.tac {
 			}
 			
 			private void DoOneLine(Line line, Context context) {
-				switch (line.op) {
+				switch (line.Op) {
     
 //				Console.WriteLine("EXECUTING line " + (context.lineNum-1) + ": " + line);
-					case Line.Op.PushParam: {
+					case Op.PushParam: {
 						var val = context.ValueInContext(line.RhsA);
 						context.PushParamArgument(val);
 						break;
 					}
-					case Line.Op.CallFunctionA: {
+					case Op.CallFunctionA: {
 						// Resolve rhsA.  If it's a function, invoke it; otherwise,
 						// just store it directly (but pop the call context).
 						ValMap valueFoundIn;
@@ -143,13 +143,13 @@ namespace Miniscript.tac {
 
 						break;
 					}
-					case Line.Op.ReturnA: {
+					case Op.ReturnA: {
 						var val = line.Evaluate(context);
 						context.StoreValue(line.Lhs, val);
 						PopContext();
 						break;
 					}
-					case Line.Op.AssignImplicit: {
+					case Op.AssignImplicit: {
 						var val = line.Evaluate(context);
 						if (StoreImplicit) {
 							context.StoreValue(ValVar.ImplicitResult, val);

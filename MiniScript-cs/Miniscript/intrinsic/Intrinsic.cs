@@ -1401,11 +1401,11 @@ namespace Miniscript.intrinsic {
 		/// Helper method to compile a call to Slice (when invoked directly via slice syntax).
 		/// </summary>
 		public static void CompileSlice(List<Line> code, Value list, Value fromIdx, Value toIdx, int resultTempNum) {
-			code.Add(new Line(null, Line.Op.PushParam, list));
-			code.Add(new Line(null, Line.Op.PushParam, fromIdx ?? TAC.Num(0)));
-			code.Add(new Line(null, Line.Op.PushParam, toIdx));// toIdx == null ? TAC.Num(0) : toIdx));
+			code.Add(new Line(null, Op.PushParam, list));
+			code.Add(new Line(null, Op.PushParam, fromIdx ?? TAC.Num(0)));
+			code.Add(new Line(null, Op.PushParam, toIdx));// toIdx == null ? TAC.Num(0) : toIdx));
 			var func = GetByName("slice").GetFunc();
-			code.Add(new Line(TAC.LTemp(resultTempNum), Line.Op.CallFunctionA, func, TAC.Num(3)));
+			code.Add(new Line(TAC.LTemp(resultTempNum), Op.CallFunctionA, func, TAC.Num(3)));
 		}
 
 		/// <summary>
@@ -1472,7 +1472,7 @@ namespace Miniscript.intrinsic {
 				// Our little wrapper function is a single opcode: CallIntrinsicA.
 				// It really exists only to provide a local variable context for the parameters.
 				function.Code = new List<Line>();
-				function.Code.Add(new Line(TAC.LTemp(0), Line.Op.CallIntrinsicA, TAC.Num(Id)));
+				function.Code.Add(new Line(TAC.LTemp(0), Op.CallIntrinsicA, TAC.Num(Id)));
 			}
 			return valFunction;
 		}
