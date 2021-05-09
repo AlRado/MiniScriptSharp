@@ -75,10 +75,10 @@ namespace Miniscript.intrinsic {
 		public int Id { get; private set; }
 		
 		// name of this intrinsic (should be a valid Minisript identifier)
-		private string name;
+		public string Name;
 		
 		// actual C# code invoked by the intrinsic
-		private IntrinsicCode code;
+		public IntrinsicCode Сode;
 		
 		private Function function;
 		private ValFunction valFunction;	// (cached wrapper for function)
@@ -108,7 +108,7 @@ namespace Miniscript.intrinsic {
 			// Example: abs(-42)		returns 42
 			var f = Create(ABS);
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => new Result(Math.Abs(context.GetVar("x").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Abs(context.GetVar("x").DoubleValue()));
 
 			// acos
 			//	Returns the inverse cosine, that is, the angle 
@@ -118,7 +118,7 @@ namespace Miniscript.intrinsic {
 			// Example: acos(0) 		returns 1.570796
 			f = Create(ACOS);
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => new Result(Math.Acos(context.GetVar("x").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Acos(context.GetVar("x").DoubleValue()));
 
 			// asin
 			//	Returns the inverse sine, that is, the angle
@@ -128,7 +128,7 @@ namespace Miniscript.intrinsic {
 			// Example: asin(1) return 1.570796
 			f = Create(ASIN);
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => new Result(Math.Asin(context.GetVar("x").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Asin(context.GetVar("x").DoubleValue()));
 
 			// atan
 			//	Returns the arctangent of a value or ratio, that is, the
@@ -145,7 +145,7 @@ namespace Miniscript.intrinsic {
 			f = Create(ATAN);
 			f.AddParam("y", 0);
 			f.AddParam("x", 1);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var y = context.GetVar("y").DoubleValue();
 				var x = context.GetVar("x").DoubleValue();
 				return x == 1.0 ? new Result(Math.Atan(y)) : new Result(Math.Atan2(y, x));
@@ -163,7 +163,7 @@ namespace Miniscript.intrinsic {
 			f = Create(BIT_AND);
 			f.AddParam("i", 0);
 			f.AddParam("j", 0);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var i = context.GetLocalInt("i");
 				var j = context.GetLocalInt("j");
 				return new Result(i & j);
@@ -181,7 +181,7 @@ namespace Miniscript.intrinsic {
 			f = Create(BIT_OR);
 			f.AddParam("i", 0);
 			f.AddParam("j", 0);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var i = context.GetLocalInt("i");
 				var j = context.GetLocalInt("j");
 				return new Result(i | j);
@@ -199,7 +199,7 @@ namespace Miniscript.intrinsic {
 			f = Create(BIT_XOR);
 			f.AddParam("i", 0);
 			f.AddParam("j", 0);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var i = context.GetLocalInt("i");
 				var j = context.GetLocalInt("j");
 				return new Result(i ^ j);
@@ -213,7 +213,7 @@ namespace Miniscript.intrinsic {
 			// See also: code
 			f = Create(CHAR);
 			f.AddParam("codePoint", 65);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var codepoint = context.GetLocalInt("codePoint");
 				var s = char.ConvertFromUtf32(codepoint);
 				return new Result(s);
@@ -228,7 +228,7 @@ namespace Miniscript.intrinsic {
 			// See also: floor
 			f = Create(CEIL);
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => new Result(Math.Ceiling(context.GetVar("x").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Ceiling(context.GetVar("x").DoubleValue()));
 			
 			// code
 			//	Return the Unicode code point of the first character of
@@ -240,7 +240,7 @@ namespace Miniscript.intrinsic {
 			// Example: code("*")		returns 42
 			f = Create(CODE);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				var codepoint = 0;
 				if (self != null) codepoint = char.ConvertToUtf32(self.ToString(), 0);
@@ -254,7 +254,7 @@ namespace Miniscript.intrinsic {
 			// Example: cos(0)		returns 1
 			f = Create(COS);
 			f.AddParam("radians", 0);
-			f.code = (context, partialResult) => new Result(Math.Cos(context.GetVar("radians").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Cos(context.GetVar("radians").DoubleValue()));
 
 			// floor
 			//	Returns the "floor", i.e. closest whole number 
@@ -265,7 +265,7 @@ namespace Miniscript.intrinsic {
 			// See also: floor
 			f = Create(FLOOR);
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => new Result(Math.Floor(context.GetVar("x").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Floor(context.GetVar("x").DoubleValue()));
 
 			// funcRef
 			//	Returns a map that represents a function reference in
@@ -276,7 +276,7 @@ namespace Miniscript.intrinsic {
 			// Example: @floor isa funcRef		returns 1
 			// See also: number, string, list, map
 			f = Create(FUNC_REF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				context.Vm.FunctionType ??= FunctionType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.FunctionType);
 			};
@@ -291,7 +291,7 @@ namespace Miniscript.intrinsic {
 			// Returns: integer hash of the given value
 			f = Create(HASH);
 			f.AddParam("obj");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var val = context.GetVar("obj");
 				return new Result(val.Hash());
 			};
@@ -312,7 +312,7 @@ namespace Miniscript.intrinsic {
 			f = Create(HAS_INDEX);
 			f.AddParam(SELF);
 			f.AddParam(INDEX);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				var index = context.GetVar(INDEX);
 				switch (self) {
@@ -345,7 +345,7 @@ namespace Miniscript.intrinsic {
 			// See also: hasIndex
 			f = Create(INDEXES);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				switch (self) {
 					case ValMap valMap: {
@@ -388,7 +388,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam(SELF);
 			f.AddParam("value");
 			f.AddParam("after");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				var value = context.GetVar("value");
 				var after = context.GetVar("after");
@@ -454,7 +454,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam(SELF);
 			f.AddParam(INDEX);
 			f.AddParam("value");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				var index = context.GetVar(INDEX);
 				var value = context.GetVar("value");
@@ -491,7 +491,7 @@ namespace Miniscript.intrinsic {
 			f = Create(JOIN);
 			f.AddParam(SELF);
 			f.AddParam("delimiter", " ");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var val = context.Self;
 				var delimiter = context.GetVar("delimiter").ToString();
 				if (!(val is ValList valList)) return new Result(val);
@@ -510,7 +510,7 @@ namespace Miniscript.intrinsic {
 			// Example: "hello".len		returns 5
 			f = Create(LEN);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				return context.Self switch {
 					ValList valList => new Result(valList.Values.Count),
 					ValString valString => new Result(valString.Value.Length),
@@ -527,7 +527,7 @@ namespace Miniscript.intrinsic {
 			// Example: [1, 2, 3] isa list		returns 1
 			// See also: number, string, map, funcRef
 			f = Create(LIST);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				context.Vm.ListType ??= ListType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.ListType);
 			};
@@ -542,7 +542,7 @@ namespace Miniscript.intrinsic {
 			f = Create(LOG);
 			f.AddParam("x", 0);
 			f.AddParam("base", 10);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var x = context.GetVar("x").DoubleValue();
 				var b = context.GetVar("base").DoubleValue();
 				double result;
@@ -560,7 +560,7 @@ namespace Miniscript.intrinsic {
 			// See also: upper
 			f = Create(LOWER);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var val = context.Self;
 				if (!(val is ValString valString)) return new Result(val);
 				var str = valString.Value;
@@ -575,7 +575,7 @@ namespace Miniscript.intrinsic {
 			// Example: {1:"one"} isa map		returns 1
 			// See also: number, string, list, funcRef
 			f = Create(MAP);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				context.Vm.MapType ??= MapType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.MapType);
 			};
@@ -590,7 +590,7 @@ namespace Miniscript.intrinsic {
 			// Example: 42 isa number		returns 1
 			// See also: string, list, map, funcRef
 			f = Create(NUMBER);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				context.Vm.NumberType ??= NumberType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.NumberType);
 			};
@@ -600,7 +600,7 @@ namespace Miniscript.intrinsic {
 			//	a circle's circumference to its diameter.
 			// Example: pi		returns 3.141593
 			f = Create(PI);
-			f.code = (context, partialResult) => new Result(Math.PI);
+			f.Сode = (context, partialResult) => new Result(Math.PI);
 
 			// print
 			//	Display the given value on the default output stream.  The
@@ -611,7 +611,7 @@ namespace Miniscript.intrinsic {
 			// Example: print 6*7
 			f = Create(PRINT);
 			f.AddParam("s", ValString.Empty);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var s = context.GetVar("s");
 				context.Vm.StandardOutput(s != null ? s.ToString() : NULL);
 				return Result.Null;
@@ -628,7 +628,7 @@ namespace Miniscript.intrinsic {
 			// See also: pull; push; remove
 			f = Create(POP);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				switch (self) {
 					case ValList valList: {
@@ -660,7 +660,7 @@ namespace Miniscript.intrinsic {
 			// See also: pop; push; remove
 			f = Create(PULL);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				switch (self) {
 					case ValList valList: {
@@ -691,7 +691,7 @@ namespace Miniscript.intrinsic {
 			f = Create(PUSH);
 			f.AddParam(SELF);
 			f.AddParam("value");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				var value = context.GetVar("value");
 				switch (self) {
@@ -721,7 +721,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam("to", 0);
 			f.AddParam("step");
 			List<Value> values;
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var fromVal = context.GetVar("from").DoubleValue();
 				var toVal = context.GetVar("to").DoubleValue();
 				double step = (toVal >= fromVal ? 1 : -1);
@@ -762,7 +762,7 @@ namespace Miniscript.intrinsic {
 			f = Create(REMOVE);
 			f.AddParam(SELF);
 			f.AddParam("k");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				var k = context.GetVar("k");
 				switch (self) {
@@ -812,7 +812,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam("oldVal");
 			f.AddParam("newVal");
 			f.AddParam("maxCount");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				if (self == null) throw new RuntimeException("argument to 'replace' must not be null");
 				var oldVal = context.GetVar("oldVal");
@@ -889,7 +889,7 @@ namespace Miniscript.intrinsic {
 			f = Create(ROUND);
 			f.AddParam("x", 0);
 			f.AddParam("decimalPlaces", 0);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var num = context.GetVar("x").DoubleValue();
 				var decimalPlaces = context.GetVar("decimalPlaces").IntValue();
 				return new Result(Math.Round(num, decimalPlaces));
@@ -906,7 +906,7 @@ namespace Miniscript.intrinsic {
 			// Returns: pseudorandom number in the range [0,1)
 			f = Create(RND);
 			f.AddParam("seed");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var seed = context.GetVar("seed");
 				if (seed != null) random = new Random(seed.IntValue());
 				return new Result(random.NextDouble());
@@ -919,7 +919,7 @@ namespace Miniscript.intrinsic {
 			// Example: sign(-42.6)		returns -1
 			f = Create(SIGN);
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => new Result(Math.Sign(context.GetVar("x").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Sign(context.GetVar("x").DoubleValue()));
 
 			// sin
 			//	Returns the sine of the given angle (in radians).
@@ -928,7 +928,7 @@ namespace Miniscript.intrinsic {
 			// Example: sin(pi/2)		returns 1
 			f = Create(SIN);
 			f.AddParam("radians", 0);
-			f.code = (context, partialResult) => new Result(Math.Sin(context.GetVar("radians").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Sin(context.GetVar("radians").DoubleValue()));
 				
 			// slice
 			//	Return a subset of a string or list.  This is equivalent to using
@@ -945,7 +945,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam("seq");
 			f.AddParam("from", 0);
 			f.AddParam("to");
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var seq = context.GetVar("seq");
 				var fromIdx = context.GetVar("from").IntValue();
 				var toVal = context.GetVar("to");
@@ -999,7 +999,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam(SELF);
 			f.AddParam("byKey");
 			f.AddParam("ascending", ValNumber.One);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
 
@@ -1061,7 +1061,7 @@ namespace Miniscript.intrinsic {
 			f.AddParam(SELF);
 			f.AddParam("delimiter", " ");
 			f.AddParam("maxCount", -1);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self.ToString();
 				var delim = context.GetVar("delimiter").ToString();
 				var maxCount = context.GetVar("maxCount").IntValue();
@@ -1087,7 +1087,7 @@ namespace Miniscript.intrinsic {
 			// Example: sqrt(1764)		returns 42
 			f = Create(SQRT);
 			f.AddParam("x", 0);
-			f.code = (context, partialResult) => new Result(Math.Sqrt(context.GetVar("x").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Sqrt(context.GetVar("x").DoubleValue()));
 
 			// str
 			//	Convert any value to a string.
@@ -1097,7 +1097,7 @@ namespace Miniscript.intrinsic {
 			// See also: val
 			f = Create(STR);
 			f.AddParam("x", ValString.Empty);
-			f.code = (context, partialResult) => new Result(context.GetVar("x").ToString());
+			f.Сode = (context, partialResult) => new Result(context.GetVar("x").ToString());
 
 			// string type
 			//	Returns a map that represents the string datatype in
@@ -1107,7 +1107,7 @@ namespace Miniscript.intrinsic {
 			// Example: "Hello" isa string		returns 1
 			// See also: number, list, map, funcRef
 			f = Create(STRING);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				context.Vm.StringType ??= StringType.EvalCopy(context.Vm.GlobalContext);
 				return new Result(context.Vm.StringType);
 			};
@@ -1119,7 +1119,7 @@ namespace Miniscript.intrinsic {
 			// Returns: null
 			f = Create(SHUFFLE);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				switch (self) {
 					case ValList valList: {
@@ -1162,7 +1162,7 @@ namespace Miniscript.intrinsic {
 			// Example: range(3).sum		returns 6 (3 + 2 + 1 + 0)
 			f = Create(SUM);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var val = context.Self;
 				double sum = 0;
 				switch (val) {
@@ -1185,12 +1185,12 @@ namespace Miniscript.intrinsic {
 			// Example: tan(pi/4)		returns 1
 			f = Create(TAN);
 			f.AddParam("radians", 0);
-			f.code = (context, partialResult) => new Result(Math.Tan(context.GetVar("radians").DoubleValue()));
+			f.Сode = (context, partialResult) => new Result(Math.Tan(context.GetVar("radians").DoubleValue()));
 
 			// time
 			//	Returns the number of seconds since the script started running.
 			f = Create(TIME);
-			f.code = (context, partialResult) => new Result(context.Vm.RunTime);
+			f.Сode = (context, partialResult) => new Result(context.Vm.RunTime);
 			
 			// upper
 			//	Return an upper-case (all capitals) version of a string.
@@ -1201,7 +1201,7 @@ namespace Miniscript.intrinsic {
 			// See also: lower
 			f = Create(UPPER);
 			f.AddParam(SELF);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var val = context.Self;
 				if (!(val is ValString)) return new Result(val);
 				var str = ((ValString)val).Value;
@@ -1218,7 +1218,7 @@ namespace Miniscript.intrinsic {
 			// See also: str
 			f = Create(VAL);
 			f.AddParam(SELF, 0);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var val = context.Self;
 				switch (val) {
 					case ValNumber _:
@@ -1242,7 +1242,7 @@ namespace Miniscript.intrinsic {
 			// See also: indexes
 			f = Create(VALUES);
             f.AddParam(SELF);
-            f.code = (context, partialResult) => {
+            f.Сode = (context, partialResult) => {
                 var self = context.Self;
                 switch (self) {
 	                case ValMap valMap: {
@@ -1273,7 +1273,7 @@ namespace Miniscript.intrinsic {
 			//		hostInfo: URL or other short info about the host app
 			f = Create(VERSION);
 			var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				if (context.Vm.VersionMap != null) return new Result(context.Vm.VersionMap);
 
 				var d = new ValMap {["miniscript"] = new ValString("1.5")};
@@ -1301,7 +1301,7 @@ namespace Miniscript.intrinsic {
 			// See also: time, yield
 			f = Create(WAIT);
 			f.AddParam("seconds", 1);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				var now = context.Vm.RunTime;
 				if (partialResult == null) {
 					// Just starting our wait; calculate end time and return as partial result
@@ -1320,7 +1320,7 @@ namespace Miniscript.intrinsic {
 			//	if you're doing something in a tight loop, calling yield is
 			//	polite to the host app or other scripts.
 			f = Create(YIELD);
-			f.code = (context, partialResult) => {
+			f.Сode = (context, partialResult) => {
 				context.Vm.Yielding = true;
 				return Result.Null;
 			};
@@ -1376,7 +1376,7 @@ namespace Miniscript.intrinsic {
 		/// <param name="name">intrinsic name</param>
 		/// <returns>freshly minted (but empty) static Intrinsic</returns>
 		public static Intrinsic Create(string name) {
-			var result = new Intrinsic {name = name, Id = all.Count, function = new Function(null)};
+			var result = new Intrinsic {Name = name, Id = all.Count, function = new Function(null)};
 			result.valFunction = new ValFunction(result.function);
 			all.Add(result);
 			nameMap[name] = result;
@@ -1414,7 +1414,7 @@ namespace Miniscript.intrinsic {
 		/// </summary>
 		public static Result Execute(int id, Context context, Result partialResult) {
 			var item = GetByID(id);
-			return item.code(context, partialResult);
+			return item.Сode(context, partialResult);
 		}
 		
 		/// <summary>
