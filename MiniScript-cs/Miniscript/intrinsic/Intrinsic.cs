@@ -63,7 +63,16 @@ namespace Miniscript.intrinsic {
 		// static map from Values to short names, used when displaying lists/maps;
 		// feel free to add to this any values (especially lists/maps) provided
 		// by your own intrinsics.
-		public static readonly Dictionary<Value, string> ShortNames = new Dictionary<Value, string>();
+		public static readonly Dictionary<Value, string> ShortNames;
+
+		private static Random random; // TODO: consider storing this on the context, instead of global!
+		
+		private static readonly List<Intrinsic> all;
+
+		private static readonly Dictionary<string, Intrinsic> nameMap;
+
+		// a numeric ID (used internally -- don't worry about this)
+		public int Id { get; private set; }
 		
 		// name of this intrinsic (should be a valid Minisript identifier)
 		private string name;
@@ -71,115 +80,11 @@ namespace Miniscript.intrinsic {
 		// actual C# code invoked by the intrinsic
 		private IntrinsicCode code;
 		
-		// a numeric ID (used internally -- don't worry about this)
-		public int Id { get; private set; }
-
 		private Function function;
 		private ValFunction valFunction;	// (cached wrapper for function)
-
-		private static readonly List<Intrinsic> all = new List<Intrinsic>() { null };
-		private static readonly Dictionary<string, Intrinsic> nameMap = new Dictionary<string, Intrinsic>();
 		
 		private readonly ValString _self = new ValString(SELF);
-		
-		private static Random random;	// TODO: consider storing this on the context, instead of global!
-		
-		/// <summary>
-		/// Factory method to create a new Intrinsic, filling out its name as given,
-		/// and other internal properties as needed.  You'll still need to add any
-		/// parameters, and define the code it runs.
-		/// </summary>
-		/// <param name="name">intrinsic name</param>
-		/// <returns>freshly minted (but empty) static Intrinsic</returns>
-		public static Intrinsic Create(string name) {
-			var result = new Intrinsic {name = name, Id = all.Count, function = new Function(null)};
-			result.valFunction = new ValFunction(result.function);
-			all.Add(result);
-			nameMap[name] = result;
-			return result;
-		}
-		
-		/// <summary>
-		/// Look up an Intrinsic by its internal numeric ID.
-		/// </summary>
-		public static Intrinsic GetByID(int id) {
-			return all[id];
-		}
-		
-		/// <summary>
-		/// Look up an Intrinsic by its name.
-		/// </summary>
-		public static Intrinsic GetByName(string name) {
-			return nameMap.TryGetValue(name, out var result) ? result : null;
-		}
-		
-		/// <summary>
-		/// Add a parameter to this Intrinsic, optionally with a default value
-		/// to be used if the user doesn't supply one.  You must add parameters
-		/// in the same order in which arguments must be supplied.
-		/// </summary>
-		/// <param name="name">parameter name</param>
-		/// <param name="defaultValue">default value, if any</param>
-		public void AddParam(string name, Value defaultValue=null) {
-			function.Parameters.Add(new Param(name, defaultValue));
-		}
-		
-		/// <summary>
-		/// Add a parameter with a numeric default value.  (See comments on
-		/// the first version of AddParam above.)
-		/// </summary>
-		/// <param name="name">parameter name</param>
-		/// <param name="defaultValue">default value for this parameter</param>
-		public void AddParam(string name, double defaultValue) {
-			Value defVal = defaultValue switch {
-				0 => ValNumber.Zero,
-				1 => ValNumber.One,
-				_ => TAC.Num(defaultValue)
-			};
-			function.Parameters.Add(new Param(name, defVal));
-		}
 
-		/// <summary>
-		/// Add a parameter with a string default value.  (See comments on
-		/// the first version of AddParam above.)
-		/// </summary>
-		/// <param name="name">parameter name</param>
-		/// <param name="defaultValue">default value for this parameter</param>
-		public void AddParam(string name, string defaultValue) {
-			Value defVal;
-			if (string.IsNullOrEmpty(defaultValue)) defVal = ValString.Empty;
-			else
-				defVal = defaultValue switch {
-					IS_A => ValString.MagicIsA,
-					SELF => _self,
-					_ => new ValString(defaultValue)
-				};
-			function.Parameters.Add(new Param(name, defVal));
-		}
-		
-		/// <summary>
-		/// GetFunc is used internally by the compiler to get the Minisript function
-		/// that makes an intrinsic call.
-		/// </summary>
-		public ValFunction GetFunc() {
-			if (function.Code == null) {
-				// Our little wrapper function is a single opcode: CallIntrinsicA.
-				// It really exists only to provide a local variable context for the parameters.
-				function.Code = new List<Line>();
-				function.Code.Add(new Line(TAC.LTemp(0), Line.Op.CallIntrinsicA, TAC.Num(Id)));
-			}
-			return valFunction;
-		}
-		
-		/// <summary>
-		/// Internally-used function to execute an intrinsic (by ID) given a
-		/// context and a partial result.
-		/// </summary>
-		public static Result Execute(int id, Context context, Result partialResult) {
-			var item = GetByID(id);
-			return item.code(context, partialResult);
-		}
-		
 		/// <summary>
 		/// Intrinsic static constructor: called automatically during script setup to make sure
 		/// that all our standard intrinsics are defined.  Note how we use a
@@ -192,6 +97,10 @@ namespace Miniscript.intrinsic {
 			ListType = new ValMap();
 			StringType = new ValMap();
 			MapType = new ValMap();
+			ShortNames = new Dictionary<Value, string>();
+			all = new List<Intrinsic>() { null };
+			nameMap = new Dictionary<string, Intrinsic>();
+			random = new Random();
 			
 			// abs
 			//	Returns the absolute value of the given number.
@@ -998,7 +907,6 @@ namespace Miniscript.intrinsic {
 			f = Create(RND);
 			f.AddParam("seed");
 			f.code = (context, partialResult) => {
-				random ??= new Random();
 				var seed = context.GetVar("seed");
 				if (seed != null) random = new Random(seed.IntValue());
 				return new Result(random.NextDouble());
@@ -1213,7 +1121,6 @@ namespace Miniscript.intrinsic {
 			f.AddParam(SELF);
 			f.code = (context, partialResult) => {
 				var self = context.Self;
-				random ??= new Random();
 				switch (self) {
 					case ValList valList: {
 						var list = valList.Values;
@@ -1460,14 +1367,114 @@ namespace Miniscript.intrinsic {
 			MapType[REPLACE] = GetByName(REPLACE).GetFunc();
 			MapType[VALUES] = GetByName(VALUES).GetFunc();
 		}
-
-		// Helper method to compile a call to Slice (when invoked directly via slice syntax).
+		
+		/// <summary>
+		/// Factory method to create a new Intrinsic, filling out its name as given,
+		/// and other internal properties as needed.  You'll still need to add any
+		/// parameters, and define the code it runs.
+		/// </summary>
+		/// <param name="name">intrinsic name</param>
+		/// <returns>freshly minted (but empty) static Intrinsic</returns>
+		public static Intrinsic Create(string name) {
+			var result = new Intrinsic {name = name, Id = all.Count, function = new Function(null)};
+			result.valFunction = new ValFunction(result.function);
+			all.Add(result);
+			nameMap[name] = result;
+			return result;
+		}
+		
+		/// <summary>
+		/// Look up an Intrinsic by its internal numeric ID.
+		/// </summary>
+		public static Intrinsic GetByID(int id) {
+			return all[id];
+		}
+		
+		/// <summary>
+		/// Look up an Intrinsic by its name.
+		/// </summary>
+		public static Intrinsic GetByName(string name) {
+			return nameMap.TryGetValue(name, out var result) ? result : null;
+		}
+		
+		/// <summary>
+		/// Helper method to compile a call to Slice (when invoked directly via slice syntax).
+		/// </summary>
 		public static void CompileSlice(List<Line> code, Value list, Value fromIdx, Value toIdx, int resultTempNum) {
 			code.Add(new Line(null, Line.Op.PushParam, list));
 			code.Add(new Line(null, Line.Op.PushParam, fromIdx ?? TAC.Num(0)));
 			code.Add(new Line(null, Line.Op.PushParam, toIdx));// toIdx == null ? TAC.Num(0) : toIdx));
 			var func = GetByName("slice").GetFunc();
 			code.Add(new Line(TAC.LTemp(resultTempNum), Line.Op.CallFunctionA, func, TAC.Num(3)));
+		}
+
+		/// <summary>
+		/// Internally-used function to execute an intrinsic (by ID) given a
+		/// context and a partial result.
+		/// </summary>
+		public static Result Execute(int id, Context context, Result partialResult) {
+			var item = GetByID(id);
+			return item.code(context, partialResult);
+		}
+		
+		/// <summary>
+		/// Add a parameter to this Intrinsic, optionally with a default value
+		/// to be used if the user doesn't supply one.  You must add parameters
+		/// in the same order in which arguments must be supplied.
+		/// </summary>
+		/// <param name="name">parameter name</param>
+		/// <param name="defaultValue">default value, if any</param>
+		public void AddParam(string name, Value defaultValue=null) {
+			function.Parameters.Add(new Param(name, defaultValue));
+		}
+		
+		/// <summary>
+		/// Add a parameter with a numeric default value.  (See comments on
+		/// the first version of AddParam above.)
+		/// </summary>
+		/// <param name="name">parameter name</param>
+		/// <param name="defaultValue">default value for this parameter</param>
+		public void AddParam(string name, double defaultValue) {
+			Value defVal = defaultValue switch {
+				0 => ValNumber.Zero,
+				1 => ValNumber.One,
+				_ => TAC.Num(defaultValue)
+			};
+			function.Parameters.Add(new Param(name, defVal));
+		}
+
+		/// <summary>
+		/// Add a parameter with a string default value.  (See comments on
+		/// the first version of AddParam above.)
+		/// </summary>
+		/// <param name="name">parameter name</param>
+		/// <param name="defaultValue">default value for this parameter</param>
+		public void AddParam(string name, string defaultValue) {
+			Value defVal;
+			if (string.IsNullOrEmpty(defaultValue)) {
+				defVal = ValString.Empty;
+			} else {
+				defVal = defaultValue switch {
+					IS_A => ValString.MagicIsA,
+					SELF => _self,
+					_ => new ValString(defaultValue)
+				};
+			}
+			function.Parameters.Add(new Param(name, defVal));
+		}
+		
+		/// <summary>
+		/// GetFunc is used internally by the compiler to get the Minisript function
+		/// that makes an intrinsic call.
+		/// </summary>
+		public ValFunction GetFunc() {
+			if (function.Code == null) {
+				// Our little wrapper function is a single opcode: CallIntrinsicA.
+				// It really exists only to provide a local variable context for the parameters.
+				function.Code = new List<Line>();
+				function.Code.Add(new Line(TAC.LTemp(0), Line.Op.CallIntrinsicA, TAC.Num(Id)));
+			}
+			return valFunction;
 		}
 		
 	}
