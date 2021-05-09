@@ -107,8 +107,8 @@ namespace Miniscript.intrinsic {
 			// x (number, default 0): number to take the absolute value of.
 			// Example: abs(-42)		returns 42
 			var f = Create(ABS);
-			f.AddParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Abs(context.GetVar("x").DoubleValue()));
+			f.AddDoubleParam("x");
+			f.Сode = (context, partialResult) => new Result(Math.Abs(context.GetLocalDouble("x")));
 
 			// acos
 			//	Returns the inverse cosine, that is, the angle 
@@ -117,8 +117,8 @@ namespace Miniscript.intrinsic {
 			// Returns: angle, in radians, whose cosine is x.
 			// Example: acos(0) 		returns 1.570796
 			f = Create(ACOS);
-			f.AddParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Acos(context.GetVar("x").DoubleValue()));
+			f.AddDoubleParam("x");
+			f.Сode = (context, partialResult) => new Result(Math.Acos(context.GetLocalDouble("x")));
 
 			// asin
 			//	Returns the inverse sine, that is, the angle
@@ -127,8 +127,8 @@ namespace Miniscript.intrinsic {
 			// Returns: angle, in radians, whose cosine is x.
 			// Example: asin(1) return 1.570796
 			f = Create(ASIN);
-			f.AddParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Asin(context.GetVar("x").DoubleValue()));
+			f.AddDoubleParam("x");
+			f.Сode = (context, partialResult) => new Result(Math.Asin(context.GetLocalDouble("x")));
 
 			// atan
 			//	Returns the arctangent of a value or ratio, that is, the
@@ -143,11 +143,11 @@ namespace Miniscript.intrinsic {
 			// Returns: angle, in radians, whose tangent is y/x
 			// Example: atan(1, -1)		returns 2.356194
 			f = Create(ATAN);
-			f.AddParam("y", 0);
-			f.AddParam("x", 1);
+			f.AddDoubleParam("y", 0);
+			f.AddDoubleParam("x", 1);
 			f.Сode = (context, partialResult) => {
-				var y = context.GetVar("y").DoubleValue();
-				var x = context.GetVar("x").DoubleValue();
+				var y = context.GetLocalDouble("y");
+				var x = context.GetLocalDouble("x");
 				return x == 1.0 ? new Result(Math.Atan(y)) : new Result(Math.Atan2(y, x));
 			};
 
@@ -161,8 +161,8 @@ namespace Miniscript.intrinsic {
 			// Example: bitAnd(14, 7)		returns 6
 			// See also: bitOr; bitXor
 			f = Create(BIT_AND);
-			f.AddParam("i", 0);
-			f.AddParam("j", 0);
+			f.AddIntParam("i");
+			f.AddIntParam("j");
 			f.Сode = (context, partialResult) => {
 				var i = context.GetLocalInt("i");
 				var j = context.GetLocalInt("j");
@@ -179,8 +179,8 @@ namespace Miniscript.intrinsic {
 			// Example: bitOr(14, 7)		returns 15
 			// See also: bitAnd; bitXor
 			f = Create(BIT_OR);
-			f.AddParam("i", 0);
-			f.AddParam("j", 0);
+			f.AddIntParam("i");
+			f.AddIntParam("j");
 			f.Сode = (context, partialResult) => {
 				var i = context.GetLocalInt("i");
 				var j = context.GetLocalInt("j");
@@ -197,8 +197,8 @@ namespace Miniscript.intrinsic {
 			// Example: bitAnd(14, 7)		returns 9
 			// See also: bitAnd; bitOr
 			f = Create(BIT_XOR);
-			f.AddParam("i", 0);
-			f.AddParam("j", 0);
+			f.AddIntParam("i");
+			f.AddIntParam("j");
 			f.Сode = (context, partialResult) => {
 				var i = context.GetLocalInt("i");
 				var j = context.GetLocalInt("j");
@@ -212,7 +212,7 @@ namespace Miniscript.intrinsic {
 			// Example: char(42)		returns "*"
 			// See also: code
 			f = Create(CHAR);
-			f.AddParam("codePoint", 65);
+			f.AddIntParam("codePoint", 65);
 			f.Сode = (context, partialResult) => {
 				var codepoint = context.GetLocalInt("codePoint");
 				var s = char.ConvertFromUtf32(codepoint);
@@ -227,8 +227,8 @@ namespace Miniscript.intrinsic {
 			// Example: ceil(41.2)		returns 42
 			// See also: floor
 			f = Create(CEIL);
-			f.AddParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Ceiling(context.GetVar("x").DoubleValue()));
+			f.AddDoubleParam("x", 0);
+			f.Сode = (context, partialResult) => new Result(Math.Ceiling(context.GetLocalDouble("x")));
 			
 			// code
 			//	Return the Unicode code point of the first character of
@@ -253,8 +253,8 @@ namespace Miniscript.intrinsic {
 			// Returns: cosine of the given angle
 			// Example: cos(0)		returns 1
 			f = Create(COS);
-			f.AddParam("radians", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Cos(context.GetVar("radians").DoubleValue()));
+			f.AddDoubleParam("radians", 0);
+			f.Сode = (context, partialResult) => new Result(Math.Cos(context.GetLocalDouble("radians")));
 
 			// floor
 			//	Returns the "floor", i.e. closest whole number 
@@ -264,8 +264,8 @@ namespace Miniscript.intrinsic {
 			// Example: floor(42.9)		returns 42
 			// See also: floor
 			f = Create(FLOOR);
-			f.AddParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Floor(context.GetVar("x").DoubleValue()));
+			f.AddDoubleParam("x", 0);
+			f.Сode = (context, partialResult) => new Result(Math.Floor(context.GetLocalDouble("x")));
 
 			// funcRef
 			//	Returns a map that represents a function reference in
@@ -490,7 +490,7 @@ namespace Miniscript.intrinsic {
 			// See also: split
 			f = Create(JOIN);
 			f.AddParam(SELF);
-			f.AddParam("delimiter", " ");
+			f.AddStringParam("delimiter", " ");
 			f.Сode = (context, partialResult) => {
 				var val = context.Self;
 				var delimiter = context.GetVar("delimiter").ToString();
@@ -540,11 +540,11 @@ namespace Miniscript.intrinsic {
 			// Returns: a number that, when base is raised to it, produces x
 			// Example: log(1000)		returns 3 (because 10^3 == 1000)
 			f = Create(LOG);
-			f.AddParam("x", 0);
-			f.AddParam("base", 10);
+			f.AddDoubleParam("x", 0);
+			f.AddDoubleParam("base", 10);
 			f.Сode = (context, partialResult) => {
-				var x = context.GetVar("x").DoubleValue();
-				var b = context.GetVar("base").DoubleValue();
+				var x = context.GetLocalDouble("x");
+				var b = context.GetLocalDouble("base");
 				double result;
 				if (Math.Abs(b - 2.718282) < 0.000001) result = Math.Log(x);
 				else result = Math.Log(x) / Math.Log(b);
@@ -610,10 +610,10 @@ namespace Miniscript.intrinsic {
 			// Returns: null
 			// Example: print 6*7
 			f = Create(PRINT);
-			f.AddParam("s", ValString.Empty);
+			f.AddStringParam("s");
 			f.Сode = (context, partialResult) => {
-				var s = context.GetVar("s");
-				context.Vm.StandardOutput(s != null ? s.ToString() : NULL);
+				var s = context.GetLocalString("s");
+				context.Vm.StandardOutput(s ?? NULL);
 				return Result.Null;
 			};
 				
@@ -717,13 +717,13 @@ namespace Miniscript.intrinsic {
 			//	defaults to 1 if to > from, or -1 if to < from
 			// Example: range(50, 5, -10)		returns [50, 40, 30, 20, 10]
 			f = Create(RANGE);
-			f.AddParam("from", 0);
-			f.AddParam("to", 0);
+			f.AddDoubleParam("from");
+			f.AddDoubleParam("to");
 			f.AddParam("step");
 			List<Value> values;
 			f.Сode = (context, partialResult) => {
-				var fromVal = context.GetVar("from").DoubleValue();
-				var toVal = context.GetVar("to").DoubleValue();
+				var fromVal = context.GetLocalDouble("from");
+				var toVal = context.GetLocalDouble("to");
 				double step = (toVal >= fromVal ? 1 : -1);
 				var p2 = context.GetVar("step");
 				if (p2 is ValNumber number) step = number.Value;
@@ -887,15 +887,14 @@ namespace Miniscript.intrinsic {
 			// Example: round(pi, 2)		returns 3.14
 			// Example: round(12345, -3)		returns 12000
 			f = Create(ROUND);
-			f.AddParam("x", 0);
-			f.AddParam("decimalPlaces", 0);
+			f.AddDoubleParam("x");
+			f.AddDoubleParam("decimalPlaces");
 			f.Сode = (context, partialResult) => {
-				var num = context.GetVar("x").DoubleValue();
-				var decimalPlaces = context.GetVar("decimalPlaces").IntValue();
+				var num = context.GetLocalDouble("x");
+				var decimalPlaces = context.GetLocalInt("decimalPlaces");
 				return new Result(Math.Round(num, decimalPlaces));
 			};
-
-
+			
 			// rnd
 			//	Generates a pseudorandom number between 0 and 1 (including 0 but
 			//	not including 1).  If given a seed, then the generator is reset
@@ -907,8 +906,8 @@ namespace Miniscript.intrinsic {
 			f = Create(RND);
 			f.AddParam("seed");
 			f.Сode = (context, partialResult) => {
-				var seed = context.GetVar("seed");
-				if (seed != null) random = new Random(seed.IntValue());
+				var seed = context.GetLocalInt("seed");
+				if (seed != 0) random = new Random(seed);
 				return new Result(random.NextDouble());
 			};
 
@@ -918,8 +917,8 @@ namespace Miniscript.intrinsic {
 			// Returns: sign of the number
 			// Example: sign(-42.6)		returns -1
 			f = Create(SIGN);
-			f.AddParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Sign(context.GetVar("x").DoubleValue()));
+			f.AddDoubleParam("x");
+			f.Сode = (context, partialResult) => new Result(Math.Sign(context.GetLocalDouble("x")));
 
 			// sin
 			//	Returns the sine of the given angle (in radians).
@@ -927,8 +926,8 @@ namespace Miniscript.intrinsic {
 			// Returns: sine of the given angle
 			// Example: sin(pi/2)		returns 1
 			f = Create(SIN);
-			f.AddParam("radians", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Sin(context.GetVar("radians").DoubleValue()));
+			f.AddDoubleParam("radians");
+			f.Сode = (context, partialResult) => new Result(Math.Sin(context.GetLocalDouble("radians")));
 				
 			// slice
 			//	Return a subset of a string or list.  This is equivalent to using
@@ -943,11 +942,11 @@ namespace Miniscript.intrinsic {
 			// Example: slice(["a","b","c","d"], 1, 3)		returns ["b", "c"]
 			f = Create(SLICE);
 			f.AddParam("seq");
-			f.AddParam("from", 0);
+			f.AddIntParam("from", 0);
 			f.AddParam("to");
 			f.Сode = (context, partialResult) => {
 				var seq = context.GetVar("seq");
-				var fromIdx = context.GetVar("from").IntValue();
+				var fromIdx = context.GetLocalInt("from");
 				var toVal = context.GetVar("to");
 				var toIdx = 0;
 				if (toVal != null) toIdx = toVal.IntValue();
@@ -998,13 +997,13 @@ namespace Miniscript.intrinsic {
 			f = Create(SORT);
 			f.AddParam(SELF);
 			f.AddParam("byKey");
-			f.AddParam("ascending", ValNumber.One);
+			f.AddBoolParam("ascending", true);
 			f.Сode = (context, partialResult) => {
 				var self = context.Self;
 				if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
 
 				IComparer<Value> sorter;
-				if (context.GetVar("ascending").BoolValue()) sorter = ValueSorter.Instance;
+				if (context.GetLocalBool("ascending")) sorter = ValueSorter.Instance;
 				else sorter = ValueReverseSorter.Instance;
 
 				var byKey = context.GetVar("byKey");
@@ -1059,12 +1058,12 @@ namespace Miniscript.intrinsic {
 			// See also: join
 			f = Create(SPLIT);
 			f.AddParam(SELF);
-			f.AddParam("delimiter", " ");
-			f.AddParam("maxCount", -1);
+			f.AddStringParam("delimiter", " ");
+			f.AddDoubleParam("maxCount", -1);
 			f.Сode = (context, partialResult) => {
 				var self = context.Self.ToString();
-				var delim = context.GetVar("delimiter").ToString();
-				var maxCount = context.GetVar("maxCount").IntValue();
+				var delim = context.GetLocalString("delimiter");
+				var maxCount = context.GetLocalInt("maxCount");
 				var result = new ValList();
 				var pos = 0;
 				while (pos < self.Length) {
@@ -1086,8 +1085,8 @@ namespace Miniscript.intrinsic {
 			// Returns: square root of x
 			// Example: sqrt(1764)		returns 42
 			f = Create(SQRT);
-			f.AddParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Sqrt(context.GetVar("x").DoubleValue()));
+			f.AddDoubleParam("x");
+			f.Сode = (context, partialResult) => new Result(Math.Sqrt(context.GetLocalDouble("x")));
 
 			// str
 			//	Convert any value to a string.
@@ -1184,8 +1183,8 @@ namespace Miniscript.intrinsic {
 			// Returns: tangent of the given angle
 			// Example: tan(pi/4)		returns 1
 			f = Create(TAN);
-			f.AddParam("radians", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Tan(context.GetVar("radians").DoubleValue()));
+			f.AddDoubleParam("radians");
+			f.Сode = (context, partialResult) => new Result(Math.Tan(context.GetLocalDouble("radians")));
 
 			// time
 			//	Returns the number of seconds since the script started running.
@@ -1217,7 +1216,7 @@ namespace Miniscript.intrinsic {
 			// Example: "1234.56".val		returns 1234.56
 			// See also: str
 			f = Create(VAL);
-			f.AddParam(SELF, 0);
+			f.AddDoubleParam(SELF, 0);
 			f.Сode = (context, partialResult) => {
 				var val = context.Self;
 				switch (val) {
@@ -1300,12 +1299,12 @@ namespace Miniscript.intrinsic {
 			// Example: wait 2.5		pauses the script for 2.5 seconds
 			// See also: time, yield
 			f = Create(WAIT);
-			f.AddParam("seconds", 1);
+			f.AddDoubleParam("seconds", 1);
 			f.Сode = (context, partialResult) => {
 				var now = context.Vm.RunTime;
 				if (partialResult == null) {
 					// Just starting our wait; calculate end time and return as partial result
-					var interval = context.GetVar("seconds").DoubleValue();
+					var interval = context.GetLocalDouble("seconds");
 					return new Result(new ValNumber(now + interval), false);
 				} else {
 					// Continue until current time exceeds the time in the partial result
@@ -1424,7 +1423,7 @@ namespace Miniscript.intrinsic {
 		/// </summary>
 		/// <param name="name">parameter name</param>
 		/// <param name="defaultValue">default value, if any</param>
-		public void AddParam(string name, Value defaultValue=null) {
+		public void AddParam(string name, Value defaultValue = default) {
 			function.Parameters.Add(new Param(name, defaultValue));
 		}
 		
@@ -1434,13 +1433,29 @@ namespace Miniscript.intrinsic {
 		/// </summary>
 		/// <param name="name">parameter name</param>
 		/// <param name="defaultValue">default value for this parameter</param>
-		public void AddParam(string name, double defaultValue) {
+		private void AddNumberParam(string name, double defaultValue = default) {
 			Value defVal = defaultValue switch {
 				0 => ValNumber.Zero,
 				1 => ValNumber.One,
 				_ => TAC.Num(defaultValue)
 			};
-			function.Parameters.Add(new Param(name, defVal));
+			AddParam(name, defVal);
+		}
+
+		public void AddIntParam(string name, int defaultValue = default) {
+			AddDoubleParam(name, defaultValue);
+		}
+		
+		public void AddFloatParam(string name, float defaultValue = default) {
+			AddDoubleParam(name, defaultValue);
+		}
+		
+		public void AddDoubleParam(string name, double defaultValue = default) {
+			AddNumberParam(name, defaultValue);
+		}
+
+		public void AddBoolParam(string name, bool defaultValue = default) {
+			AddDoubleParam(name, defaultValue ? 1 : 0);
 		}
 
 		/// <summary>
@@ -1449,7 +1464,7 @@ namespace Miniscript.intrinsic {
 		/// </summary>
 		/// <param name="name">parameter name</param>
 		/// <param name="defaultValue">default value for this parameter</param>
-		public void AddParam(string name, string defaultValue) {
+		public void AddStringParam(string name, string defaultValue = default) {
 			Value defVal;
 			if (string.IsNullOrEmpty(defaultValue)) {
 				defVal = ValString.Empty;
@@ -1460,7 +1475,7 @@ namespace Miniscript.intrinsic {
 					_ => new ValString(defaultValue)
 				};
 			}
-			function.Parameters.Add(new Param(name, defVal));
+			AddParam(name, defVal);
 		}
 		
 		/// <summary>
