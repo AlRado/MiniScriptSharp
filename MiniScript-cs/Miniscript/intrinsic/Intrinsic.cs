@@ -65,7 +65,7 @@ namespace Miniscript.intrinsic {
 		// by your own intrinsics.
 		public static readonly Dictionary<Value, string> ShortNames;
 
-		private static Random random; // TODO: consider storing this on the context, instead of global!
+		private static Random random;
 		
 		private static readonly List<Intrinsic> all;
 

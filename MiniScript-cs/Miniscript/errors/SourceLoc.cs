@@ -2,8 +2,8 @@
 
     public class SourceLoc {
 
-        private string context; // file name, etc. (optional)
-        private int lineNum;
+        private readonly string context; // file name, etc. (optional)
+        private readonly int lineNum;
 
         public SourceLoc(string context, int lineNum) {
             this.context = context;

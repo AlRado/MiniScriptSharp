@@ -35,10 +35,10 @@ namespace Miniscript.interpreter {
         /// standardOutput: receives the output of the "print" intrinsic.
         /// </summary>
         public TextOutputMethod StandardOutput {
-            get => _standardOutput;
+            get => standardOutput;
             set {
-                _standardOutput = value;
-                if (_vm != null) _vm.StandardOutput = value;
+                standardOutput = value;
+                if (vm != null) vm.StandardOutput = value;
             }
         }
 
@@ -61,23 +61,23 @@ namespace Miniscript.interpreter {
         /// Done: returns true when we don't have a virtual machine, or we do have
         /// one and it is Done (has reached the end of its code).
         /// </summary>
-        public bool Done => _vm == null || _vm.Done;
+        public bool Done => vm == null || vm.Done;
 
         /// <summary>
         /// vm: the virtual machine this interpreter is running.  Most applications will
         /// not need to use this, but it's provided for advanced users.
         /// </summary>
-        private Machine _vm;
+        private Machine vm;
 
-        private TextOutputMethod _standardOutput;
-        private string _source;
-        private Parser _parser;
+        private TextOutputMethod standardOutput;
+        private string source;
+        private Parser parser;
 
         /// <summary>
         /// Constructor taking some Minisript source code, and the output delegates.
         /// </summary>
         public Interpreter(string source = null, TextOutputMethod standardOutput = null, TextOutputMethod errorOutput = null) {
-            this._source = source;
+            this.source = source;
             standardOutput ??= Console.WriteLine;
             errorOutput ??= Console.WriteLine;
             this.StandardOutput = standardOutput;
@@ -101,8 +101,8 @@ namespace Miniscript.interpreter {
         /// Also reset the parser, in case it's stuck waiting for a block ender.
         /// </summary>
         public void Stop() {
-            _vm?.Stop();
-            _parser?.PartialReset();
+            vm?.Stop();
+            parser?.PartialReset();
         }
 
         /// <summary>
@@ -110,9 +110,9 @@ namespace Miniscript.interpreter {
         /// </summary>
         /// <param name="source"></param>
         public void Reset(string source = "") {
-            _source = source;
-            _parser = null;
-            _vm = null;
+            this.source = source;
+            parser = null;
+            vm = null;
         }
 
         /// <summary>
@@ -120,13 +120,13 @@ namespace Miniscript.interpreter {
         /// either ready to run, or generate compiler errors (reported via ErrorOutput).
         /// </summary>
         public void Compile() {
-            if (_vm != null) return; // already compiled
+            if (vm != null) return; // already compiled
 
-            _parser ??= new Parser();
+            parser ??= new Parser();
             try {
-                _parser.Parse(_source);
-                _vm = _parser.CreateVM(StandardOutput);
-                _vm.Interpreter = new WeakReference(this);
+                parser.Parse(source);
+                vm = parser.CreateVM(StandardOutput);
+                vm.Interpreter = new WeakReference(this);
             }
             catch (MiniscriptException mse) {
                 ReportError(mse);
@@ -140,7 +140,7 @@ namespace Miniscript.interpreter {
         /// want to run over and over, without recompiling every time.
         /// </summary>
         public void Restart() {
-            _vm?.Reset();
+            vm?.Reset();
         }
 
         /// <summary>
@@ -161,22 +161,22 @@ namespace Miniscript.interpreter {
         /// <param name="returnEarly">if true, return as soon as we reach an intrinsic that returns a partial result</param>
         public void RunUntilDone(double timeLimit = 60, bool returnEarly = true) {
             try {
-                if (_vm == null) {
+                if (vm == null) {
                     Compile();
-                    if (_vm == null) return; // (must have been some error)
+                    if (vm == null) return; // (must have been some error)
                 }
 
-                var startTime = _vm.RunTime;
-                _vm.Yielding = false;
-                while (!_vm.Done && !_vm.Yielding) {
-                    if (_vm.RunTime - startTime > timeLimit) return; // time's up for now!
-                    _vm.Step(); // update the machine
-                    if (returnEarly && _vm.GetTopContext().PartialResult != null) return; // waiting for something
+                var startTime = vm.RunTime;
+                vm.Yielding = false;
+                while (!vm.Done && !vm.Yielding) {
+                    if (vm.RunTime - startTime > timeLimit) return; // time's up for now!
+                    vm.Step(); // update the machine
+                    if (returnEarly && vm.GetTopContext().PartialResult != null) return; // waiting for something
                 }
             }
             catch (MiniscriptException mse) {
                 ReportError(mse);
-                _vm.GetTopContext().JumpToEnd();
+                vm.GetTopContext().JumpToEnd();
             }
         }
 
@@ -187,11 +187,11 @@ namespace Miniscript.interpreter {
         public void Step() {
             try {
                 Compile();
-                _vm.Step();
+                vm.Step();
             }
             catch (MiniscriptException mse) {
                 ReportError(mse);
-                _vm.GetTopContext().JumpToEnd();
+                vm.GetTopContext().JumpToEnd();
             }
         }
 
@@ -203,16 +203,16 @@ namespace Miniscript.interpreter {
         /// <param name="sourceLine">Source line.</param>
         /// <param name="timeLimit">Time limit.</param>
         public void REPL(string sourceLine, double timeLimit = 60) {
-            _parser ??= new Parser();
-            if (_vm == null) {
-                _vm = _parser.CreateVM(StandardOutput);
-                _vm.Interpreter = new WeakReference(this);
+            parser ??= new Parser();
+            if (vm == null) {
+                vm = parser.CreateVM(StandardOutput);
+                vm.Interpreter = new WeakReference(this);
             }
-            else if (_vm.Done && !_parser.NeedMoreInput()) {
+            else if (vm.Done && !parser.NeedMoreInput()) {
                 // Since the machine and parser are both Done, we don't really need the
                 // previously-compiled code.  So let's clear it out, as a memory optimization.
-                _vm.GetTopContext().ClearCodeAndTemps();
-                _parser.PartialReset();
+                vm.GetTopContext().ClearCodeAndTemps();
+                parser.PartialReset();
             }
 
             if (sourceLine == Consts.DUMP) {
@@ -220,29 +220,29 @@ namespace Miniscript.interpreter {
                 return;
             }
 
-            var startTime = _vm.RunTime;
-            var startImpResultCount = _vm.GlobalContext.ImplicitResultCounter;
-            _vm.StoreImplicit = (ImplicitOutput != null);
+            var startTime = vm.RunTime;
+            var startImpResultCount = vm.GlobalContext.ImplicitResultCounter;
+            vm.StoreImplicit = (ImplicitOutput != null);
 
             try {
-                if (sourceLine != null) _parser.Parse(sourceLine, true);
-                if (_parser.NeedMoreInput()) return;
+                if (sourceLine != null) parser.Parse(sourceLine, true);
+                if (parser.NeedMoreInput()) return;
 
-                while (!_vm.Done && !_vm.Yielding) {
-                    if (_vm.RunTime - startTime > timeLimit) return; // time's up for now!
-                    _vm.Step();
+                while (!vm.Done && !vm.Yielding) {
+                    if (vm.RunTime - startTime > timeLimit) return; // time's up for now!
+                    vm.Step();
                 }
 
-                if (ImplicitOutput == null || _vm.GlobalContext.ImplicitResultCounter <= startImpResultCount) return;
-                var result = _vm.GlobalContext.GetVar(ValVar.ImplicitResult.Identifier);
+                if (ImplicitOutput == null || vm.GlobalContext.ImplicitResultCounter <= startImpResultCount) return;
+                var result = vm.GlobalContext.GetVar(ValVar.ImplicitResult.Identifier);
                 if (result != null) {
-                    ImplicitOutput.Invoke(result.ToString(_vm));
+                    ImplicitOutput.Invoke(result.ToString(vm));
                 }
             }
             catch (MiniscriptException mse) {
                 ReportError(mse);
                 // Attempt to recover from an error by jumping to the end of the code.
-                _vm.GetTopContext().JumpToEnd();
+                vm.GetTopContext().JumpToEnd();
             }
         }
 
@@ -252,7 +252,7 @@ namespace Miniscript.interpreter {
         /// </summary>
         /// <returns></returns>
         public bool Running() {
-            return _vm != null && !_vm.Done;
+            return vm != null && !vm.Done;
         }
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace Miniscript.interpreter {
         /// </summary>
         /// <returns></returns>
         public bool NeedMoreInput() {
-            return _parser != null && _parser.NeedMoreInput();
+            return parser != null && parser.NeedMoreInput();
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace Miniscript.interpreter {
         /// <param name="varName">name of global variable to get</param>
         /// <returns>Value of the named variable, or null if not found</returns>
         public Value GetGlobalValue(string varName) {
-            var c = _vm?.GlobalContext;
+            var c = vm?.GlobalContext;
             if (c == null) return null;
 
             try {
@@ -289,7 +289,7 @@ namespace Miniscript.interpreter {
         /// <param name="varName">name of global variable to set</param>
         /// <param name="value">value to set</param>
         public void SetGlobalValue(string varName, Value value) {
-            _vm?.GlobalContext.SetVar(varName, value);
+            vm?.GlobalContext.SetVar(varName, value);
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace Miniscript.interpreter {
         }
 
         public void DumpTopContext() {
-            _vm.DumpTopContext();
+            vm.DumpTopContext();
         }
 
     }
