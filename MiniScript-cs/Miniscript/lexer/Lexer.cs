@@ -58,11 +58,14 @@ namespace Miniscript.lexer {
 
 			// Handle two-character operators first.
 			if (!AtEnd) {
-				char c2 = input[position];
-				if (c == '=' && c2 == '=') result.TokenType = TokenType.OpEqual;
-				if (c == '!' && c2 == '=') result.TokenType = TokenType.OpNotEqual;
-				if (c == '>' && c2 == '=') result.TokenType = TokenType.OpGreatEqual;
-				if (c == '<' && c2 == '=') result.TokenType = TokenType.OpLessEqual;
+				var c2 = input[position];
+				result.TokenType = c switch {
+					'=' when c2 == '=' => TokenType.OpEqual,
+					'!' when c2 == '=' => TokenType.OpNotEqual,
+					'>' when c2 == '=' => TokenType.OpGreatEqual,
+					'<' when c2 == '=' => TokenType.OpLessEqual,
+					_ => result.TokenType
+				};
 
 				if (result.TokenType != TokenType.Unknown) {
 					position++;
@@ -71,40 +74,50 @@ namespace Miniscript.lexer {
 			}
 
 			// Handle one-char operators next.
-			if (c == '+') result.TokenType = TokenType.OpPlus;
-			else if (c == '-') result.TokenType = TokenType.OpMinus;
-			else if (c == '*') result.TokenType = TokenType.OpTimes;
-			else if (c == '/') result.TokenType = TokenType.OpDivide;
-			else if (c == '%') result.TokenType = TokenType.OpMod;
-			else if (c == '^') result.TokenType = TokenType.OpPower;
-			else if (c == '(') result.TokenType = TokenType.LParen;
-			else if (c == ')') result.TokenType = TokenType.RParen;
-			else if (c == '[') result.TokenType = TokenType.LSquare;
-			else if (c == ']') result.TokenType = TokenType.RSquare;
-			else if (c == '{') result.TokenType = TokenType.LCurly;
-			else if (c == '}') result.TokenType = TokenType.RCurly;
-			else if (c == ',') result.TokenType = TokenType.Comma;
-			else if (c == ':') result.TokenType = TokenType.Colon;
-			else if (c == '=') result.TokenType = TokenType.OpAssign;
-			else if (c == '<') result.TokenType = TokenType.OpLesser;
-			else if (c == '>') result.TokenType = TokenType.OpGreater;
-			else if (c == '@') result.TokenType = TokenType.AddressOf;
-			else if (c == ';' || c == '\n') {
-				result.TokenType = TokenType.Eol;
-				result.Text = c == ';' ? ";" : "\n";
-				if (c != ';') LineNum++;
-			}
-			if (c == '\r') {
-				// Careful; DOS may use \r\n, so we need to check for that too.
-				result.TokenType = TokenType.Eol;
-				if (position < inputLength && input[position] == '\n') {
-					position++;
-					result.Text = "\r\n";
-				} else {
-					result.Text = "\r";
+			result.TokenType = c switch {
+				'+' => TokenType.OpPlus,
+				'-' => TokenType.OpMinus,
+				'*' => TokenType.OpTimes,
+				'/' => TokenType.OpDivide,
+				'%' => TokenType.OpMod,
+				'^' => TokenType.OpPower,
+				'(' => TokenType.LParen,
+				')' => TokenType.RParen,
+				'[' => TokenType.LSquare,
+				']' => TokenType.RSquare,
+				'{' => TokenType.LCurly,
+				'}' => TokenType.RCurly,
+				',' => TokenType.Comma,
+				':' => TokenType.Colon,
+				'=' => TokenType.OpAssign,
+				'<' => TokenType.OpLesser,
+				'>' => TokenType.OpGreater,
+				'@' => TokenType.AddressOf,
+				_ => result.TokenType
+			};
+			
+			switch (c) {
+				case ';':
+				case '\n': {
+					result.TokenType = TokenType.Eol;
+					result.Text = c == ';' ? ";" : "\n";
+					if (c != ';') LineNum++;
+					break;
 				}
-				LineNum++;
+				case '\r': {
+					// Careful; DOS may use \r\n, so we need to check for that too.
+					result.TokenType = TokenType.Eol;
+					if (position < inputLength && input[position] == '\n') {
+						position++;
+						result.Text = "\r\n";
+					} else {
+						result.Text = "\r";
+					}
+					LineNum++;
+					break;
+				}
 			}
+
 			if (result.TokenType != TokenType.Unknown) return result;
 
 			// Then, handle more extended tokens.
@@ -121,13 +134,14 @@ namespace Miniscript.lexer {
 			if (c == '.' || IsNumeric(c)) {
 				result.TokenType = TokenType.Number;
 				while (position < inputLength) {
-					char lastc = c;
+					var lastCh = c;
 					c = input[position];
 					if (IsNumeric(c) || c == '.' || c == 'E' || c == 'e' ||
-					    ((c == '-' || c == '+') && (lastc == 'E' || lastc == 'e'))) {
+					    ((c == '-' || c == '+') && (lastCh == 'E' || lastCh == 'e'))) {
 						position++;
 					} else break;
 				}
+				
 			} else if (IsIdentifier(c)) {
 				while (position < inputLength) {
 					if (IsIdentifier(input[position])) position++;
@@ -135,48 +149,55 @@ namespace Miniscript.lexer {
 				}
 				result.Text = input.Substring(startPos, position - startPos);
 				result.TokenType = (Keywords.IsKeyword(result.Text) ? TokenType.Keyword : TokenType.Identifier);
-				if (result.Text == Consts.END) {
-					// As a special case: when we see "end", grab the next keyword (after whitespace)
-					// too, and conjoin it, so our token is "end if", "end function", etc.
-					Token nextWord = Dequeue();
-					if (nextWord != null && nextWord.TokenType == TokenType.Keyword) {
-						result.Text = result.Text + " " + nextWord.Text;
-					} else {
-						// Oops, didn't find another keyword.  User error.
-						throw new LexerException("'end' without following keyword ('if', 'function', etc.)");
+				switch (result.Text) {
+					case END: {
+						// As a special case: when we see "end", grab the next keyword (after whitespace)
+						// too, and conjoin it, so our token is "end if", "end function", etc.
+						var nextWord = Dequeue();
+						if (nextWord != null && nextWord.TokenType == TokenType.Keyword) {
+							result.Text = result.Text + " " + nextWord.Text;
+						} else {
+							// Oops, didn't find another keyword.  User error.
+							throw new LexerException("'end' without following keyword ('if', 'function', etc.)");
+						}
+						break;
 					}
-				} else if (result.Text == Consts.ELSE) {
-					// And similarly, conjoin an "if" after "else" (to make "else if").
-					var p = position;
-					while (p < inputLength && (input[p]==' ' || input[p]=='\t')) p++;
-					if (p+1 < inputLength && input.Substring(p,2) == Consts.IF &&
-							(p+2 >= inputLength || IsWhitespace(input[p+2]))) {
-						result.Text = ELSE_IF;
-						position = p + 2;
+					case ELSE: {
+						// And similarly, conjoin an "if" after "else" (to make "else if").
+						var p = position;
+						while (p < inputLength && (input[p]==' ' || input[p]=='\t')) p++;
+						if (p+1 < inputLength && input.Substring(p,2) == Consts.IF &&
+						    (p+2 >= inputLength || IsWhitespace(input[p+2]))) {
+							result.Text = ELSE_IF;
+							position = p + 2;
+						}
+						break;
 					}
 				}
 				return result;
+				
 			} else if (c == '"') {
 				// Lex a string... to the closing ", but skipping (and singling) a doubled double quote ("")
 				result.TokenType = TokenType.String;
-				bool haveDoubledQuotes = false;
+				var haveDoubledQuotes = false;
 				startPos = position;
-				bool gotEndQuote = false;
+				var gotEndQuote = false;
 				while (position < inputLength) {
 					c = input[position++];
-					if (c == '"') {
-						if (position < inputLength && input[position] == '"') {
-							// This is just a doubled quote.
-							haveDoubledQuotes = true;
-							position++;
-						} else {
-							// This is the closing quote, marking the end of the string.
-							gotEndQuote = true;
-							break;
-						}
+					if (c != '"') continue;
+					
+					if (position < inputLength && input[position] == '"') {
+						// This is just a doubled quote.
+						haveDoubledQuotes = true;
+						position++;
+					} else {
+						// This is the closing quote, marking the end of the string.
+						gotEndQuote = true;
+						break;
 					}
 				}
 				if (!gotEndQuote) throw new LexerException("missing closing quote (\")");
+				
 				result.Text = input.Substring(startPos, position-startPos-1);
 				if (haveDoubledQuotes) result.Text = result.Text.Replace("\"\"", "\"");
 				return result;
@@ -223,7 +244,7 @@ namespace Miniscript.lexer {
 		}
 
 		public static bool IsInStringLiteral(int charPos, string source, int startPos=0) {
-			bool inString = false;
+			var inString = false;
 			for (int i=startPos; i<charPos; i++) {
 				if (source[i] == '"') inString = !inString;
 			}
@@ -233,7 +254,7 @@ namespace Miniscript.lexer {
 		public static int CommentStartPos(string source, int startPos) {
 			// Find the first occurrence of "//" in this line that
 			// is not within a string literal.
-			int commentStart = startPos-2;
+			var commentStart = startPos-2;
 			while (true) {
 				commentStart = source.IndexOf("//", commentStart + 2, StringComparison.Ordinal);
 				if (commentStart < 0) break;	// no comment found
@@ -243,32 +264,31 @@ namespace Miniscript.lexer {
 		}
 		
 		public static string TrimComment(string source) {
-			int startPos = source.LastIndexOf('\n') + 1;
-			int commentStart = CommentStartPos(source, startPos);
-			if (commentStart >= 0) return source.Substring(startPos, commentStart - startPos);
-			return source;
+			var startPos = source.LastIndexOf('\n') + 1;
+			var commentStart = CommentStartPos(source, startPos);
+			return commentStart >= 0 ? source.Substring(startPos, commentStart - startPos) : source;
 		}
 
 		// Find the last token in the given source, ignoring any whitespace
 		// or comment at the end of that line.
 		public static Token LastToken(string source) {
 			// Start by finding the start and logical  end of the last line.
-			int startPos = source.LastIndexOf('\n') + 1;
-			int commentStart = CommentStartPos(source, startPos);
+			var startPos = source.LastIndexOf('\n') + 1;
+			var commentStart = CommentStartPos(source, startPos);
 			
 			// Walk back from end of string or start of comment, skipping whitespace.
-			int endPos = (commentStart >= 0 ? commentStart-1 : source.Length - 1);
+			var endPos = (commentStart >= 0 ? commentStart-1 : source.Length - 1);
 			while (endPos >= 0 && IsWhitespace(source[endPos])) endPos--;
 			if (endPos < 0) return Token.Eol;
 			
 			// Find the start of that last token.
 			// There are several cases to consider here.
-			int tokStart = endPos;
-			char c = source[endPos];
+			var tokStart = endPos;
+			var c = source[endPos];
 			if (IsIdentifier(c)) {
 				while (tokStart > startPos && IsIdentifier(source[tokStart-1])) tokStart--;
 			} else if (c == '"') {
-				bool inQuote = true;
+				var inQuote = true;
 				while (tokStart > startPos) {
 					tokStart--;
 					if (source[tokStart] == '"') {
@@ -277,34 +297,29 @@ namespace Miniscript.lexer {
 					}
 				}
 			} else if (c == '=' && tokStart > startPos) {
-				char c2 = source[tokStart-1];
+				var c2 = source[tokStart-1];
 				if (c2 == '>' || c2 == '<' || c2 == '=' || c2 == '!') tokStart--;
 			}
 			
 			// Now use the standard lexer to grab just that bit.
-			Lexer lex = new Lexer(source);
-			lex.position = tokStart;
+			var lex = new Lexer(source) {position = tokStart};
 			return lex.Dequeue();
 		}
 
 		public static void Check(Token tok, TokenType type, string text=null, int lineNum=0) {
 			UnitTest.ErrorIfNull(tok);
 			if (tok == null) return;
-			UnitTest.ErrorIf(tok.TokenType != type, "Token type: expected "
-						+ type + ", but got " + tok.TokenType);
-
-			UnitTest.ErrorIf(text != null && tok.Text != text,
-						"Token text: expected " + text + ", but got " + tok.Text);
-
+			
+			UnitTest.ErrorIf(tok.TokenType != type, $"Token type: expected {type}, but got {tok.TokenType}");
+			UnitTest.ErrorIf(text != null && tok.Text != text, $"Token text: expected {text}, but got {tok.Text}");
 		}
 
 		public static void CheckLineNum(int actual, int expected) {
-			UnitTest.ErrorIf(actual != expected, "Lexer line number: expected "
-				+ expected + ", but got " + actual);
+			UnitTest.ErrorIf(actual != expected, $"Lexer line number: expected {expected}, but got {actual}");
 		}
 
 		public static void RunUnitTests() {
-			Lexer lex = new Lexer("42  * 3.14158");
+			var lex = new Lexer("42  * 3.14158");
 			Check(lex.Dequeue(), TokenType.Number, "42");
 			CheckLineNum(lex.LineNum, 1);
 			Check(lex.Dequeue(), TokenType.OpTimes);
