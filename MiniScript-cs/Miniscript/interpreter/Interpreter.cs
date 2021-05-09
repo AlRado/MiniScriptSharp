@@ -58,14 +58,6 @@ namespace Miniscript.interpreter {
         public TextOutputMethod ErrorOutput;
 
         /// <summary>
-        /// HostData is just a convenient place for you to attach some arbitrary
-        /// data to the interpreter.  It gets passed through to the context object,
-        /// so you can access it inside your custom intrinsic functions.  Use it
-        /// for whatever you like (or don't, if you don't feel the need).
-        /// </summary>
-        public object HostData;
-
-        /// <summary>
         /// Done: returns true when we don't have a virtual machine, or we do have
         /// one and it is Done (has reached the end of its code).
         /// </summary>
