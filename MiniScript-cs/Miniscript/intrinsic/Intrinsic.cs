@@ -101,14 +101,18 @@ namespace Miniscript.intrinsic {
 			all = new List<Intrinsic>() { null };
 			nameMap = new Dictionary<string, Intrinsic>();
 			random = new Random();
+
+			IntrinsicInjector.InitFunctions(new IntrinsicFunctions());
+
 			
 			// abs
 			//	Returns the absolute value of the given number.
 			// x (number, default 0): number to take the absolute value of.
 			// Example: abs(-42)		returns 42
-			var f = Create(ABS);
-			f.AddDoubleParam("x");
-			f.Сode = (context, partialResult) => new Result(Math.Abs(context.GetLocalDouble("x")));
+			
+			// var f = Create(ABS);
+			// f.AddDoubleParam("x");
+			// f.Сode = (context, partialResult) => new Result(Math.Abs(context.GetLocalDouble("x")));
 
 			// acos
 			//	Returns the inverse cosine, that is, the angle 
@@ -116,7 +120,7 @@ namespace Miniscript.intrinsic {
 			// x (number, default 0): cosine of the angle to find.
 			// Returns: angle, in radians, whose cosine is x.
 			// Example: acos(0) 		returns 1.570796
-			f = Create(ACOS);
+			var f = Create(ACOS);
 			f.AddDoubleParam("x");
 			f.Сode = (context, partialResult) => new Result(Math.Acos(context.GetLocalDouble("x")));
 
@@ -142,14 +146,15 @@ namespace Miniscript.intrinsic {
 			// x (number, default 1): length of the side adjacent the angle
 			// Returns: angle, in radians, whose tangent is y/x
 			// Example: atan(1, -1)		returns 2.356194
-			f = Create(ATAN);
-			f.AddDoubleParam("y", 0);
-			f.AddDoubleParam("x", 1);
-			f.Сode = (context, partialResult) => {
-				var y = context.GetLocalDouble("y");
-				var x = context.GetLocalDouble("x");
-				return x == 1.0 ? new Result(Math.Atan(y)) : new Result(Math.Atan2(y, x));
-			};
+			
+			// f = Create(ATAN);
+			// f.AddDoubleParam("y", 0);
+			// f.AddDoubleParam("x", 1);
+			// f.Сode = (context, partialResult) => {
+			// 	var y = context.GetLocalDouble("y");
+			// 	var x = context.GetLocalDouble("x");
+			// 	return x == 1.0 ? new Result(Math.Atan(y)) : new Result(Math.Atan2(y, x));
+			// };
 
 			// bitAnd
 			//	Treats its arguments as integers, and computes the bitwise
