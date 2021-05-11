@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Miniscript.types;
 
 namespace Miniscript.intrinsic {
@@ -108,17 +110,7 @@ namespace Miniscript.intrinsic {
         public double Ceil(double x = 0) {
             return Math.Ceiling(x);
         }
-        
-        // code
-        //	Return the Unicode code point of the first character of
-        //	the given string.  This is the inverse of `char`.
-        //	May be called with function syntax or dot syntax.
-        // self (string): string to get the code point of
-        // Returns: Unicode code point of the first character of self
-        // Example: "*".code		returns 42
-        // Example: code("*")		returns 42
-        
-        
+
         // cos
         //	Returns the cosine of the given angle (in radians).
         // radians (number): angle, in radians, to get the cosine of
@@ -138,17 +130,7 @@ namespace Miniscript.intrinsic {
         public double Floor(double x = 0) {
             return Math.Floor(x);
         }
-        
-        // funcRef
-        //	Returns a map that represents a function reference in
-        //	Minisript's core type system.  This can be used with `isa`
-        //	to check whether a variable refers to a function (but be
-        //	sure to use @ to avoid invoking the function and testing
-        //	the result).
-        // Example: @floor isa funcRef		returns 1
-        // See also: number, string, list, map
-        
-        
+
         // hash
         //	Returns an integer that is "relatively unique" to the given value.
         //	In the case of strings, the hash is case-sensitive.  In the case
@@ -161,6 +143,37 @@ namespace Miniscript.intrinsic {
             return obj.Hash();
         }
         
+        // self.join
+        //	Join the elements of a list together to form a string.
+        // self (list): list to join
+        // delimiter (string, default " "): string to insert between each pair of elements
+        // Returns: string built by joining elements of self with delimiter
+        // Example: [2,4,8].join("-")		returns "2-4-8"
+        // See also: split
+        public string Join(Value self, string delimiter = " ") {
+            if (!(self is ValList valList)) return self.ToString();
+            
+            var list = new List<string>(valList.Values.Count);
+            list.AddRange(valList.Values.Select(t => t?.ToString()));
+            return string.Join(delimiter, list.ToArray());
+        }
+        
+        // self.len
+        //	Return the number of characters in a string, elements in
+        //	a list, or key/value pairs in a map.
+        //	May be called with function syntax or dot syntax.
+        // self (list, string, or map): object to get the length of
+        // Returns: length (number of elements) in self
+        // Example: "hello".len		returns 5
+        public int Len(Value self) {
+            return self switch {
+                ValList valList => valList.Values.Count,
+                ValString valString => valString.Value.Length,
+                ValMap map => map.Count,
+                _ => 0
+            };
+        }
+
     }
 
 }

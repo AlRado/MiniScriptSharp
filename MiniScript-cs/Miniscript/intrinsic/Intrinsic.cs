@@ -493,18 +493,18 @@ namespace Miniscript.intrinsic {
 			// Returns: string built by joining elements of self with delimiter
 			// Example: [2,4,8].join("-")		returns "2-4-8"
 			// See also: split
-			f = Create(JOIN);
-			f.AddParam(SELF);
-			f.AddStringParam("delimiter", " ");
-			f.Сode = (context, partialResult) => {
-				var val = context.Self;
-				var delimiter = context.GetVar("delimiter").ToString();
-				if (!(val is ValList valList)) return new Result(val);
-				var list = new List<string>(valList.Values.Count);
-				list.AddRange(valList.Values.Select(t => t?.ToString()));
-				var result = string.Join(delimiter, list.ToArray());
-				return new Result(result);
-			};
+			// f = Create(JOIN);
+			// f.AddParam(SELF);
+			// f.AddStringParam("delimiter", " ");
+			// f.Сode = (context, partialResult) => {
+			// 	var val = context.Self;
+			// 	var delimiter = context.GetVar("delimiter").ToString();
+			// 	if (!(val is ValList valList)) return new Result(val);
+			// 	var list = new List<string>(valList.Values.Count);
+			// 	list.AddRange(valList.Values.Select(t => t?.ToString()));
+			// 	var result = string.Join(delimiter, list.ToArray());
+			// 	return new Result(result);
+			// };
 			
 			// self.len
 			//	Return the number of characters in a string, elements in
@@ -513,16 +513,16 @@ namespace Miniscript.intrinsic {
 			// self (list, string, or map): object to get the length of
 			// Returns: length (number of elements) in self
 			// Example: "hello".len		returns 5
-			f = Create(LEN);
-			f.AddParam(SELF);
-			f.Сode = (context, partialResult) => {
-				return context.Self switch {
-					ValList valList => new Result(valList.Values.Count),
-					ValString valString => new Result(valString.Value.Length),
-					ValMap map => new Result(map.Count),
-					_ => Result.Null
-				};
-			};
+			// f = Create(LEN);
+			// f.AddParam(SELF);
+			// f.Сode = (context, partialResult) => {
+			// 	return context.Self switch {
+			// 		ValList valList => new Result(valList.Values.Count),
+			// 		ValString valString => new Result(valString.Value.Length),
+			// 		ValMap map => new Result(map.Count),
+			// 		_ => Result.Null
+			// 	};
+			// };
 			
 			// list type
 			//	Returns a map that represents the list datatype in

@@ -64,7 +64,7 @@ namespace Miniscript.intrinsic {
                         case Type s when ReferenceEquals(s, typeof(string)):
                             if (parameter.RawDefaultValue is string defaultString) {
                                 function.AddStringParam(parameter.Name, defaultString);
-                                msg += $" = {defaultString}";
+                                msg += $" = \"{defaultString}\"";
                             } else {
                                 function.AddStringParam(parameter.Name);
                             }
@@ -109,7 +109,11 @@ namespace Miniscript.intrinsic {
                                 parametersValues.Add(paramEnabled ? context.GetLocalString(parameter.Name) : parameter.RawDefaultValue);
                                 break;
                             case Type v when ReferenceEquals(v, typeof(Value)):
-                                parametersValues.Add(paramEnabled ? context.GetLocal(parameter.Name) : parameter.RawDefaultValue);
+                                var paramValue = paramEnabled ? context.GetLocal(parameter.Name) : parameter.RawDefaultValue;
+                                if (parameter.Name == Consts.SELF) {
+                                    paramValue = context.Self;
+                                }
+                                parametersValues.Add(paramValue);
                                 break;
                             default:
                                 throw new Exception($"ParameterType: {parameter.ParameterType} not supported!");
