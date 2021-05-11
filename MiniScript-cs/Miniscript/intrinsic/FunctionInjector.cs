@@ -9,7 +9,7 @@ namespace Miniscript.intrinsic {
     public static class FunctionInjector {
 
         public static void AddFunctions(object classInstance) {
-            Console.WriteLine($"Intrinsic Injector started, functions injected:");
+            Console.WriteLine($"Function injector added functions:");
             
             var methods = classInstance.GetType()
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
