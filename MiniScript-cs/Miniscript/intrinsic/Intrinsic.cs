@@ -102,7 +102,7 @@ namespace Miniscript.intrinsic {
 			nameMap = new Dictionary<string, Intrinsic>();
 			random = new Random();
 
-			IntrinsicInjector.InitFunctions(new IntrinsicFunctions());
+			FunctionInjector.AddFunctions(new IntrinsicFunctions());
 
 			
 			// abs

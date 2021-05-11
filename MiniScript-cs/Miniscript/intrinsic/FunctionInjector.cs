@@ -6,9 +6,9 @@ using Microsoft.CSharp;
 
 namespace Miniscript.intrinsic {
 
-    public static class IntrinsicInjector {
+    public static class FunctionInjector {
 
-        public static void InitFunctions(object classInstance) {
+        public static void AddFunctions(object classInstance) {
             Console.WriteLine($"Intrinsic Injector started, functions injected:");
             
             var methods = classInstance.GetType()
