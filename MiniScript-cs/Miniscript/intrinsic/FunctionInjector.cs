@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.CSharp;
+using Miniscript.types;
 
 namespace Miniscript.intrinsic {
 
@@ -67,6 +68,14 @@ namespace Miniscript.intrinsic {
                             } else {
                                 function.AddStringParam(parameter.Name);
                             }
+                            break;                        
+                        case Type v when ReferenceEquals(v, typeof(Value)):
+                            if (parameter.RawDefaultValue is Value defaultValue) {
+                                function.AddParam(parameter.Name, defaultValue);
+                                msg += $" = {defaultValue}";
+                            } else {
+                                function.AddStringParam(parameter.Name);
+                            }
                             break;
 
                         default:
@@ -99,6 +108,9 @@ namespace Miniscript.intrinsic {
                             case Type s when ReferenceEquals(s, typeof(string)):
                                 parametersValues.Add(paramEnabled ? context.GetLocalString(parameter.Name) : parameter.RawDefaultValue);
                                 break;
+                            case Type v when ReferenceEquals(v, typeof(Value)):
+                                parametersValues.Add(paramEnabled ? context.GetLocal(parameter.Name) : parameter.RawDefaultValue);
+                                break;
                             default:
                                 throw new Exception($"ParameterType: {parameter.ParameterType} not supported!");
                         }
@@ -124,6 +136,8 @@ namespace Miniscript.intrinsic {
                     return new Result((double)method.Invoke(classInstance, parameters));
                 case Type s when ReferenceEquals(s, typeof(string)):
                     return new Result((string) method.Invoke(classInstance, parameters));
+                case Type v when ReferenceEquals(v, typeof(Value)):
+                    return new Result((Value) method.Invoke(classInstance, parameters));
                 default:
                     throw new Exception($"Returned Type: {returnedType} not supported!");
             }

@@ -183,14 +183,14 @@ namespace Miniscript.intrinsic {
 			// Returns: bitwise `or` of i and j
 			// Example: bitOr(14, 7)		returns 15
 			// See also: bitAnd; bitXor
-			f = Create(BIT_OR);
-			f.AddIntParam("i");
-			f.AddIntParam("j");
-			f.Сode = (context, partialResult) => {
-				var i = context.GetLocalInt("i");
-				var j = context.GetLocalInt("j");
-				return new Result(i | j);
-			};
+			// f = Create(BIT_OR);
+			// f.AddIntParam("i");
+			// f.AddIntParam("j");
+			// f.Сode = (context, partialResult) => {
+			// 	var i = context.GetLocalInt("i");
+			// 	var j = context.GetLocalInt("j");
+			// 	return new Result(i | j);
+			// };
 			
 			// bitXor
 			//	Treats its arguments as integers, and computes the bitwise
@@ -201,14 +201,14 @@ namespace Miniscript.intrinsic {
 			// Returns: bitwise `and` of i and j
 			// Example: bitAnd(14, 7)		returns 9
 			// See also: bitAnd; bitOr
-			f = Create(BIT_XOR);
-			f.AddIntParam("i");
-			f.AddIntParam("j");
-			f.Сode = (context, partialResult) => {
-				var i = context.GetLocalInt("i");
-				var j = context.GetLocalInt("j");
-				return new Result(i ^ j);
-			};
+			// f = Create(BIT_XOR);
+			// f.AddIntParam("i");
+			// f.AddIntParam("j");
+			// f.Сode = (context, partialResult) => {
+			// 	var i = context.GetLocalInt("i");
+			// 	var j = context.GetLocalInt("j");
+			// 	return new Result(i ^ j);
+			// };
 			
 			// char
 			//	Gets a character from its Unicode code point.
@@ -216,13 +216,13 @@ namespace Miniscript.intrinsic {
 			// Returns: string containing the specified character
 			// Example: char(42)		returns "*"
 			// See also: code
-			f = Create(CHAR);
-			f.AddIntParam("codePoint", 65);
-			f.Сode = (context, partialResult) => {
-				var codepoint = context.GetLocalInt("codePoint");
-				var s = char.ConvertFromUtf32(codepoint);
-				return new Result(s);
-			};
+			// f = Create(CHAR);
+			// f.AddIntParam("codePoint", 65);
+			// f.Сode = (context, partialResult) => {
+			// 	var codepoint = context.GetLocalInt("codePoint");
+			// 	var s = char.ConvertFromUtf32(codepoint);
+			// 	return new Result(s);
+			// };
 			
 			// ceil
 			//	Returns the "ceiling", i.e. closest whole number 
@@ -231,9 +231,9 @@ namespace Miniscript.intrinsic {
 			// Returns: closest whole number not less than x
 			// Example: ceil(41.2)		returns 42
 			// See also: floor
-			f = Create(CEIL);
-			f.AddDoubleParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Ceiling(context.GetLocalDouble("x")));
+			// f = Create(CEIL);
+			// f.AddDoubleParam("x", 0);
+			// f.Сode = (context, partialResult) => new Result(Math.Ceiling(context.GetLocalDouble("x")));
 			
 			// code
 			//	Return the Unicode code point of the first character of
@@ -257,9 +257,9 @@ namespace Miniscript.intrinsic {
 			// radians (number): angle, in radians, to get the cosine of
 			// Returns: cosine of the given angle
 			// Example: cos(0)		returns 1
-			f = Create(COS);
-			f.AddDoubleParam("radians", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Cos(context.GetLocalDouble("radians")));
+			// f = Create(COS);
+			// f.AddDoubleParam("radians", 0);
+			// f.Сode = (context, partialResult) => new Result(Math.Cos(context.GetLocalDouble("radians")));
 
 			// floor
 			//	Returns the "floor", i.e. closest whole number 
@@ -268,9 +268,9 @@ namespace Miniscript.intrinsic {
 			// Returns: closest whole number not more than x
 			// Example: floor(42.9)		returns 42
 			// See also: floor
-			f = Create(FLOOR);
-			f.AddDoubleParam("x", 0);
-			f.Сode = (context, partialResult) => new Result(Math.Floor(context.GetLocalDouble("x")));
+			// f = Create(FLOOR);
+			// f.AddDoubleParam("x", 0);
+			// f.Сode = (context, partialResult) => new Result(Math.Floor(context.GetLocalDouble("x")));
 
 			// funcRef
 			//	Returns a map that represents a function reference in
@@ -294,12 +294,12 @@ namespace Miniscript.intrinsic {
 			//	across different Minisript implementations.
 			// obj (any type): value to hash
 			// Returns: integer hash of the given value
-			f = Create(HASH);
-			f.AddParam("obj");
-			f.Сode = (context, partialResult) => {
-				var val = context.GetVar("obj");
-				return new Result(val.Hash());
-			};
+			// f = Create(HASH);
+			// f.AddParam("obj");
+			// f.Сode = (context, partialResult) => {
+			// 	var val = context.GetVar("obj");
+			// 	return new Result(val.Hash());
+			// };
 
 			// hasIndex
 			//	Return whether the given index is valid for this object, that is,
