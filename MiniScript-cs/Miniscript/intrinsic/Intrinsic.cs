@@ -104,12 +104,12 @@ namespace Miniscript.intrinsic {
 
 			FunctionInjector.AddFunctions(new IntrinsicFunctions());
 
+			Intrinsic f;
 			
 			// abs
 			//	Returns the absolute value of the given number.
 			// x (number, default 0): number to take the absolute value of.
 			// Example: abs(-42)		returns 42
-			
 			// var f = Create(ABS);
 			// f.AddDoubleParam("x");
 			// f.Сode = (context, partialResult) => new Result(Math.Abs(context.GetLocalDouble("x")));
@@ -120,9 +120,9 @@ namespace Miniscript.intrinsic {
 			// x (number, default 0): cosine of the angle to find.
 			// Returns: angle, in radians, whose cosine is x.
 			// Example: acos(0) 		returns 1.570796
-			var f = Create(ACOS);
-			f.AddDoubleParam("x");
-			f.Сode = (context, partialResult) => new Result(Math.Acos(context.GetLocalDouble("x")));
+			// var f = Create(ACOS);
+			// f.AddDoubleParam("x");
+			// f.Сode = (context, partialResult) => new Result(Math.Acos(context.GetLocalDouble("x")));
 
 			// asin
 			//	Returns the inverse sine, that is, the angle
@@ -130,9 +130,9 @@ namespace Miniscript.intrinsic {
 			// x (number, default 0): cosine of the angle to find.
 			// Returns: angle, in radians, whose cosine is x.
 			// Example: asin(1) return 1.570796
-			f = Create(ASIN);
-			f.AddDoubleParam("x");
-			f.Сode = (context, partialResult) => new Result(Math.Asin(context.GetLocalDouble("x")));
+			// f = Create(ASIN);
+			// f.AddDoubleParam("x");
+			// f.Сode = (context, partialResult) => new Result(Math.Asin(context.GetLocalDouble("x")));
 
 			// atan
 			//	Returns the arctangent of a value or ratio, that is, the
@@ -165,14 +165,14 @@ namespace Miniscript.intrinsic {
 			// Returns: bitwise `and` of i and j
 			// Example: bitAnd(14, 7)		returns 6
 			// See also: bitOr; bitXor
-			f = Create(BIT_AND);
-			f.AddIntParam("i");
-			f.AddIntParam("j");
-			f.Сode = (context, partialResult) => {
-				var i = context.GetLocalInt("i");
-				var j = context.GetLocalInt("j");
-				return new Result(i & j);
-			};
+			// f = Create(BIT_AND);
+			// f.AddIntParam("i");
+			// f.AddIntParam("j");
+			// f.Сode = (context, partialResult) => {
+			// 	var i = context.GetLocalInt("i");
+			// 	var j = context.GetLocalInt("j");
+			// 	return new Result(i & j);
+			// };
 			
 			// bitOr
 			//	Treats its arguments as integers, and computes the bitwise

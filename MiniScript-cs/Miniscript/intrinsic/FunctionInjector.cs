@@ -20,7 +20,7 @@ namespace Miniscript.intrinsic {
                 var methodName = new string(nameChars);
                 
                 var function = Intrinsic.Create(methodName);
-                var msg = $"\t{GetAlias(info.ReturnType)} {methodName} (";
+                var msg = $"\t{GetAlias(info.ReturnType)} {methodName}(";
                 var firstParam = true;
                 foreach (var parameter in info.GetParameters()) {
                     if (!firstParam) msg += ", ";
@@ -29,9 +29,6 @@ namespace Miniscript.intrinsic {
 
                     switch (parameter.ParameterType) {
                         case Type d when ReferenceEquals(d, typeof(double)):
-                        case Type f when ReferenceEquals(f, typeof(float)):
-                        case Type i when ReferenceEquals(i, typeof(int)):
-                        case Type b when ReferenceEquals(b, typeof(bool)):
                             if (parameter.RawDefaultValue is double defaultDouble) {
                                 function.AddDoubleParam(parameter.Name, defaultDouble);
                                 msg += $" = {defaultDouble}";
@@ -39,7 +36,30 @@ namespace Miniscript.intrinsic {
                                 function.AddDoubleParam(parameter.Name);
                             }
                             break;
-
+                        case Type f when ReferenceEquals(f, typeof(float)):
+                            if (parameter.RawDefaultValue is float defaultFloat) {
+                                function.AddFloatParam(parameter.Name, defaultFloat);
+                                msg += $" = {defaultFloat}";
+                            } else {
+                                function.AddFloatParam(parameter.Name);
+                            }
+                            break;
+                        case Type i when ReferenceEquals(i, typeof(int)):
+                            if (parameter.RawDefaultValue is int defaultInt) {
+                                function.AddIntParam(parameter.Name, defaultInt);
+                                msg += $" = {defaultInt}";
+                            } else {
+                                function.AddIntParam(parameter.Name);
+                            }
+                            break;
+                        case Type b when ReferenceEquals(b, typeof(bool)):
+                            if (parameter.RawDefaultValue is bool defaultBool) {
+                                function.AddBoolParam(parameter.Name, defaultBool);
+                                msg += $" = {defaultBool}";
+                            } else {
+                                function.AddBoolParam(parameter.Name);
+                            }
+                            break;
                         case Type s when ReferenceEquals(s, typeof(string)):
                             if (parameter.RawDefaultValue is string defaultString) {
                                 function.AddStringParam(parameter.Name, defaultString);
@@ -65,18 +85,19 @@ namespace Miniscript.intrinsic {
 
                         switch (parameter.ParameterType) {
                             case Type d when ReferenceEquals(d, typeof(double)):
-                            case Type f when ReferenceEquals(f, typeof(float)):
-                            case Type i when ReferenceEquals(i, typeof(int)):
-                            case Type b when ReferenceEquals(b, typeof(bool)):
-                                parametersValues.Add(paramEnabled
-                                    ? context.GetLocalDouble(parameter.Name)
-                                    : parameter.RawDefaultValue);
+                                parametersValues.Add(paramEnabled ? context.GetLocalDouble(parameter.Name) : parameter.RawDefaultValue);
                                 break;
-
+                            case Type f when ReferenceEquals(f, typeof(float)):
+                                parametersValues.Add(paramEnabled ? context.GetLocalFloat(parameter.Name) : parameter.RawDefaultValue);
+                                break;
+                            case Type i when ReferenceEquals(i, typeof(int)):
+                                parametersValues.Add(paramEnabled ? context.GetLocalInt(parameter.Name) : parameter.RawDefaultValue);
+                                break;
+                            case Type b when ReferenceEquals(b, typeof(bool)):
+                                parametersValues.Add(paramEnabled ? context.GetLocalBool(parameter.Name) : parameter.RawDefaultValue);
+                                break;
                             case Type s when ReferenceEquals(s, typeof(string)):
-                                parametersValues.Add(paramEnabled
-                                    ? context.GetLocalString(parameter.Name)
-                                    : parameter.RawDefaultValue);
+                                parametersValues.Add(paramEnabled ? context.GetLocalString(parameter.Name) : parameter.RawDefaultValue);
                                 break;
                             default:
                                 throw new Exception($"ParameterType: {parameter.ParameterType} not supported!");
@@ -86,6 +107,7 @@ namespace Miniscript.intrinsic {
                     return GetResult(classInstance, info.Name, info.ReturnType, parametersValues.ToArray());
                 };
             }
+            Console.WriteLine();
         }
 
         private static Result GetResult(object classInstance, string methodName, Type returnedType,
@@ -93,14 +115,15 @@ namespace Miniscript.intrinsic {
             var method = classInstance.GetType().GetMethod(methodName);
             switch (returnedType) {
                 case Type d when ReferenceEquals(d, typeof(double)):
-                case Type f when ReferenceEquals(f, typeof(float)):
-                case Type i when ReferenceEquals(i, typeof(int)):
-                case Type b when ReferenceEquals(b, typeof(bool)):
                     return new Result((double) method.Invoke(classInstance, parameters));
-
+                case Type f when ReferenceEquals(f, typeof(float)):
+                    return new Result((float) method.Invoke(classInstance, parameters));
+                case Type i when ReferenceEquals(i, typeof(int)):
+                    return new Result((int) method.Invoke(classInstance, parameters));
+                case Type b when ReferenceEquals(b, typeof(bool)):
+                    return new Result((double)method.Invoke(classInstance, parameters));
                 case Type s when ReferenceEquals(s, typeof(string)):
                     return new Result((string) method.Invoke(classInstance, parameters));
-
                 default:
                     throw new Exception($"Returned Type: {returnedType} not supported!");
             }
