@@ -8,7 +8,11 @@ namespace Miniscript.intrinsic {
             Console.WriteLine("This is private function - not for injecting");
         }
         
-        public double Abs_temp(double x) {
+        public void VoidFunc(string x) {
+            Console.WriteLine("Void function");
+        }
+        
+        public double AbsTemp(double x) {
             return Math.Abs(x);
         }
         

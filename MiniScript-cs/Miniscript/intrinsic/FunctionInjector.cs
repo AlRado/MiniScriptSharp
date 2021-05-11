@@ -15,7 +15,10 @@ namespace Miniscript.intrinsic {
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
             foreach (var info in methods) {
-                var methodName = info.Name.ToLower();
+                var nameChars = info.Name.ToCharArray();
+                nameChars[0] = char.ToLower(nameChars[0]);
+                var methodName = new string(nameChars);
+                
                 var function = Intrinsic.Create(methodName);
                 var msg = $"\t{GetAlias(info.ReturnType)} {methodName} (";
                 var firstParam = true;
