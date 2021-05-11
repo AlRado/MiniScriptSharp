@@ -174,6 +174,35 @@ namespace Miniscript.intrinsic {
             };
         }
 
+        // log(x, base)
+        //	Returns the logarithm (with the given) of the given number,
+        //	that is, the number y such that base^y = x.
+        // x (number): number to take the log of
+        // base (number, default 10): logarithm base
+        // Returns: a number that, when base is raised to it, produces x
+        // Example: log(1000)		returns 3 (because 10^3 == 1000)
+        public double Log(double x = 0, double @base = 10) {
+            double result;
+            if (Math.Abs(@base - 2.718282) < 0.000001) result = Math.Log(x);
+            else result = Math.Log(x) / Math.Log(@base);
+
+            return result;
+        }
+        
+        // lower
+        //	Return a lower-case version of a string.
+        //	May be called with function syntax or dot syntax.
+        // self (string): string to lower-case
+        // Returns: string with all capital letters converted to lowercase
+        // Example: "Mo Spam".lower		returns "mo spam"
+        // See also: upper
+        public string Lower(Value self) {
+            if (!(self is ValString valString)) return self.ToString();
+            
+            return valString.Value.ToLower();
+        }
+        
+
     }
 
 }

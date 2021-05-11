@@ -544,17 +544,17 @@ namespace Miniscript.intrinsic {
 			// base (number, default 10): logarithm base
 			// Returns: a number that, when base is raised to it, produces x
 			// Example: log(1000)		returns 3 (because 10^3 == 1000)
-			f = Create(LOG);
-			f.AddDoubleParam("x", 0);
-			f.AddDoubleParam("base", 10);
-			f.Сode = (context, partialResult) => {
-				var x = context.GetLocalDouble("x");
-				var b = context.GetLocalDouble("base");
-				double result;
-				if (Math.Abs(b - 2.718282) < 0.000001) result = Math.Log(x);
-				else result = Math.Log(x) / Math.Log(b);
-				return new Result(result);
-			};
+			// f = Create(LOG);
+			// f.AddDoubleParam("x", 0);
+			// f.AddDoubleParam("base", 10);
+			// f.Сode = (context, partialResult) => {
+			// 	var x = context.GetLocalDouble("x");
+			// 	var b = context.GetLocalDouble("base");
+			// 	double result;
+			// 	if (Math.Abs(b - 2.718282) < 0.000001) result = Math.Log(x);
+			// 	else result = Math.Log(x) / Math.Log(b);
+			// 	return new Result(result);
+			// };
 			
 			// lower
 			//	Return a lower-case version of a string.
@@ -563,14 +563,14 @@ namespace Miniscript.intrinsic {
 			// Returns: string with all capital letters converted to lowercase
 			// Example: "Mo Spam".lower		returns "mo spam"
 			// See also: upper
-			f = Create(LOWER);
-			f.AddParam(SELF);
-			f.Сode = (context, partialResult) => {
-				var val = context.Self;
-				if (!(val is ValString valString)) return new Result(val);
-				var str = valString.Value;
-				return new Result(str.ToLower());
-			};
+			// f = Create(LOWER);
+			// f.AddParam(SELF);
+			// f.Сode = (context, partialResult) => {
+			// 	var val = context.Self;
+			// 	if (!(val is ValString valString)) return new Result(val);
+			// 	var str = valString.Value;
+			// 	return new Result(str.ToLower());
+			// };
 
 			// map type
 			//	Returns a map that represents the map datatype in
