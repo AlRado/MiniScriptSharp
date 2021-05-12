@@ -40,7 +40,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="errors\CompilerException.cs" />
-        <Compile Include="errors\Errors.cs" />
+        <Compile Include="errors\Check.cs" />
         <Compile Include="errors\IndexException.cs" />
         <Compile Include="errors\KeyException.cs" />
         <Compile Include="errors\LexerException.cs" />
@@ -52,11 +52,15 @@
         <Compile Include="errors\TypeException.cs" />
         <Compile Include="errors\UndefinedIdentifierException.cs" />
         <Compile Include="interpreter\Interpreter.cs" />
+        <Compile Include="intrinsic\Consts.cs" />
         <Compile Include="intrinsic\HostInfo.cs" />
         <Compile Include="intrinsic\Intrinsic.cs" />
         <Compile Include="intrinsic\IntrinsicCode.cs" />
+        <Compile Include="intrinsic\IntrinsicFunctions.cs" />
+        <Compile Include="intrinsic\FunctionInjector.cs" />
         <Compile Include="intrinsic\KeyedValue.cs" />
         <Compile Include="intrinsic\Result.cs" />
+        <Compile Include="keywords\Consts.cs" />
         <Compile Include="keywords\Keywords.cs" />
         <Compile Include="lexer\Lexer.cs" />
         <Compile Include="lexer\Token.cs" />
@@ -70,10 +74,12 @@
         <Compile Include="tac\Context.cs" />
         <Compile Include="tac\Line.cs" />
         <Compile Include="tac\Machine.cs" />
+        <Compile Include="tac\Op.cs" />
         <Compile Include="tac\TAC.cs" />
         <Compile Include="tests\TestSuite.cs" />
         <Compile Include="tests\UnitTest.cs" />
         <Compile Include="types\Function.cs" />
+        <Compile Include="types\Param.cs" />
         <Compile Include="types\RValueEqualityComparer.cs" />
         <Compile Include="types\TempValString.cs" />
         <Compile Include="types\ValFunction.cs" />
