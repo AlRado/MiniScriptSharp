@@ -16,3 +16,15 @@ C:\AlRado\miniscript-cs\MiniScript-cs\Miniscript\obj\Debug\Miniscript.csprojAsse
 C:\AlRado\miniscript-cs\MiniScript-cs\Miniscript\obj\Debug\Miniscript.csproj.CoreCompileInputs.cache
 C:\AlRado\miniscript-cs\MiniScript-cs\Miniscript\obj\Debug\Miniscript.exe
 C:\AlRado\miniscript-cs\MiniScript-cs\Miniscript\obj\Debug\Miniscript.pdb
+C:\Projects\test\Mini\miniscript-cs\MiniScript-cs\Miniscript\bin\Debug\Miniscript.exe
+C:\Projects\test\Mini\miniscript-cs\MiniScript-cs\Miniscript\bin\Debug\Miniscript.pdb
+C:\Projects\test\Mini\miniscript-cs\MiniScript-cs\Miniscript\obj\Debug\Miniscript.csprojAssemblyReference.cache
+C:\Projects\test\Mini\miniscript-cs\MiniScript-cs\Miniscript\obj\Debug\Miniscript.csproj.CoreCompileInputs.cache
+C:\Projects\test\Mini\miniscript-cs\MiniScript-cs\Miniscript\obj\Debug\Miniscript.exe
+C:\Projects\test\Mini\miniscript-cs\MiniScript-cs\Miniscript\obj\Debug\Miniscript.pdb
+C:\Projects\test\Mini\miniscript-cs\miniscript\bin\Debug\Miniscript.exe
+C:\Projects\test\Mini\miniscript-cs\miniscript\bin\Debug\Miniscript.pdb
+C:\Projects\test\Mini\miniscript-cs\miniscript\obj\Debug\Miniscript.csprojAssemblyReference.cache
+C:\Projects\test\Mini\miniscript-cs\miniscript\obj\Debug\Miniscript.csproj.CoreCompileInputs.cache
+C:\Projects\test\Mini\miniscript-cs\miniscript\obj\Debug\Miniscript.exe
+C:\Projects\test\Mini\miniscript-cs\miniscript\obj\Debug\Miniscript.pdb

@@ -10,7 +10,7 @@ namespace Miniscript {
 	internal static class Program {
 
 		private const string TestSuiteFilePath = "../../tests/TestSuiteData.txt";
-		private const string QuickTestFilePath = "../../../QuickTest.mscp";
+		private const string QuickTestFilePath = "../../Miniscript/tests/QuickTest.mscp";
 	
 		public static void Main(string[] args) {
 			HostInfo.Name = "Test harness";
