@@ -7,6 +7,8 @@ namespace Miniscript.intrinsic {
 
     public class IntrinsicFunctions {
         
+        private static Random random = new Random();
+        
         // abs
         //	Returns the absolute value of the given number.
         // x (number, default 0): number to take the absolute value of.
@@ -63,7 +65,7 @@ namespace Miniscript.intrinsic {
         public int BitAnd(int i, int j) {
             return i & j;
         }
-
+        
         // bitOr
         //	Treats its arguments as integers, and computes the bitwise
         //	`or`: each bit in the result is set if the corresponding
@@ -110,7 +112,21 @@ namespace Miniscript.intrinsic {
         public double Ceil(double x = 0) {
             return Math.Ceiling(x);
         }
-
+        
+        // code
+        //	Return the Unicode code point of the first character of
+        //	the given string.  This is the inverse of `char`.
+        //	May be called with function syntax or dot syntax.
+        // self (string): string to get the code point of
+        // Returns: Unicode code point of the first character of self
+        // Example: "*".code		returns 42
+        // Example: code("*")		returns 42
+        public int Code(Value self) {
+            var codepoint = 0;
+            if (self != null) codepoint = char.ConvertToUtf32(self.ToString(), 0);
+            return codepoint;
+        }
+        
         // cos
         //	Returns the cosine of the given angle (in radians).
         // radians (number): angle, in radians, to get the cosine of
@@ -130,7 +146,7 @@ namespace Miniscript.intrinsic {
         public double Floor(double x = 0) {
             return Math.Floor(x);
         }
-
+        
         // hash
         //	Returns an integer that is "relatively unique" to the given value.
         //	In the case of strings, the hash is case-sensitive.  In the case
@@ -173,7 +189,7 @@ namespace Miniscript.intrinsic {
                 _ => 0
             };
         }
-
+        
         // log(x, base)
         //	Returns the logarithm (with the given) of the given number,
         //	that is, the number y such that base^y = x.
@@ -185,7 +201,7 @@ namespace Miniscript.intrinsic {
             double result;
             if (Math.Abs(@base - 2.718282) < 0.000001) result = Math.Log(x);
             else result = Math.Log(x) / Math.Log(@base);
-
+        
             return result;
         }
         
@@ -202,7 +218,39 @@ namespace Miniscript.intrinsic {
             return valString.Value.ToLower();
         }
         
-
+        // pi
+        //	Returns the universal constant π, that is, the ratio of
+        //	a circle's circumference to its diameter.
+        // Example: pi		returns 3.141593
+        public double Pi() {
+            return Math.PI;
+        }
+        
+        // round
+        //	Rounds a number to the specified number of decimal places.  If given
+        //	a negative number for decimalPlaces, then rounds to a power of 10:
+        //	-1 rounds to the nearest 10, -2 rounds to the nearest 100, etc.
+        // x (number): number to round
+        // decimalPlaces (number, defaults to 0): how many places past the decimal point to round to
+        // Example: round(pi, 2)		returns 3.14
+        // Example: round(12345, -3)		returns 12000
+        public double Round(double x, int decimalPlaces) {
+            return Math.Round(x, decimalPlaces);
+        }
+        
+        // rnd
+        //	Generates a pseudorandom number between 0 and 1 (including 0 but
+        //	not including 1).  If given a seed, then the generator is reset
+        //	with that seed value, allowing you to create repeatable sequences
+        //	of random numbers.  If you never specify a seed, then it is
+        //	initialized automatically, generating a unique sequence on each run.
+        // seed (number, optional): if given, reset the sequence with this value
+        // Returns: pseudorandom number in the range [0,1)
+        public double Rnd(int seed) {
+            if (seed != 0) random = new Random(seed);
+            return random.NextDouble();
+        }
+        
     }
 
 }

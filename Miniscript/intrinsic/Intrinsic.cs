@@ -244,14 +244,14 @@ namespace Miniscript.intrinsic {
 			// Returns: Unicode code point of the first character of self
 			// Example: "*".code		returns 42
 			// Example: code("*")		returns 42
-			f = Create(CODE);
-			f.AddParam(SELF);
-			f.Сode = (context, partialResult) => {
-				var self = context.Self;
-				var codepoint = 0;
-				if (self != null) codepoint = char.ConvertToUtf32(self.ToString(), 0);
-				return new Result(codepoint);
-			};
+			// f = Create(CODE);
+			// f.AddParam(SELF);
+			// f.Сode = (context, partialResult) => {
+			// 	var self = context.Self;
+			// 	var codepoint = 0;
+			// 	if (self != null) codepoint = char.ConvertToUtf32(self.ToString(), 0);
+			// 	return new Result(codepoint);
+			// };
 						
 			// cos
 			//	Returns the cosine of the given angle (in radians).
@@ -605,8 +605,8 @@ namespace Miniscript.intrinsic {
 			//	Returns the universal constant π, that is, the ratio of
 			//	a circle's circumference to its diameter.
 			// Example: pi		returns 3.141593
-			f = Create(PI);
-			f.Сode = (context, partialResult) => new Result(Math.PI);
+			// f = Create(PI);
+			// f.Сode = (context, partialResult) => new Result(Math.PI);
 
 			// print
 			//	Display the given value on the default output stream.  The
@@ -892,14 +892,14 @@ namespace Miniscript.intrinsic {
 			// decimalPlaces (number, defaults to 0): how many places past the decimal point to round to
 			// Example: round(pi, 2)		returns 3.14
 			// Example: round(12345, -3)		returns 12000
-			f = Create(ROUND);
-			f.AddDoubleParam("x");
-			f.AddDoubleParam("decimalPlaces");
-			f.Сode = (context, partialResult) => {
-				var num = context.GetLocalDouble("x");
-				var decimalPlaces = context.GetLocalInt("decimalPlaces");
-				return new Result(Math.Round(num, decimalPlaces));
-			};
+			// f = Create(ROUND);
+			// f.AddDoubleParam("x");
+			// f.AddDoubleParam("decimalPlaces");
+			// f.Сode = (context, partialResult) => {
+			// 	var num = context.GetLocalDouble("x");
+			// 	var decimalPlaces = context.GetLocalInt("decimalPlaces");
+			// 	return new Result(Math.Round(num, decimalPlaces));
+			// };
 			
 			// rnd
 			//	Generates a pseudorandom number between 0 and 1 (including 0 but
@@ -909,13 +909,13 @@ namespace Miniscript.intrinsic {
 			//	initialized automatically, generating a unique sequence on each run.
 			// seed (number, optional): if given, reset the sequence with this value
 			// Returns: pseudorandom number in the range [0,1)
-			f = Create(RND);
-			f.AddParam("seed");
-			f.Сode = (context, partialResult) => {
-				var seed = context.GetLocalInt("seed");
-				if (seed != 0) random = new Random(seed);
-				return new Result(random.NextDouble());
-			};
+			// f = Create(RND);
+			// f.AddParam("seed");
+			// f.Сode = (context, partialResult) => {
+			// 	var seed = context.GetLocalInt("seed");
+			// 	if (seed != 0) random = new Random(seed);
+			// 	return new Result(random.NextDouble());
+			// };
 
 			// sign
 			//	Return -1 for negative numbers, 1 for positive numbers, and 0 for zero.
