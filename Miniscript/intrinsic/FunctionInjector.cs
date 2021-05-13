@@ -74,7 +74,7 @@ namespace Miniscript.intrinsic {
                                 function.AddParam(parameter.Name, defaultValue);
                                 msg += $" = {defaultValue}";
                             } else {
-                                function.AddStringParam(parameter.Name);
+                                function.AddParam(parameter.Name);
                             }
                             break;
 
@@ -113,6 +113,9 @@ namespace Miniscript.intrinsic {
                                 if (parameter.Name == Consts.SELF) {
                                     paramValue = context.Self;
                                 }
+                                // Галифакс!
+                                if (paramValue is DBNull) paramValue = null;
+                                
                                 parametersValues.Add(paramValue);
                                 break;
                             default:

@@ -246,8 +246,8 @@ namespace Miniscript.intrinsic {
         //	initialized automatically, generating a unique sequence on each run.
         // seed (number, optional): if given, reset the sequence with this value
         // Returns: pseudorandom number in the range [0,1)
-        public double Rnd(int seed) {
-            if (seed != 0) random = new Random(seed);
+        public double Rnd(Value seed) {
+            if (seed != null) random = new Random(seed.IntValue());
             return random.NextDouble();
         }
         
