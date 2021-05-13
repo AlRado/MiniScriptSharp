@@ -6,6 +6,7 @@
         public const string IS_A = "__isa";
         public const string INDEX = "index";
         public const string NULL = "null";
+        public const string FUNCTION = "function";
         
         // intrinsic methods
         public const string ABS = "abs";
@@ -61,6 +62,7 @@
         public const string VERSION = "version";
         public const string WAIT = "wait";
         public const string YIELD = "yield";
+        public const string INTRINSIC = "intrinsic";
 
     }
 

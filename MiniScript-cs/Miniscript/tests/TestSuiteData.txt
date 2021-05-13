@@ -754,7 +754,7 @@ print f(6)
 ----------------------------------------------------------------------
 null
 15
-FUNCTION(n)
+function(n)
 18
 ======================================================================
 ==== While loop, with break and continue.
@@ -1270,7 +1270,7 @@ B
 C
 0
 1
-FUNCTION(seed)
+rnd(seed)
 ======================================================================
 ==== Check that invoking a non-function with arguments throws
 ==== a "too many arguments" exception (issue #35).

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using Miniscript.errors;
 using Miniscript.tac;
 using Miniscript.types;
@@ -1328,6 +1329,9 @@ namespace Miniscript.intrinsic {
 				context.Vm.Yielding = true;
 				return Result.Null;
 			};
+			
+			f = Create(INTRINSIC);
+			f.Сode = (context, partialResult) => new Result(GetAllIntrinsicInfo());
 
 			ListType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
 			ListType[INDEXES] = GetByName(INDEXES).GetFunc();
@@ -1380,7 +1384,7 @@ namespace Miniscript.intrinsic {
 		/// <param name="name">intrinsic name</param>
 		/// <returns>freshly minted (but empty) static Intrinsic</returns>
 		public static Intrinsic Create(string name) {
-			var result = new Intrinsic {Name = name, Id = all.Count, function = new Function(null)};
+			var result = new Intrinsic {Name = name, Id = all.Count, function = new Function(null, name: name)};
 			result.valFunction = new ValFunction(result.function);
 			all.Add(result);
 			nameMap[name] = result;
@@ -1392,6 +1396,14 @@ namespace Miniscript.intrinsic {
 		/// </summary>
 		public static Intrinsic GetByID(int id) {
 			return all[id];
+		}
+
+		public static string GetAllIntrinsicInfo() {
+			var sb = new StringBuilder();
+			foreach (var intrinsic in all) {
+				sb.Append($"{intrinsic?.GetFunc()}\n");
+			}
+			return sb.ToString();
 		}
 		
 		/// <summary>
