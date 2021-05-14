@@ -2,7 +2,7 @@
 
     public class Token {
         
-        public static readonly Token Eol = new Token(TokenType.Eol);
+        public static readonly Token Eol = new Token(TokenType.EOL);
 
         public TokenType TokenType;
         public string Text; // may be null for things like operators, whose text is fixed

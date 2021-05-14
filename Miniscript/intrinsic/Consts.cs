@@ -6,7 +6,7 @@
         public const string IS_A = "__isa";
         public const string INDEX = "index";
         public const string NULL = "null";
-        public const string FUNCTION = "function";
+        public const string FUNCTION = "FUNCTION"; // caps lock left for compatibility
         
         // intrinsic methods
         public const string ABS = "abs";

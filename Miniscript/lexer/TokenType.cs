@@ -31,7 +31,7 @@
         Dot,
         Colon,
         Comment,
-        Eol
+        EOL // caps lock left for compatibility
 
     }
 

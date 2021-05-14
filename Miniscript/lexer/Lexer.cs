@@ -99,14 +99,14 @@ namespace Miniscript.lexer {
 			switch (c) {
 				case ';':
 				case '\n': {
-					result.TokenType = TokenType.Eol;
+					result.TokenType = TokenType.EOL;
 					result.Text = c == ';' ? ";" : "\n";
 					if (c != ';') LineNum++;
 					break;
 				}
 				case '\r': {
 					// Careful; DOS may use \r\n, so we need to check for that too.
-					result.TokenType = TokenType.Eol;
+					result.TokenType = TokenType.EOL;
 					if (position < inputLength && input[position] == '\n') {
 						position++;
 						result.Text = "\r\n";
@@ -339,7 +339,7 @@ namespace Miniscript.lexer {
 			Check(lex.Dequeue(), TokenType.Identifier, "foo");
 			Check(lex.Dequeue(), TokenType.RParen);
 			Check(lex.Dequeue(), TokenType.Keyword, "end if");
-			Check(lex.Dequeue(), TokenType.Eol);
+			Check(lex.Dequeue(), TokenType.EOL);
 			UnitTest.ErrorIf(!lex.AtEnd, "AtEnd not set when it should be");
 			CheckLineNum(lex.LineNum, 1);
 
@@ -352,16 +352,16 @@ namespace Miniscript.lexer {
 			lex = new Lexer("foo\nbar\rbaz\r\nbamf");
 			Check(lex.Dequeue(), TokenType.Identifier, "foo");
 			CheckLineNum(lex.LineNum, 1);
-			Check(lex.Dequeue(), TokenType.Eol);
+			Check(lex.Dequeue(), TokenType.EOL);
 			Check(lex.Dequeue(), TokenType.Identifier, "bar");
 			CheckLineNum(lex.LineNum, 2);
-			Check(lex.Dequeue(), TokenType.Eol);
+			Check(lex.Dequeue(), TokenType.EOL);
 			Check(lex.Dequeue(), TokenType.Identifier, "baz");
 			CheckLineNum(lex.LineNum, 3);
-			Check(lex.Dequeue(), TokenType.Eol);
+			Check(lex.Dequeue(), TokenType.EOL);
 			Check(lex.Dequeue(), TokenType.Identifier, "bamf");
 			CheckLineNum(lex.LineNum, 4);
-			Check(lex.Dequeue(), TokenType.Eol);
+			Check(lex.Dequeue(), TokenType.EOL);
 			UnitTest.ErrorIf(!lex.AtEnd, "AtEnd not set when it should be");
 			
 			Check(LastToken("x=42 // foo"), TokenType.Number, "42");

@@ -82,7 +82,7 @@ namespace Miniscript.parser {
 				var lastTok = Lexer.LastToken(sourceCode);
 				// Almost any token at the end will signify line continuation, except:
 				var isPartial = lastTok.TokenType switch {
-					TokenType.Eol => false,
+					TokenType.EOL => false,
 					TokenType.Identifier => false,
 					TokenType.Keyword => false,
 					TokenType.Number => false,
@@ -154,7 +154,7 @@ namespace Miniscript.parser {
 		}
 
 		private void AllowLineBreak(Lexer tokens) {
-			while (tokens.Peek().TokenType == TokenType.Eol && !tokens.AtEnd) tokens.Dequeue();
+			while (tokens.Peek().TokenType == TokenType.EOL && !tokens.AtEnd) tokens.Dequeue();
 		}
 
 		private delegate Value ExpressionParsingMethod(Lexer tokens, bool asLval=false, bool statementStart=false);
@@ -166,7 +166,7 @@ namespace Miniscript.parser {
 		private void ParseMultipleLines(Lexer tokens) {
 			while (!tokens.AtEnd) {
 				// Skip any blank lines
-				if (tokens.Peek().TokenType == TokenType.Eol) {
+				if (tokens.Peek().TokenType == TokenType.EOL) {
 					tokens.Dequeue();
 					continue;
 				}
@@ -212,7 +212,7 @@ namespace Miniscript.parser {
 				switch (keyword) {
 					case RETURN: {
 							Value returnValue = null;
-							if (tokens.Peek().TokenType != TokenType.Eol) {
+							if (tokens.Peek().TokenType != TokenType.EOL) {
 								returnValue = ParseExpr(tokens);
 							}
 							output.Add(new Line(TAC.LTemp(0), Op.ReturnA, returnValue));
@@ -235,14 +235,14 @@ namespace Miniscript.parser {
 							// Allow for the special one-statement if: if the next token after "then"
 							// is not EOL, then parse a statement, and do the same for any else or
 							// else-if blocks, until we get to EOL (and then implicitly do "end if").
-							if (tokens.Peek().TokenType != TokenType.Eol) {
+							if (tokens.Peek().TokenType != TokenType.EOL) {
 								ParseStatement(tokens, true);  // parses a single statement for the "then" body
 								if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == ELSE) {
 									tokens.Dequeue();	// skip "else"
 									StartElseClause();
 									ParseStatement(tokens, true);		// parse a single statement for the "else" body
 								} else {
-									RequireEitherToken(tokens, TokenType.Keyword, ELSE, TokenType.Eol);
+									RequireEitherToken(tokens, TokenType.Keyword, ELSE, TokenType.EOL);
 								}
 								output.PatchIfBlock();	// terminate the single-line if
 							} else {
@@ -355,7 +355,7 @@ namespace Miniscript.parser {
 			}
 
 			// A statement should consume everything to the end of the line.
-			if (!allowExtra) RequireToken(tokens, TokenType.Eol);
+			if (!allowExtra) RequireToken(tokens, TokenType.EOL);
 
 			// Finally, if we have a pending state, because we encountered a function(),
 			// then push it onto our stack now that we're Done with that statement.
@@ -382,7 +382,7 @@ namespace Miniscript.parser {
 			Value lhs, rhs;
 			var peek = tokens.Peek();
 			switch (peek.TokenType) {
-				case TokenType.Eol:
+				case TokenType.EOL:
 				case TokenType.Keyword when peek.Text == ELSE:
 					// No explicit assignment; store an implicit result
 					rhs = FullyEvaluate(expr);
@@ -402,14 +402,14 @@ namespace Miniscript.parser {
 						var arg = ParseExpr(tokens);
 						output.Add(new Line(null, Op.PushParam, arg));
 						argCount++;
-						if (tokens.Peek().TokenType == TokenType.Eol) break;
+						if (tokens.Peek().TokenType == TokenType.EOL) break;
 						if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == ELSE) break;
 						if (tokens.Peek().TokenType == TokenType.Comma) {
 							tokens.Dequeue();
 							AllowLineBreak(tokens);
 							continue;
 						}
-						if (RequireEitherToken(tokens, TokenType.Comma, TokenType.Eol).TokenType == TokenType.Eol) break;
+						if (RequireEitherToken(tokens, TokenType.Comma, TokenType.EOL).TokenType == TokenType.EOL) break;
 					}
 					var result = new ValTemp(output.nextTempNum++);
 					output.Add(new Line(result, Op.CallFunctionA, funcRef, TAC.Num(argCount)));					
