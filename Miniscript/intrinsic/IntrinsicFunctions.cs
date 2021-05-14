@@ -235,7 +235,14 @@ namespace Miniscript.intrinsic {
         // Example: round(pi, 2)		returns 3.14
         // Example: round(12345, -3)		returns 12000
         public double Round(double x, int decimalPlaces) {
-            return Math.Round(x, decimalPlaces);
+            if (decimalPlaces >= 0) {
+                x = Math.Round(x, decimalPlaces);
+            } else {
+                var pow10 = Math.Pow(10, -decimalPlaces);
+                x = Math.Round(x / pow10) * pow10;
+            }
+
+            return x;
         }
         
         // rnd

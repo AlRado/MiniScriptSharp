@@ -754,7 +754,7 @@ print f(6)
 ----------------------------------------------------------------------
 null
 15
-function(n)
+FUNCTION(n)
 18
 ======================================================================
 ==== While loop, with break and continue.
@@ -958,7 +958,7 @@ x = 1
 x = 5$&@*!
 x = 3
 ----------------------------------------------------------------------
-Compiler Error: got Unknown($) where Eol is required [line 2]
+Compiler Error: got Unknown($) where EOL is required [line 2]
 ======================================================================
 ==== Run-time error reporting test.
 x = 1
@@ -1261,6 +1261,7 @@ print "C"
 print rnd == rnd
 print @rnd == @rnd
 print @rnd
+print round(12345, -3)
 ----------------------------------------------------------------------
 A
 func invoked!
@@ -1271,6 +1272,7 @@ C
 0
 1
 rnd(seed)
+12000
 ======================================================================
 ==== Check that invoking a non-function with arguments throws
 ==== a "too many arguments" exception (issue #35).
