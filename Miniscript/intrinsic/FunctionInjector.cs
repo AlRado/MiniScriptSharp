@@ -53,6 +53,14 @@ namespace Miniscript.intrinsic {
                                 function.AddIntParam(parameter.Name);
                             }
                             break;
+                        case Type iNullable when ReferenceEquals(iNullable, typeof(int?)):
+                            if (parameter.RawDefaultValue is int defaultIntNullable) {
+                                function.AddIntParam(parameter.Name, defaultIntNullable);
+                                msg += $" = {defaultIntNullable}";
+                            } else {
+                                function.AddParam(parameter.Name, null);
+                            }
+                            break;
                         case Type b when ReferenceEquals(b, typeof(bool)):
                             if (parameter.RawDefaultValue is bool defaultBool) {
                                 function.AddBoolParam(parameter.Name, defaultBool);
@@ -74,7 +82,7 @@ namespace Miniscript.intrinsic {
                                 function.AddParam(parameter.Name, defaultValue);
                                 msg += $" = {defaultValue}";
                             } else {
-                                function.AddParam(parameter.Name);
+                                function.AddParam(parameter.Name, null);
                             }
                             break;
 
@@ -89,7 +97,7 @@ namespace Miniscript.intrinsic {
                     var parametersValues = new List<object>();
 
                     foreach (var parameter in info.GetParameters()) {
-                        var paramEnabled = context.GetVar(parameter.Name) != null;
+                        var paramEnabled = context.GetLocal(parameter.Name) != null;
                         // Console.WriteLine($"parameter.Name: {parameter.Name}, paramEnabled: {paramEnabled}");
 
                         switch (parameter.ParameterType) {
@@ -101,6 +109,13 @@ namespace Miniscript.intrinsic {
                                 break;
                             case Type i when ReferenceEquals(i, typeof(int)):
                                 parametersValues.Add(paramEnabled ? context.GetLocalInt(parameter.Name) : parameter.RawDefaultValue);
+                                break;
+                            case Type iNullable when ReferenceEquals(iNullable, typeof(int?)):
+                                var paramVal = paramEnabled ? context.GetLocalInt(parameter.Name) : parameter.RawDefaultValue;
+                                // Галифакс!
+                                if (paramVal is DBNull) paramVal = null; 
+                                
+                                parametersValues.Add(paramVal);
                                 break;
                             case Type b when ReferenceEquals(b, typeof(bool)):
                                 parametersValues.Add(paramEnabled ? context.GetLocalBool(parameter.Name) : parameter.RawDefaultValue);

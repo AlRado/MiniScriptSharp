@@ -257,6 +257,13 @@ namespace Miniscript.intrinsic {
             if (seed != null) random = new Random(seed.IntValue());
             return random.NextDouble();
         }
+
+        public double Rnd2(int? seed) {
+            Console.WriteLine($"--- Rnd2, seed: {seed}");
+            
+            if (seed != null) random = new Random((int)seed);
+            return random.NextDouble();
+        }
         
     }
 
