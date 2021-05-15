@@ -95,14 +95,13 @@ namespace Miniscript.intrinsic {
                 Console.WriteLine(msg);
 
                 function.Сode = (context, partialResult) => {
-                    var parametersValues = new List<object>();
-
-                    foreach (var parameter in info.GetParameters()) {
-                        var paramValue = GetParam(parameter, context);
-                        parametersValues.Add(paramValue is DBNull ? null : paramValue);
+                    var parameterInfos = info.GetParameters();
+                    var parametersValues = new object[parameterInfos.Length];
+                    for (var i = 0; i < parameterInfos.Length; i++) {
+                        var paramValue = GetParam(parameterInfos[i], context);
+                        parametersValues[i] = paramValue is DBNull ? null : paramValue;
                     }
-
-                    return GetResult(classInstance, info, parametersValues.ToArray());
+                    return GetResult(classInstance, info, parametersValues);
                 };
             }
             Console.WriteLine();
