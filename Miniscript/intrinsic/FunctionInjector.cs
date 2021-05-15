@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.CSharp;
+using Miniscript.tac;
 using Miniscript.types;
 
 namespace Miniscript.intrinsic {
@@ -22,10 +23,10 @@ namespace Miniscript.intrinsic {
                 
                 var function = Intrinsic.Create(methodName);
                 var msg = $"\t{GetAlias(info.ReturnType)} {methodName}(";
-                var firstParam = true;
+                var isFirstParam = true;
                 foreach (var parameter in info.GetParameters()) {
-                    if (!firstParam) msg += ", ";
-                    firstParam = false;
+                    if (!isFirstParam) msg += ", ";
+                    isFirstParam = false;
                     msg += $"{GetAlias(parameter.ParameterType)} {parameter.Name}";
 
                     switch (parameter.ParameterType) {
@@ -97,80 +98,53 @@ namespace Miniscript.intrinsic {
                     var parametersValues = new List<object>();
 
                     foreach (var parameter in info.GetParameters()) {
-                        var paramEnabled = context.GetLocal(parameter.Name) != null;
-                        // Console.WriteLine($"parameter.Name: {parameter.Name}, paramEnabled: {paramEnabled}");
-
-                        switch (parameter.ParameterType) {
-                            case Type d when ReferenceEquals(d, typeof(double)):
-                                parametersValues.Add(paramEnabled ? context.GetLocalDouble(parameter.Name) : parameter.RawDefaultValue);
-                                break;
-                            case Type f when ReferenceEquals(f, typeof(float)):
-                                parametersValues.Add(paramEnabled ? context.GetLocalFloat(parameter.Name) : parameter.RawDefaultValue);
-                                break;
-                            case Type i when ReferenceEquals(i, typeof(int)):
-                                parametersValues.Add(paramEnabled ? context.GetLocalInt(parameter.Name) : parameter.RawDefaultValue);
-                                break;
-                            case Type iNullable when ReferenceEquals(iNullable, typeof(int?)):
-                                var paramVal = paramEnabled ? context.GetLocalInt(parameter.Name) : parameter.RawDefaultValue;
-                                // Галифакс!
-                                if (paramVal is DBNull) paramVal = null; 
-                                
-                                parametersValues.Add(paramVal);
-                                break;
-                            case Type b when ReferenceEquals(b, typeof(bool)):
-                                parametersValues.Add(paramEnabled ? context.GetLocalBool(parameter.Name) : parameter.RawDefaultValue);
-                                break;
-                            case Type s when ReferenceEquals(s, typeof(string)):
-                                parametersValues.Add(paramEnabled ? context.GetLocalString(parameter.Name) : parameter.RawDefaultValue);
-                                break;
-                            case Type v when ReferenceEquals(v, typeof(Value)):
-                                var paramValue = paramEnabled ? context.GetLocal(parameter.Name) : parameter.RawDefaultValue;
-                                if (parameter.Name == Consts.SELF) {
-                                    paramValue = context.Self;
-                                }
-                                // Галифакс!
-                                if (paramValue is DBNull) paramValue = null;
-                                
-                                parametersValues.Add(paramValue);
-                                break;
-                            default:
-                                throw new Exception($"ParameterType: {parameter.ParameterType} not supported!");
-                        }
+                        var paramValue = GetParam(parameter, context);
+                        parametersValues.Add(paramValue is DBNull ? null : paramValue);
                     }
 
-                    return GetResult(classInstance, info.Name, info.ReturnType, parametersValues.ToArray());
+                    return GetResult(classInstance, info, parametersValues.ToArray());
                 };
             }
             Console.WriteLine();
         }
 
-        private static Result GetResult(object classInstance, string methodName, Type returnedType,
-            object[] parameters) {
-            var method = classInstance.GetType().GetMethod(methodName);
-            switch (returnedType) {
-                case Type d when ReferenceEquals(d, typeof(double)):
-                    return new Result((double) method.Invoke(classInstance, parameters));
-                case Type f when ReferenceEquals(f, typeof(float)):
-                    return new Result((float) method.Invoke(classInstance, parameters));
-                case Type i when ReferenceEquals(i, typeof(int)):
-                    return new Result((int) method.Invoke(classInstance, parameters));
-                case Type b when ReferenceEquals(b, typeof(bool)):
-                    return new Result((double)method.Invoke(classInstance, parameters));
-                case Type s when ReferenceEquals(s, typeof(string)):
-                    return new Result((string) method.Invoke(classInstance, parameters));
+        private static object GetParam(ParameterInfo param, Context context) {
+            var enabled = context.GetLocal(param.Name) != null;
+            switch (param.ParameterType) {
+                case Type d when ReferenceEquals(d, typeof(double)): 
+                    return enabled ? context.GetLocalDouble(param.Name) : param.RawDefaultValue;
+                case Type f when ReferenceEquals(f, typeof(float)): 
+                    return enabled ? context.GetLocalFloat(param.Name) : param.RawDefaultValue;
+                case Type iNullable when ReferenceEquals(iNullable, typeof(int?)):
+                case Type i when ReferenceEquals(i, typeof(int)): 
+                    return enabled ? context.GetLocalInt(param.Name) : param.RawDefaultValue;
+                case Type b when ReferenceEquals(b, typeof(bool)): 
+                    return enabled ? context.GetLocalBool(param.Name) : param.RawDefaultValue;
+                case Type s when ReferenceEquals(s, typeof(string)): 
+                    return enabled ? context.GetLocalString(param.Name) : param.RawDefaultValue;
                 case Type v when ReferenceEquals(v, typeof(Value)):
-                    return new Result((Value) method.Invoke(classInstance, parameters));
-                default:
-                    throw new Exception($"Returned Type: {returnedType} not supported!");
+                    return param.Name == Consts.SELF ? context.Self : enabled ? context.GetLocal(param.Name) : param.RawDefaultValue;
+                default: throw new Exception($"ParameterType: {param.ParameterType} not supported!");
             }
+        }
+
+        private static Result GetResult(object classInstance, MethodInfo method, object[] parameters) {
+            return method.ReturnType switch {
+                Type d when ReferenceEquals(d, typeof(double)) => new Result((double) method.Invoke(classInstance, parameters)),
+                Type f when ReferenceEquals(f, typeof(float)) => new Result((float) method.Invoke(classInstance, parameters)),
+                Type i when ReferenceEquals(i, typeof(int)) => new Result((int) method.Invoke(classInstance, parameters)),
+                Type b when ReferenceEquals(b, typeof(bool)) => new Result((double) method.Invoke(classInstance, parameters)),
+                Type s when ReferenceEquals(s, typeof(string)) => new Result((string) method.Invoke(classInstance, parameters)),
+                Type v when ReferenceEquals(v, typeof(Value)) => new Result((Value) method.Invoke(classInstance, parameters)),
+                _ => throw new Exception($"Returned Type: {method.ReturnType} not supported!")
+            };
         }
         
         private static string GetAlias(Type t) {
             using var provider = new CSharpCodeProvider();
             var typeRef = new CodeTypeReference(t);
-            var typeName = provider.GetTypeOutput(typeRef);
             
-            return typeName;
+            return provider.GetTypeOutput(typeRef);
         }
 
     }
