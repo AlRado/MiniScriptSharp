@@ -31,35 +31,23 @@ namespace Miniscript.intrinsic {
 
                     switch (parameter.ParameterType) {
                         case Type d when ReferenceEquals(d, typeof(double)):
+                        case Type f when ReferenceEquals(f, typeof(float)):
+                        case Type i when ReferenceEquals(i, typeof(int)):
                             if (parameter.RawDefaultValue is double defaultDouble) {
-                                function.AddDoubleParam(parameter.Name, defaultDouble);
+                                function.AddNumberParam(parameter.Name, defaultDouble);
                                 msg += $" = {defaultDouble}";
                             } else {
-                                function.AddDoubleParam(parameter.Name);
+                                function.AddNumberParam(parameter.Name);
                             }
                             break;
-                        case Type f when ReferenceEquals(f, typeof(float)):
-                            if (parameter.RawDefaultValue is float defaultFloat) {
-                                function.AddFloatParam(parameter.Name, defaultFloat);
-                                msg += $" = {defaultFloat}";
-                            } else {
-                                function.AddFloatParam(parameter.Name);
-                            }
-                            break;
-                        case Type i when ReferenceEquals(i, typeof(int)):
-                            if (parameter.RawDefaultValue is int defaultInt) {
-                                function.AddIntParam(parameter.Name, defaultInt);
-                                msg += $" = {defaultInt}";
-                            } else {
-                                function.AddIntParam(parameter.Name);
-                            }
-                            break;
+                        case Type dNullable when ReferenceEquals(dNullable, typeof(double?)):
+                        case Type fNullable when ReferenceEquals(fNullable, typeof(float?)):
                         case Type iNullable when ReferenceEquals(iNullable, typeof(int?)):
-                            if (parameter.RawDefaultValue is int defaultIntNullable) {
-                                function.AddIntParam(parameter.Name, defaultIntNullable);
-                                msg += $" = {defaultIntNullable}";
+                            if (parameter.RawDefaultValue is double defaultDoubleNullable) {
+                                function.AddNumberParam(parameter.Name, defaultDoubleNullable);
+                                msg += $" = {defaultDoubleNullable}";
                             } else {
-                                function.AddParam(parameter.Name, null);
+                                function.AddValueParam(parameter.Name, null); // set null!
                             }
                             break;
                         case Type b when ReferenceEquals(b, typeof(bool)):
@@ -80,10 +68,10 @@ namespace Miniscript.intrinsic {
                             break;                        
                         case Type v when ReferenceEquals(v, typeof(Value)):
                             if (parameter.RawDefaultValue is Value defaultValue) {
-                                function.AddParam(parameter.Name, defaultValue);
+                                function.AddValueParam(parameter.Name, defaultValue);
                                 msg += $" = {defaultValue}";
                             } else {
-                                function.AddParam(parameter.Name, null);
+                                function.AddValueParam(parameter.Name, null); // set null!
                             }
                             break;
 
@@ -111,11 +99,13 @@ namespace Miniscript.intrinsic {
             var enabled = context.GetLocal(param.Name) != null;
             switch (param.ParameterType) {
                 case Type d when ReferenceEquals(d, typeof(double)): 
+                case Type dNullable when ReferenceEquals(dNullable, typeof(double?)): 
                     return enabled ? context.GetLocalDouble(param.Name) : param.RawDefaultValue;
                 case Type f when ReferenceEquals(f, typeof(float)): 
+                case Type fNullable when ReferenceEquals(fNullable, typeof(float?)): 
                     return enabled ? context.GetLocalFloat(param.Name) : param.RawDefaultValue;
-                case Type iNullable when ReferenceEquals(iNullable, typeof(int?)):
                 case Type i when ReferenceEquals(i, typeof(int)): 
+                case Type iNullable when ReferenceEquals(iNullable, typeof(int?)):
                     return enabled ? context.GetLocalInt(param.Name) : param.RawDefaultValue;
                 case Type b when ReferenceEquals(b, typeof(bool)): 
                     return enabled ? context.GetLocalBool(param.Name) : param.RawDefaultValue;
