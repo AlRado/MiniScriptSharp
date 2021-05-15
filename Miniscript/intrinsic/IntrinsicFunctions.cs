@@ -265,6 +265,13 @@ namespace Miniscript.intrinsic {
             return random.NextDouble();
         }
         
+        // time
+        //	Returns the number of seconds since the script started running.
+        public double Time() {
+            var context = FunctionInjector.GetContext("Time");
+            return context.Vm.RunTime;
+        }
+        
     }
 
 }

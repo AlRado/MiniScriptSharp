@@ -1194,8 +1194,8 @@ namespace Miniscript.intrinsic {
 
 			// time
 			//	Returns the number of seconds since the script started running.
-			f = Create(TIME);
-			f.Сode = (context, partialResult) => new Result(context.Vm.RunTime);
+			// f = Create(TIME);
+			// f.Сode = (context, partialResult) => new Result(context.Vm.RunTime);
 			
 			// upper
 			//	Return an upper-case (all capitals) version of a string.

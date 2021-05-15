@@ -10,6 +10,9 @@ namespace Miniscript.intrinsic {
 
     public static class FunctionInjector {
 
+        private static readonly Dictionary<string, Context> contexts = new Dictionary<string, Context>();
+        private static readonly Dictionary<string, Result> partialResults = new Dictionary<string, Result>();
+
         public static void AddFunctions(object classInstance) {
             Console.WriteLine($"Function injector added functions:");
             
@@ -83,6 +86,9 @@ namespace Miniscript.intrinsic {
                 Console.WriteLine(msg);
 
                 function.Сode = (context, partialResult) => {
+                    contexts[info.Name] = context;
+                    partialResults[info.Name] = partialResult;
+                    
                     var parameterInfos = info.GetParameters();
                     var parametersValues = new object[parameterInfos.Length];
                     for (var i = 0; i < parameterInfos.Length; i++) {
@@ -95,6 +101,14 @@ namespace Miniscript.intrinsic {
             Console.WriteLine();
         }
 
+        public static Context GetContext(string funcName) {
+            return contexts.TryGetValue(funcName, out var result) ? result: null;
+        }
+        
+        public static Result GetPartialResult(string funcName) {
+            return partialResults.TryGetValue(funcName, out var result) ? result: null;
+        }
+        
         private static object GetParam(ParameterInfo param, Context context) {
             var enabled = context.GetLocal(param.Name) != null;
             switch (param.ParameterType) {
