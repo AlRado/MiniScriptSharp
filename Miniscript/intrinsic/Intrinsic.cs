@@ -1111,11 +1111,11 @@ namespace Miniscript.intrinsic {
 			//	assign new methods here to make them available to all strings.
 			// Example: "Hello" isa string		returns 1
 			// See also: number, list, map, funcRef
-			f = Create(STRING);
-			f.Сode = (context, partialResult) => {
-				context.Vm.StringType ??= StringType.EvalCopy(context.Vm.GlobalContext);
-				return new Result(context.Vm.StringType);
-			};
+			// f = Create(STRING);
+			// f.Сode = (context, partialResult) => {
+			// 	context.Vm.StringType ??= StringType.EvalCopy(context.Vm.GlobalContext);
+			// 	return new Result(context.Vm.StringType);
+			// };
 
 			// shuffle
 			//	Randomize the order of elements in a list, or the mappings from

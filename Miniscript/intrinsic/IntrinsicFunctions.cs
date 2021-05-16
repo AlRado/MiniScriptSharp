@@ -272,6 +272,18 @@ namespace Miniscript.intrinsic {
             return context.Vm.RunTime;
         }
         
+        // string type
+        //	Returns a map that represents the string datatype in
+        //	Minisript's core type system.  This can be used with `isa`
+        //	to check whether a variable refers to a string.  You can also
+        //	assign new methods here to make them available to all strings.
+        // Example: "Hello" isa string		returns 1
+        // See also: number, list, map, funcRef
+        public ValMap String() {
+            var context = FunctionInjector.GetContext("String");
+            return context.Vm.StringType ??= Intrinsic.StringType.EvalCopy(context.Vm.GlobalContext);
+        }
+
     }
 
 }
