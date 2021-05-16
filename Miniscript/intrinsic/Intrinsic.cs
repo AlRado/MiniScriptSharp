@@ -1000,57 +1000,57 @@ namespace Miniscript.intrinsic {
 			// Returns: self (which has been sorted in place)
 			// Example: a = [5,3,4,1,2]; a.sort		results in a == [1, 2, 3, 4, 5]
 			// See also: shuffle
-			f = Create(SORT);
-			f.AddValueParam(SELF);
-			f.AddValueParam("byKey");
-			f.AddBoolParam("ascending", true);
-			f.Сode = (context, partialResult) => {
-				var self = context.Self;
-				if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
-
-				IComparer<Value> sorter;
-				if (context.GetLocalBool("ascending")) sorter = ValueSorter.Instance;
-				else sorter = ValueReverseSorter.Instance;
-
-				var byKey = context.GetVar("byKey");
-				if (byKey == null) {
-					// Simple case: sort the values as themselves
-					list.Values = list.Values.OrderBy((arg) => arg, sorter).ToList();
-				} else {
-					// Harder case: sort by a key.
-					var count = list.Values.Count;
-					var arr = new KeyedValue[count];
-					for (int i=0; i<count; i++) {
-						arr[i].Value = list.Values[i];
-						//arr[i].valueIndex = i;
-					}
-					// The key for each item will be the item itself, unless it is a map, in which
-					// case it's the item indexed by the given key.  (Works too for lists if our
-					// index is an integer.)
-					var byKeyInt = byKey.IntValue();
-					for (int i=0; i<count; i++) {
-						var item = list.Values[i];
-						switch (item) {
-							case ValMap map:
-								arr[i].SortKey = map.Lookup(byKey);
-								break;
-							case ValList valList: {
-								if (byKeyInt > -valList.Values.Count && byKeyInt < valList.Values.Count) arr[i].SortKey = valList.Values[byKeyInt];
-								else arr[i].SortKey = null;
-								break;
-							}
-						}
-					}
-					// Now sort our list of keyed values, by key
-					var sortedArr = arr.OrderBy((arg) => arg.SortKey, sorter);
-					// And finally, convert that back into our list
-					var idx=0;
-					foreach (var kv in sortedArr) {
-						list.Values[idx++] = kv.Value;
-					}
-				}
-				return new Result(list);
-			};
+			// f = Create(SORT);
+			// f.AddValueParam(SELF);
+			// f.AddValueParam("byKey");
+			// f.AddBoolParam("ascending", true);
+			// f.Сode = (context, partialResult) => {
+			// 	var self = context.Self;
+			// 	if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
+			//
+			// 	IComparer<Value> sorter;
+			// 	if (context.GetLocalBool("ascending")) sorter = ValueSorter.Instance;
+			// 	else sorter = ValueReverseSorter.Instance;
+			//
+			// 	var byKey = context.GetVar("byKey");
+			// 	if (byKey == null) {
+			// 		// Simple case: sort the values as themselves
+			// 		list.Values = list.Values.OrderBy((arg) => arg, sorter).ToList();
+			// 	} else {
+			// 		// Harder case: sort by a key.
+			// 		var count = list.Values.Count;
+			// 		var arr = new KeyedValue[count];
+			// 		for (int i=0; i<count; i++) {
+			// 			arr[i].Value = list.Values[i];
+			// 			//arr[i].valueIndex = i;
+			// 		}
+			// 		// The key for each item will be the item itself, unless it is a map, in which
+			// 		// case it's the item indexed by the given key.  (Works too for lists if our
+			// 		// index is an integer.)
+			// 		var byKeyInt = byKey.IntValue();
+			// 		for (int i=0; i<count; i++) {
+			// 			var item = list.Values[i];
+			// 			switch (item) {
+			// 				case ValMap map:
+			// 					arr[i].SortKey = map.Lookup(byKey);
+			// 					break;
+			// 				case ValList valList: {
+			// 					if (byKeyInt > -valList.Values.Count && byKeyInt < valList.Values.Count) arr[i].SortKey = valList.Values[byKeyInt];
+			// 					else arr[i].SortKey = null;
+			// 					break;
+			// 				}
+			// 			}
+			// 		}
+			// 		// Now sort our list of keyed values, by key
+			// 		var sortedArr = arr.OrderBy((arg) => arg.SortKey, sorter);
+			// 		// And finally, convert that back into our list
+			// 		var idx=0;
+			// 		foreach (var kv in sortedArr) {
+			// 			list.Values[idx++] = kv.Value;
+			// 		}
+			// 	}
+			// 	return new Result(list);
+			// };
 
 			// split
 			//	Split a string into a list, by some delimiter.
@@ -1062,37 +1062,37 @@ namespace Miniscript.intrinsic {
 			// Example: "foo bar baz".split		returns ["foo", "bar", "baz"]
 			// Example: "foo bar baz".split("a", 2)		returns ["foo b", "r baz"]
 			// See also: join
-			f = Create(SPLIT);
-			f.AddValueParam(SELF);
-			f.AddStringParam("delimiter", " ");
-			f.AddDoubleParam("maxCount", -1);
-			f.Сode = (context, partialResult) => {
-				var self = context.Self.ToString();
-				var delim = context.GetLocalString("delimiter");
-				var maxCount = context.GetLocalInt("maxCount");
-				var result = new ValList();
-				var pos = 0;
-				while (pos < self.Length) {
-					int nextPos;
-					if (maxCount >= 0 && result.Values.Count == maxCount - 1) nextPos = self.Length;
-					else if (delim.Length == 0) nextPos = pos+1;
-					else nextPos = self.IndexOf(delim, pos, StringComparison.InvariantCulture);
-					if (nextPos < 0) nextPos = self.Length;
-					result.Values.Add(new ValString(self.Substring(pos, nextPos - pos)));
-					pos = nextPos + delim.Length;
-					if (pos == self.Length && delim.Length > 0) result.Values.Add(ValString.Empty);
-				}
-				return new Result(result);
-			};
+			// f = Create(SPLIT);
+			// f.AddValueParam(SELF);
+			// f.AddStringParam("delimiter", " ");
+			// f.AddDoubleParam("maxCount", -1);
+			// f.Сode = (context, partialResult) => {
+			// 	var self = context.Self.ToString();
+			// 	var delim = context.GetLocalString("delimiter");
+			// 	var maxCount = context.GetLocalInt("maxCount");
+			// 	var result = new ValList();
+			// 	var pos = 0;
+			// 	while (pos < self.Length) {
+			// 		int nextPos;
+			// 		if (maxCount >= 0 && result.Values.Count == maxCount - 1) nextPos = self.Length;
+			// 		else if (delim.Length == 0) nextPos = pos+1;
+			// 		else nextPos = self.IndexOf(delim, pos, StringComparison.InvariantCulture);
+			// 		if (nextPos < 0) nextPos = self.Length;
+			// 		result.Values.Add(new ValString(self.Substring(pos, nextPos - pos)));
+			// 		pos = nextPos + delim.Length;
+			// 		if (pos == self.Length && delim.Length > 0) result.Values.Add(ValString.Empty);
+			// 	}
+			// 	return new Result(result);
+			// };
 
 			// sqrt
 			//	Returns the square root of a number.
 			// x (number): number to get the square root of
 			// Returns: square root of x
 			// Example: sqrt(1764)		returns 42
-			f = Create(SQRT);
-			f.AddDoubleParam("x");
-			f.Сode = (context, partialResult) => new Result(Math.Sqrt(context.GetLocalDouble("x")));
+			// f = Create(SQRT);
+			// f.AddDoubleParam("x");
+			// f.Сode = (context, partialResult) => new Result(Math.Sqrt(context.GetLocalDouble("x")));
 
 			// str
 			//	Convert any value to a string.

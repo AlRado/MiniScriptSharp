@@ -146,6 +146,8 @@ namespace Miniscript.intrinsic {
                     return new Result((ValMap) method.Invoke(classInstance, parameters));
                 case Type valNumber when ReferenceEquals(valNumber, typeof(ValNumber)):
                     return new Result((ValNumber) method.Invoke(classInstance, parameters));
+                case Type valList when ReferenceEquals(valList, typeof(ValList)):
+                    return new Result((ValList) method.Invoke(classInstance, parameters));
                 
                 case Type result when ReferenceEquals(result, typeof(Result)):
                     return (Result) method.Invoke(classInstance, parameters);

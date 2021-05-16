@@ -260,6 +260,107 @@ namespace Miniscript.intrinsic {
             return random.NextDouble();
         }
         
+        // sort
+        //	Sorts a list in place.  With null or no argument, this sorts the
+        //	list elements by their own values.  With the byKey argument, each
+        //	element is indexed by that argument, and the elements are sorted
+        //	by the result.  (This only works if the list elements are maps, or
+        //	they are lists and byKey is an integer index.)
+        // self (list): list to sort
+        // byKey (optional): if given, sort each element by indexing with this key
+        // ascending (optional, default true): if false, sort in descending order
+        // Returns: self (which has been sorted in place)
+        // Example: a = [5,3,4,1,2]; a.sort		results in a == [1, 2, 3, 4, 5]
+        // See also: shuffle
+        public ValList Sort(Value self, Value byKey, bool ascending = true) {
+            if (!(self is ValList list) || list.Values.Count < 2) return self as ValList;
+
+            IComparer<Value> sorter;
+            if (ascending) {
+                sorter = ValueSorter.Instance;
+            } else {
+                sorter = ValueReverseSorter.Instance;
+            }
+
+            if (byKey == null) {
+                // Simple case: sort the values as themselves
+                list.Values = list.Values.OrderBy((arg) => arg, sorter).ToList();
+            } else {
+                // Harder case: sort by a key.
+                var count = list.Values.Count;
+                var arr = new KeyedValue[count];
+                for (int i = 0; i < count; i++) {
+                    arr[i].Value = list.Values[i];
+                }
+
+                // The key for each item will be the item itself, unless it is a map, in which
+                // case it's the item indexed by the given key.  (Works too for lists if our
+                // index is an integer.)
+                var byKeyInt = byKey.IntValue();
+                for (int i = 0; i < count; i++) {
+                    var item = list.Values[i];
+                    switch (item) {
+                        case ValMap map:
+                            arr[i].SortKey = map.Lookup(byKey);
+                            break;
+                        case ValList valList: {
+                            if (byKeyInt > -valList.Values.Count && byKeyInt < valList.Values.Count)
+                                arr[i].SortKey = valList.Values[byKeyInt];
+                            else arr[i].SortKey = null;
+                            break;
+                        }
+                    }
+                }
+
+                // Now sort our list of keyed values, by key
+                var sortedArr = arr.OrderBy((arg) => arg.SortKey, sorter);
+                // And finally, convert that back into our list
+                var idx = 0;
+                foreach (var kv in sortedArr) {
+                    list.Values[idx++] = kv.Value;
+                }
+            }
+
+            return list;
+        }
+
+        // split
+        //	Split a string into a list, by some delimiter.
+        //	May be called with function syntax or dot syntax.
+        // self (string): string to split
+        // delimiter (string, default " "): substring to split on
+        // maxCount (number, default -1): if > 0, split into no more than this many strings
+        // Returns: list of substrings found by splitting on delimiter
+        // Example: "foo bar baz".split		returns ["foo", "bar", "baz"]
+        // Example: "foo bar baz".split("a", 2)		returns ["foo b", "r baz"]
+        // See also: join
+        public ValList Split(Value self, string delimiter = " ", double maxCount = -1) {
+            var selfStr = self.ToString();
+            var result = new ValList();
+            var pos = 0;
+            while (pos < selfStr.Length) {
+                int nextPos;
+                if (maxCount >= 0 && result.Values.Count == maxCount - 1) nextPos = selfStr.Length;
+                else if (delimiter.Length == 0) nextPos = pos+1;
+                else nextPos = selfStr.IndexOf(delimiter, pos, StringComparison.InvariantCulture);
+                if (nextPos < 0) nextPos = selfStr.Length;
+                result.Values.Add(new ValString(selfStr.Substring(pos, nextPos - pos)));
+                pos = nextPos + delimiter.Length;
+                if (pos == selfStr.Length && delimiter.Length > 0) result.Values.Add(ValString.Empty);
+            }
+
+            return result;
+        }
+        
+        // sqrt
+        //	Returns the square root of a number.
+        // x (number): number to get the square root of
+        // Returns: square root of x
+        // Example: sqrt(1764)		returns 42
+        public double Sqrt(double x) {
+            return Math.Sqrt(x);
+        }
+        
         // str
         //	Convert any value to a string.
         // x (any): value to convert
