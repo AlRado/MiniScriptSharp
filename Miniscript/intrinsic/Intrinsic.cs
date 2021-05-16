@@ -1100,9 +1100,9 @@ namespace Miniscript.intrinsic {
 			// Returns: string representation of the given value
 			// Example: str(42)		returns "42"
 			// See also: val
-			f = Create(STR);
-			f.AddValueParam("x", ValString.Empty);
-			f.Сode = (context, partialResult) => new Result(context.GetVar("x").ToString());
+			// f = Create(STR);
+			// f.AddValueParam("x", ValString.Empty);
+			// f.Сode = (context, partialResult) => new Result(context.GetVar("x").ToString());
 
 			// string type
 			//	Returns a map that represents the string datatype in
@@ -1188,9 +1188,9 @@ namespace Miniscript.intrinsic {
 			// radians (number): angle, in radians, to get the tangent of
 			// Returns: tangent of the given angle
 			// Example: tan(pi/4)		returns 1
-			f = Create(TAN);
-			f.AddDoubleParam("radians");
-			f.Сode = (context, partialResult) => new Result(Math.Tan(context.GetLocalDouble("radians")));
+			// f = Create(TAN);
+			// f.AddDoubleParam("radians");
+			// f.Сode = (context, partialResult) => new Result(Math.Tan(context.GetLocalDouble("radians")));
 
 			// time
 			//	Returns the number of seconds since the script started running.
@@ -1204,14 +1204,14 @@ namespace Miniscript.intrinsic {
 			// Returns: string with all lowercase letters converted to capitals
 			// Example: "Mo Spam".upper		returns "MO SPAM"
 			// See also: lower
-			f = Create(UPPER);
-			f.AddValueParam(SELF);
-			f.Сode = (context, partialResult) => {
-				var val = context.Self;
-				if (!(val is ValString)) return new Result(val);
-				var str = ((ValString)val).Value;
-				return new Result(str.ToUpper());
-			};
+			// f = Create(UPPER);
+			// f.AddValueParam(SELF);
+			// f.Сode = (context, partialResult) => {
+			// 	var val = context.Self;
+			// 	if (!(val is ValString)) return new Result(val);
+			// 	var str = ((ValString)val).Value;
+			// 	return new Result(str.ToUpper());
+			// };
 			
 			// val
 			//	Return the numeric value of a given string.  (If given a number,
@@ -1221,21 +1221,21 @@ namespace Miniscript.intrinsic {
 			// Returns: numeric value of the given string
 			// Example: "1234.56".val		returns 1234.56
 			// See also: str
-			f = Create(VAL);
-			f.AddDoubleParam(SELF, 0);
-			f.Сode = (context, partialResult) => {
-				var val = context.Self;
-				switch (val) {
-					case ValNumber _:
-						return new Result(val);
-					case ValString _: {
-						double.TryParse(val.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var value);
-						return new Result(value);
-					}
-					default:
-						return Result.Null;
-				}
-			};
+			// f = Create(VAL);
+			// f.AddDoubleParam(SELF, 0);
+			// f.Сode = (context, partialResult) => {
+			// 	var val = context.Self;
+			// 	switch (val) {
+			// 		case ValNumber _:
+			// 			return new Result(val);
+			// 		case ValString _: {
+			// 			double.TryParse(val.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var value);
+			// 			return new Result(value);
+			// 		}
+			// 		default:
+			// 			return Result.Null;
+			// 	}
+			// };
 
             // values
 			//	Returns the values of a dictionary, or the characters of a string.
@@ -1324,14 +1324,14 @@ namespace Miniscript.intrinsic {
 			//	the next 60Hz frame.  Exact meaning may very, but generally
 			//	if you're doing something in a tight loop, calling yield is
 			//	polite to the host app or other scripts.
-			f = Create(YIELD);
-			f.Сode = (context, partialResult) => {
-				context.Vm.Yielding = true;
-				return Result.Null;
-			};
+			// f = Create(YIELD);
+			// f.Сode = (context, partialResult) => {
+			// 	context.Vm.Yielding = true;
+			// 	return Result.Null;
+			// };
 			
-			f = Create(INTRINSIC);
-			f.Сode = (context, partialResult) => new Result(GetAllIntrinsicInfo());
+			// f = Create(INTRINSIC);
+			// f.Сode = (context, partialResult) => new Result(GetAllIntrinsicInfo());
 
 			ListType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
 			ListType[INDEXES] = GetByName(INDEXES).GetFunc();

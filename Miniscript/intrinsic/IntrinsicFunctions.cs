@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Miniscript.types;
 
@@ -167,7 +168,7 @@ namespace Miniscript.intrinsic {
         // Example: [2,4,8].join("-")		returns "2-4-8"
         // See also: split
         public string Join(Value self, string delimiter = " ") {
-            if (!(self is ValList valList)) return self.ToString();
+            if (!(self is ValList valList)) return self?.ToString();
             
             var list = new List<string>(valList.Values.Count);
             list.AddRange(valList.Values.Select(t => t?.ToString()));
@@ -213,7 +214,7 @@ namespace Miniscript.intrinsic {
         // Example: "Mo Spam".lower		returns "mo spam"
         // See also: upper
         public string Lower(Value self) {
-            if (!(self is ValString valString)) return self.ToString();
+            if (!(self is ValString valString)) return self?.ToString();
             
             return valString.Value.ToLower();
         }
@@ -253,24 +254,21 @@ namespace Miniscript.intrinsic {
         //	initialized automatically, generating a unique sequence on each run.
         // seed (number, optional): if given, reset the sequence with this value
         // Returns: pseudorandom number in the range [0,1)
-        public double Rnd(Value seed) {
-            if (seed != null) random = new Random(seed.IntValue());
-            return random.NextDouble();
-        }
-
-        public double Rnd2(int? seed) {
-            Console.WriteLine($"--- Rnd2, seed: {seed}");
-            
+        public double Rnd(int? seed) {
             if (seed != null) random = new Random((int)seed);
             return random.NextDouble();
         }
         
-        // time
-        //	Returns the number of seconds since the script started running.
-        public double Time() {
-            return FunctionInjector.Context.Vm.RunTime;
+        // str
+        //	Convert any value to a string.
+        // x (any): value to convert
+        // Returns: string representation of the given value
+        // Example: str(42)		returns "42"
+        // See also: val
+        public string Str(Value x) {
+            return x.ToString();
         }
-        
+
         // string type
         //	Returns a map that represents the string datatype in
         //	Minisript's core type system.  This can be used with `isa`
@@ -281,6 +279,58 @@ namespace Miniscript.intrinsic {
         public ValMap String() {
             return FunctionInjector.Context.Vm.StringType ??= 
                 Intrinsic.StringType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
+        }
+        
+        // tan
+        //	Returns the tangent of the given angle (in radians).
+        // radians (number): angle, in radians, to get the tangent of
+        // Returns: tangent of the given angle
+        // Example: tan(pi/4)		returns 1
+        public double Tan(double radians) {
+            return Math.Tan(radians);
+        }
+        
+        // time
+        //	Returns the number of seconds since the script started running.
+        public double Time() {
+            return FunctionInjector.Context.Vm.RunTime;
+        }
+        
+        // upper
+        //	Return an upper-case (all capitals) version of a string.
+        //	May be called with function syntax or dot syntax.
+        // self (string): string to upper-case
+        // Returns: string with all lowercase letters converted to capitals
+        // Example: "Mo Spam".upper		returns "MO SPAM"
+        // See also: lower
+        public string Upper(Value self) {
+            return self is ValString str ? str.Value.ToUpper() : self?.ToString();
+        }
+        
+        // val
+        //	Return the numeric value of a given string.  (If given a number,
+        //	returns it as-is; if given a list or map, returns null.)
+        //	May be called with function syntax or dot syntax.
+        // self (string or number): string to get the value of
+        // Returns: numeric value of the given string
+        // Example: "1234.56".val		returns 1234.56
+        // See also: str
+        public double Val(Value self) {
+            return double.TryParse(self.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var value) ? value : 0; 
+        }
+        
+        // yield
+        //	Pause the execution of the script until the next "tick" of
+        //	the host app.  In Mini Micro, for example, this waits until
+        //	the next 60Hz frame.  Exact meaning may very, but generally
+        //	if you're doing something in a tight loop, calling yield is
+        //	polite to the host app or other scripts.
+        public void Yield() {
+            FunctionInjector.Context.Vm.Yielding = true;
+        }
+
+        public string AllIntrinsic() {
+            return Intrinsic.GetAllIntrinsicInfo();
         }
 
     }
