@@ -1245,27 +1245,27 @@ namespace Miniscript.intrinsic {
 			// Example: d={1:"one", 2:"two"}; d.values		returns ["one", "two"]
 			// Example: "abc".values		returns ["a", "b", "c"]
 			// See also: indexes
-			f = Create(VALUES);
-            f.AddValueParam(SELF);
-            f.Сode = (context, partialResult) => {
-                var self = context.Self;
-                switch (self) {
-	                case ValMap valMap: {
-		                var values = new List<Value>(valMap.Map.Values);
-		                return new Result(new ValList(values));
-	                }
-	                case ValString valString: {
-		                var str = valString.Value;
-		                var values = new List<Value>(str.Length);
-		                for (int i = 0; i < str.Length; i++) {
-			                values.Add(TAC.Str(str[i].ToString()));
-		                }
-		                return new Result(new ValList(values));
-	                }
-	                default:
-		                return new Result(self);
-                }
-            };
+			// f = Create(VALUES);
+   //          f.AddValueParam(SELF);
+   //          f.Сode = (context, partialResult) => {
+   //              var self = context.Self;
+   //              switch (self) {
+	  //               case ValMap valMap: {
+		 //                var values = new List<Value>(valMap.Map.Values);
+		 //                return new Result(new ValList(values));
+	  //               }
+	  //               case ValString valString: {
+		 //                var str = valString.Value;
+		 //                var values = new List<Value>(str.Length);
+		 //                for (int i = 0; i < str.Length; i++) {
+			//                 values.Add(TAC.Str(str[i].ToString()));
+		 //                }
+		 //                return new Result(new ValList(values));
+	  //               }
+	  //               default:
+		 //                return new Result(self);
+   //              }
+   //          };
 
 			// version
 			//	Get a map with information about the version of Minisript and
@@ -1276,47 +1276,47 @@ namespace Miniscript.intrinsic {
 			//		host: a number for the host major and minor version, like 0.9
 			//		hostName: name of the host application, e.g. "Mini Micro"
 			//		hostInfo: URL or other short info about the host app
-			f = Create(VERSION);
-			var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-			f.Сode = (context, partialResult) => {
-				if (context.Vm.VersionMap != null) return new Result(context.Vm.VersionMap);
-
-				var d = new ValMap {["miniscript"] = new ValString("1.5")};
-
-				// Getting the build date is annoyingly hard in C#.
-				// This will work if the assembly.cs file uses the version format: 1.0.*
-				var buildDate = new DateTime(2000, 1, 1);
-				buildDate = buildDate.AddDays(version.Build);
-				buildDate = buildDate.AddSeconds(version.Revision * 2);
-				
-				d["buildDate"] = new ValString(buildDate.ToString("yyyy-MM-dd"));
-
-				d["host"] = new ValNumber(HostInfo.Version);
-				d["hostName"] = new ValString(HostInfo.Name);
-				d["hostInfo"] = new ValString(HostInfo.Info);
-
-				context.Vm.VersionMap = d;
-				return new Result(context.Vm.VersionMap);
-			};
+			// f = Create(VERSION);
+			// var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+			// f.Сode = (context, partialResult) => {
+			// 	if (context.Vm.VersionMap != null) return new Result(context.Vm.VersionMap);
+			//
+			// 	var d = new ValMap {["miniscript"] = new ValString("1.5")};
+			//
+			// 	// Getting the build date is annoyingly hard in C#.
+			// 	// This will work if the assembly.cs file uses the version format: 1.0.*
+			// 	var buildDate = new DateTime(2000, 1, 1);
+			// 	buildDate = buildDate.AddDays(version.Build);
+			// 	buildDate = buildDate.AddSeconds(version.Revision * 2);
+			// 	
+			// 	d["buildDate"] = new ValString(buildDate.ToString("yyyy-MM-dd"));
+			//
+			// 	d["host"] = new ValNumber(HostInfo.Version);
+			// 	d["hostName"] = new ValString(HostInfo.Name);
+			// 	d["hostInfo"] = new ValString(HostInfo.Info);
+			//
+			// 	context.Vm.VersionMap = d;
+			// 	return new Result(context.Vm.VersionMap);
+			// };
 
 			// wait
 			//	Pause execution of this script for some amount of time.
 			// seconds (default 1.0): how many seconds to wait
 			// Example: wait 2.5		pauses the script for 2.5 seconds
 			// See also: time, yield
-			f = Create(WAIT);
-			f.AddDoubleParam("seconds", 1);
-			f.Сode = (context, partialResult) => {
-				var now = context.Vm.RunTime;
-				if (partialResult == null) {
-					// Just starting our wait; calculate end time and return as partial result
-					var interval = context.GetLocalDouble("seconds");
-					return new Result(new ValNumber(now + interval), false);
-				} else {
-					// Continue until current time exceeds the time in the partial result
-					return now > partialResult.ResultValue.DoubleValue() ? Result.Null : partialResult;
-				}
-			};
+			// f = Create(WAIT);
+			// f.AddDoubleParam("seconds", 1);
+			// f.Сode = (context, partialResult) => {
+			// 	var now = context.Vm.RunTime;
+			// 	if (partialResult == null) {
+			// 		// Just starting our wait; calculate end time and return as partial result
+			// 		var interval = context.GetLocalDouble("seconds");
+			// 		return new Result(new ValNumber(now + interval), false);
+			// 	} else {
+			// 		// Continue until current time exceeds the time in the partial result
+			// 		return now > partialResult.ResultValue.DoubleValue() ? Result.Null : partialResult;
+			// 	}
+			// };
 
 			// yield
 			//	Pause the execution of the script until the next "tick" of

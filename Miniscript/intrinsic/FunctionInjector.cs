@@ -131,9 +131,14 @@ namespace Miniscript.intrinsic {
                 Type i when ReferenceEquals(i, typeof(int)) => new Result((int) method.Invoke(classInstance, parameters)),
                 Type b when ReferenceEquals(b, typeof(bool)) => (bool) method.Invoke(classInstance, parameters) ? Result.True : Result.False,
                 Type s when ReferenceEquals(s, typeof(string)) => new Result((string) method.Invoke(classInstance, parameters)),
-                Type v when ReferenceEquals(v, typeof(Value)) => new Result((Value) method.Invoke(classInstance, parameters)),
-                Type vMap when ReferenceEquals(vMap, typeof(ValMap)) => new Result((ValMap) method.Invoke(classInstance, parameters)),
                 Type tVoid when ReferenceEquals(tVoid, typeof(void)) => Result.Null,
+
+                Type v when ReferenceEquals(v, typeof(Value)) => new Result((Value) method.Invoke(classInstance, parameters)),
+                Type valMap when ReferenceEquals(valMap, typeof(ValMap)) => new Result((ValMap) method.Invoke(classInstance, parameters)),
+                Type valNumber when ReferenceEquals(valNumber, typeof(ValNumber)) => new Result((ValNumber) method.Invoke(classInstance, parameters)),
+                
+                Type result when ReferenceEquals(result, typeof(Result)) => (Result) method.Invoke(classInstance, parameters),
+                
                 _ => throw new Exception($"Returned Type: {method.ReturnType} not supported!")
             };
         }

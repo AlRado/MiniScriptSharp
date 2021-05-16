@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Miniscript.tac;
 using Miniscript.types;
 
 namespace Miniscript.intrinsic {
@@ -319,6 +320,83 @@ namespace Miniscript.intrinsic {
             return double.TryParse(self.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var value) ? value : 0; 
         }
         
+        // values
+        //	Returns the values of a dictionary, or the characters of a string.
+        //  (Returns any other value as-is.)
+        //	May be called with function syntax or dot syntax.
+        // self (any): object to get the values of.
+        // Example: d={1:"one", 2:"two"}; d.values		returns ["one", "two"]
+        // Example: "abc".values		returns ["a", "b", "c"]
+        // See also: indexes
+        public Value Values(Value self) {
+            switch (self) {
+                case ValMap valMap: {
+                    var values = new List<Value>(valMap.Map.Values);
+                    return new ValList(values);
+                }
+                case ValString valString: {
+                    var str = valString.Value;
+                    var values = new List<Value>(str.Length);
+                    for (int i = 0; i < str.Length; i++) {
+                        values.Add(TAC.Str(str[i].ToString()));
+                    }
+
+                    return new ValList(values);
+                }
+                default:
+                    return self;
+            }
+        }
+        
+        // version
+        //	Get a map with information about the version of Minisript and
+        //	the host environment that you're currently running.  This will
+        //	include at least the following keys:
+        //		miniscript: a string such as "1.5"
+        //		buildDate: a date in yyyy-mm-dd format, like "2020-05-28"
+        //		host: a number for the host major and minor version, like 0.9
+        //		hostName: name of the host application, e.g. "Mini Micro"
+        //		hostInfo: URL or other short info about the host app
+        public ValMap Version() {
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            if (FunctionInjector.Context.Vm.VersionMap != null) return FunctionInjector.Context.Vm.VersionMap;
+
+            var d = new ValMap {["miniscript"] = new ValString("1.5")};
+
+            // Getting the build date is annoyingly hard in C#.
+            // This will work if the assembly.cs file uses the version format: 1.0.*
+            var buildDate = new DateTime(2000, 1, 1);
+            buildDate = buildDate.AddDays(version.Build);
+            buildDate = buildDate.AddSeconds(version.Revision * 2);
+
+            d["buildDate"] = new ValString(buildDate.ToString("yyyy-MM-dd"));
+
+            d["host"] = new ValNumber(HostInfo.Version);
+            d["hostName"] = new ValString(HostInfo.Name);
+            d["hostInfo"] = new ValString(HostInfo.Info);
+
+            FunctionInjector.Context.Vm.VersionMap = d;
+            return FunctionInjector.Context.Vm.VersionMap;
+        }
+        
+        // wait
+        //	Pause execution of this script for some amount of time.
+        // seconds (default 1.0): how many seconds to wait
+        // Example: wait 2.5		pauses the script for 2.5 seconds
+        // See also: time, yield
+        public Result Wait(double seconds = 1) {
+            var now = FunctionInjector.Context.Vm.RunTime;
+            if (FunctionInjector.PartialResult == null) {
+                // Just starting our wait; calculate end time and return as partial result
+                return new Result(new ValNumber(now + seconds), false);
+            } else {
+                // Continue until current time exceeds the time in the partial result
+                return now > FunctionInjector.PartialResult.ResultValue.DoubleValue() ? 
+                    Result.Null : 
+                    FunctionInjector.PartialResult;
+            }
+        }
+
         // yield
         //	Pause the execution of the script until the next "tick" of
         //	the host app.  In Mini Micro, for example, this waits until
