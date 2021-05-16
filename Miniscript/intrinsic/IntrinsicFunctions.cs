@@ -282,6 +282,64 @@ namespace Miniscript.intrinsic {
                 Intrinsic.StringType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
         }
         
+        // shuffle
+        //	Randomize the order of elements in a list, or the mappings from
+        //	keys to values in a map.  This is Done in place.
+        // self (list or map): object to shuffle
+        // Returns: null
+        public void Shuffle(Value self) {
+            switch (self) {
+                case ValList valList: {
+                    var list = valList.Values;
+                    // We'll do a Fisher-Yates shuffle, i.e., swap each element
+                    // with a randomly selected one.
+                    for (int i=list.Count-1; i >= 1; i--) {
+                        var j = random.Next(i+1);
+                        var temp = list[j];
+                        list[j] = list[i];
+                        list[i] = temp;
+                    }
+                    break;
+                }
+                case ValMap valMap: {
+                    var map = valMap.Map;
+                    // Fisher-Yates again, but this time, what we're swapping
+                    // is the values associated with the keys, not the keys themselves.
+                    var keys = map.Keys.ToList();
+                    for (int i=keys.Count-1; i >= 1; i--) {
+                        var j = random.Next(i+1);
+                        var keyi = keys[i];
+                        var keyj = keys[j];
+                        var temp = map[keyj];
+                        map[keyj] = map[keyi];
+                        map[keyi] = temp;
+                    }
+                    break;
+                }
+            }
+        }
+
+        // sum
+        //	Returns the total of all elements in a list, or all values in a map.
+        // self (list or map): object to sum
+        // Returns: result of adding up all values in self
+        // Example: range(3).sum		returns 6 (3 + 2 + 1 + 0)
+        public double Sum(Value self) {
+            double sum = 0;
+            switch (self) {
+                case ValList valList: {
+                    sum += valList.Values.Sum(v => v.DoubleValue());
+                    break;
+                }
+                case ValMap valMap: {
+                    sum += valMap.Map.Values.Sum(v => v.DoubleValue());
+                    break;
+                }
+            }
+            return sum;
+        }
+        
+        
         // tan
         //	Returns the tangent of the given angle (in radians).
         // radians (number): angle, in radians, to get the tangent of
