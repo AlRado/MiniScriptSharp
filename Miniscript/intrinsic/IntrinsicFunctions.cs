@@ -268,8 +268,7 @@ namespace Miniscript.intrinsic {
         // time
         //	Returns the number of seconds since the script started running.
         public double Time() {
-            var context = FunctionInjector.GetContext("Time");
-            return context.Vm.RunTime;
+            return FunctionInjector.Context.Vm.RunTime;
         }
         
         // string type
@@ -280,8 +279,8 @@ namespace Miniscript.intrinsic {
         // Example: "Hello" isa string		returns 1
         // See also: number, list, map, funcRef
         public ValMap String() {
-            var context = FunctionInjector.GetContext("String");
-            return context.Vm.StringType ??= Intrinsic.StringType.EvalCopy(context.Vm.GlobalContext);
+            return FunctionInjector.Context.Vm.StringType ??= 
+                Intrinsic.StringType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
         }
 
     }
