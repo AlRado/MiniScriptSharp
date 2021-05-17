@@ -124,9 +124,9 @@ namespace Miniscript.intrinsic {
         //	the result).
         // Example: @floor isa funcRef		returns 1
         // See also: number, string, list, map
-        public ValMap FuncRef() {
+        public Result FuncRef() {
             FunctionInjector.Context.Vm.FunctionType ??= Intrinsic.FunctionType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
-            return FunctionInjector.Context.Vm.FunctionType;
+            return new Result(FunctionInjector.Context.Vm.FunctionType);
         }
         
         // code
@@ -793,8 +793,8 @@ namespace Miniscript.intrinsic {
         // Returns: self (which has been sorted in place)
         // Example: a = [5,3,4,1,2]; a.sort		results in a == [1, 2, 3, 4, 5]
         // See also: shuffle
-        public ValList Sort(Value self, Value byKey, bool ascending = true) {
-            if (!(self is ValList list) || list.Values.Count < 2) return self as ValList;
+        public Result Sort(Value self, Value byKey, bool ascending = true) {
+            if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
 
             IComparer<Value> sorter;
             if (ascending) {
@@ -842,7 +842,7 @@ namespace Miniscript.intrinsic {
                 }
             }
 
-            return list;
+            return new Result(list);
         }
 
         // split
@@ -855,7 +855,7 @@ namespace Miniscript.intrinsic {
         // Example: "foo bar baz".split		returns ["foo", "bar", "baz"]
         // Example: "foo bar baz".split("a", 2)		returns ["foo b", "r baz"]
         // See also: join
-        public ValList Split(Value self, string delimiter = " ", double maxCount = -1) {
+        public Result Split(Value self, string delimiter = " ", double maxCount = -1) {
             var selfStr = self.ToString();
             var result = new ValList();
             var pos = 0;
@@ -870,7 +870,7 @@ namespace Miniscript.intrinsic {
                 if (pos == selfStr.Length && delimiter.Length > 0) result.Values.Add(ValString.Empty);
             }
 
-            return result;
+            return new Result(result);
         }
         
         // sqrt
@@ -899,9 +899,9 @@ namespace Miniscript.intrinsic {
         //	assign new methods here to make them available to all strings.
         // Example: "Hello" isa string		returns 1
         // See also: number, list, map, funcRef
-        public ValMap String() {
-            return FunctionInjector.Context.Vm.StringType ??= 
-                Intrinsic.StringType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
+        public Result String() {
+            FunctionInjector.Context.Vm.StringType ??= Intrinsic.StringType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
+            return new Result(FunctionInjector.Context.Vm.StringType);
         }
         
         // shuffle
@@ -1007,11 +1007,11 @@ namespace Miniscript.intrinsic {
         // Example: d={1:"one", 2:"two"}; d.values		returns ["one", "two"]
         // Example: "abc".values		returns ["a", "b", "c"]
         // See also: indexes
-        public Value Values(Value self) {
+        public Result Values(Value self) {
             switch (self) {
                 case ValMap valMap: {
                     var values = new List<Value>(valMap.Map.Values);
-                    return new ValList(values);
+                    return new Result(new ValList(values));
                 }
                 case ValString valString: {
                     var str = valString.Value;
@@ -1019,11 +1019,10 @@ namespace Miniscript.intrinsic {
                     for (int i = 0; i < str.Length; i++) {
                         values.Add(TAC.Str(str[i].ToString()));
                     }
-
-                    return new ValList(values);
+                    return new Result(new ValList(values));
                 }
                 default:
-                    return self;
+                    return new Result(self);
             }
         }
         
@@ -1036,9 +1035,9 @@ namespace Miniscript.intrinsic {
         //		host: a number for the host major and minor version, like 0.9
         //		hostName: name of the host application, e.g. "Mini Micro"
         //		hostInfo: URL or other short info about the host app
-        public ValMap Version() {
+        public Result Version() {
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            if (FunctionInjector.Context.Vm.VersionMap != null) return FunctionInjector.Context.Vm.VersionMap;
+            if (FunctionInjector.Context.Vm.VersionMap != null) return new Result(FunctionInjector.Context.Vm.VersionMap);
 
             var d = new ValMap {["miniscript"] = new ValString("1.5")};
 
@@ -1055,7 +1054,7 @@ namespace Miniscript.intrinsic {
             d["hostInfo"] = new ValString(HostInfo.Info);
 
             FunctionInjector.Context.Vm.VersionMap = d;
-            return FunctionInjector.Context.Vm.VersionMap;
+            return new Result(FunctionInjector.Context.Vm.VersionMap);
         }
         
         // wait
