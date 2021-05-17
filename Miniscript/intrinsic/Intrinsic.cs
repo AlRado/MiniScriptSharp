@@ -615,13 +615,13 @@ namespace Miniscript.intrinsic {
 			// s (any): value to print (converted to a string as needed)
 			// Returns: null
 			// Example: print 6*7
-			f = Create(PRINT);
-			f.AddStringParam("s");
-			f.Сode = (context, partialResult) => {
-				var s = context.GetLocalString("s");
-				context.Vm.StandardOutput(s ?? NULL);
-				return Result.Null;
-			};
+			// f = Create(PRINT);
+			// f.AddStringParam("s");
+			// f.Сode = (context, partialResult) => {
+			// 	var s = context.GetLocalString("s");
+			// 	context.Vm.StandardOutput(s ?? NULL);
+			// 	return Result.Null;
+			// };
 				
 			// pop
 			//	Removes and	returns the last item in a list, or an arbitrary
@@ -632,28 +632,28 @@ namespace Miniscript.intrinsic {
 			// Returns: value removed, or null
 			// Example: [1, 2, 3].pop		returns (and removes) 3
 			// See also: pull; push; remove
-			f = Create(POP);
-			f.AddValueParam(SELF);
-			f.Сode = (context, partialResult) => {
-				var self = context.Self;
-				switch (self) {
-					case ValList valList: {
-						var list = valList.Values;
-						if (list.Count < 1) return Result.Null;
-						var result = list[list.Count-1];
-						list.RemoveAt(list.Count-1);
-						return new Result(result);
-					}
-					case ValMap valMap: {
-						if (valMap.Map.Count < 1) return Result.Null;
-						var result = valMap.Map.Keys.First();
-						valMap.Map.Remove(result);
-						return new Result(result);
-					}
-					default:
-						return Result.Null;
-				}
-			};
+			// f = Create(POP);
+			// f.AddValueParam(SELF);
+			// f.Сode = (context, partialResult) => {
+			// 	var self = context.Self;
+			// 	switch (self) {
+			// 		case ValList valList: {
+			// 			var list = valList.Values;
+			// 			if (list.Count < 1) return Result.Null;
+			// 			var result = list[list.Count-1];
+			// 			list.RemoveAt(list.Count-1);
+			// 			return new Result(result);
+			// 		}
+			// 		case ValMap valMap: {
+			// 			if (valMap.Map.Count < 1) return Result.Null;
+			// 			var result = valMap.Map.Keys.First();
+			// 			valMap.Map.Remove(result);
+			// 			return new Result(result);
+			// 		}
+			// 		default:
+			// 			return Result.Null;
+			// 	}
+			// };
 
 			// pull
 			//	Removes and	returns the first item in a list, or an arbitrary
@@ -664,28 +664,28 @@ namespace Miniscript.intrinsic {
 			// Returns: value removed, or null
 			// Example: [1, 2, 3].pull		returns (and removes) 1
 			// See also: pop; push; remove
-			f = Create(PULL);
-			f.AddValueParam(SELF);
-			f.Сode = (context, partialResult) => {
-				var self = context.Self;
-				switch (self) {
-					case ValList valList: {
-						var list = valList.Values;
-						if (list.Count < 1) return Result.Null;
-						var result = list[0];
-						list.RemoveAt(0);
-						return new Result(result);
-					}
-					case ValMap valMap: {
-						if (valMap.Map.Count < 1) return Result.Null;
-						var result = valMap.Map.Keys.First();
-						valMap.Map.Remove(result);
-						return new Result(result);
-					}
-					default:
-						return Result.Null;
-				}
-			};
+			// f = Create(PULL);
+			// f.AddValueParam(SELF);
+			// f.Сode = (context, partialResult) => {
+			// 	var self = context.Self;
+			// 	switch (self) {
+			// 		case ValList valList: {
+			// 			var list = valList.Values;
+			// 			if (list.Count < 1) return Result.Null;
+			// 			var result = list[0];
+			// 			list.RemoveAt(0);
+			// 			return new Result(result);
+			// 		}
+			// 		case ValMap valMap: {
+			// 			if (valMap.Map.Count < 1) return Result.Null;
+			// 			var result = valMap.Map.Keys.First();
+			// 			valMap.Map.Remove(result);
+			// 			return new Result(result);
+			// 		}
+			// 		default:
+			// 			return Result.Null;
+			// 	}
+			// };
 
 			// push
 			//	Appends an item to the end of a list, or inserts it into a map
@@ -694,26 +694,26 @@ namespace Miniscript.intrinsic {
 			// self (list or map): object to append an element to
 			// Returns: self
 			// See also: pop, pull, insert
-			f = Create(PUSH);
-			f.AddValueParam(SELF);
-			f.AddValueParam("value");
-			f.Сode = (context, partialResult) => {
-				var self = context.Self;
-				var value = context.GetVar("value");
-				switch (self) {
-					case ValList valList: {
-						var list = valList.Values;
-						list.Add(value);
-						return new Result(valList);
-					}
-					case ValMap valMap: {
-						valMap.Map[value] = ValNumber.One;
-						return new Result(valMap);
-					}
-					default:
-						return Result.Null;
-				}
-			};
+			// f = Create(PUSH);
+			// f.AddValueParam(SELF);
+			// f.AddValueParam("value");
+			// f.Сode = (context, partialResult) => {
+			// 	var self = context.Self;
+			// 	var value = context.GetVar("value");
+			// 	switch (self) {
+			// 		case ValList valList: {
+			// 			var list = valList.Values;
+			// 			list.Add(value);
+			// 			return new Result(valList);
+			// 		}
+			// 		case ValMap valMap: {
+			// 			valMap.Map[value] = ValNumber.One;
+			// 			return new Result(valMap);
+			// 		}
+			// 		default:
+			// 			return Result.Null;
+			// 	}
+			// };
 
 			// range
 			//	Return a list containing a series of numbers within a range.

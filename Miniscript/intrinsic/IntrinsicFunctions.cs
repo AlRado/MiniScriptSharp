@@ -443,6 +443,98 @@ namespace Miniscript.intrinsic {
             return Math.PI;
         }
         
+        // print
+        //	Display the given value on the default output stream.  The
+        //	exact effect may vary with the environment.  In most cases, the
+        //	given string will be followed by the standard line delimiter.
+        // s (any): value to print (converted to a string as needed)
+        // Returns: null
+        // Example: print 6*7
+        public void Print(string s) {
+            FunctionInjector.Context.Vm.StandardOutput(s ?? "null");
+        }
+        
+        // pop
+        //	Removes and	returns the last item in a list, or an arbitrary
+        //	key of a map.  If the list or map is empty (or if called on
+        //	any other data type), returns null.
+        //	May be called with function syntax or dot syntax.
+        // self (list or map): object to remove an element from the end of
+        // Returns: value removed, or null
+        // Example: [1, 2, 3].pop		returns (and removes) 3
+        // See also: pull; push; remove
+        public Result Pop(Value self) {
+            switch (self) {
+                case ValList valList: {
+                    var list = valList.Values;
+                    if (list.Count < 1) return Result.Null;
+                    var result = list[list.Count - 1];
+                    list.RemoveAt(list.Count - 1);
+                    return new Result(result);
+                }
+                case ValMap valMap: {
+                    if (valMap.Map.Count < 1) return Result.Null;
+                    var result = valMap.Map.Keys.First();
+                    valMap.Map.Remove(result);
+                    return new Result(result);
+                }
+                default:
+                    return Result.Null;
+            }
+        }
+        
+        // pull
+        //	Removes and	returns the first item in a list, or an arbitrary
+        //	key of a map.  If the list or map is empty (or if called on
+        //	any other data type), returns null.
+        //	May be called with function syntax or dot syntax.
+        // self (list or map): object to remove an element from the end of
+        // Returns: value removed, or null
+        // Example: [1, 2, 3].pull		returns (and removes) 1
+        // See also: pop; push; remove
+        public Result Pull(Value self) {
+            switch (self) {
+                case ValList valList: {
+                    var list = valList.Values;
+                    if (list.Count < 1) return Result.Null;
+                    var result = list[0];
+                    list.RemoveAt(0);
+                    return new Result(result);
+                }
+                case ValMap valMap: {
+                    if (valMap.Map.Count < 1) return Result.Null;
+                    var result = valMap.Map.Keys.First();
+                    valMap.Map.Remove(result);
+                    return new Result(result);
+                }
+                default:
+                    return Result.Null;
+            }
+        }
+        
+        // push
+        //	Appends an item to the end of a list, or inserts it into a map
+        //	as a key with a value of 1.
+        //	May be called with function syntax or dot syntax.
+        // self (list or map): object to append an element to
+        // Returns: self
+        // See also: pop, pull, insert
+        public Result Push(Value self, Value value) {
+            switch (self) {
+                case ValList valList: {
+                    var list = valList.Values;
+                    list.Add(value);
+                    return new Result(valList);
+                }
+                case ValMap valMap: {
+                    valMap.Map[value] = ValNumber.One;
+                    return new Result(valMap);
+                }
+                default:
+                    return Result.Null;
+            }
+        }
+
         // round
         //	Rounds a number to the specified number of decimal places.  If given
         //	a negative number for decimalPlaces, then rounds to a power of 10:
