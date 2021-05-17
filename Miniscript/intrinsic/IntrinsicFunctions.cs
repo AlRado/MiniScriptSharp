@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Miniscript.errors;
 using Miniscript.tac;
 using Miniscript.types;
 
@@ -115,6 +116,19 @@ namespace Miniscript.intrinsic {
             return Math.Ceiling(x);
         }
         
+        // funcRef
+        //	Returns a map that represents a function reference in
+        //	Minisript's core type system.  This can be used with `isa`
+        //	to check whether a variable refers to a function (but be
+        //	sure to use @ to avoid invoking the function and testing
+        //	the result).
+        // Example: @floor isa funcRef		returns 1
+        // See also: number, string, list, map
+        public ValMap FuncRef() {
+            FunctionInjector.Context.Vm.FunctionType ??= Intrinsic.FunctionType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
+            return FunctionInjector.Context.Vm.FunctionType;
+        }
+        
         // code
         //	Return the Unicode code point of the first character of
         //	the given string.  This is the inverse of `char`.
@@ -161,6 +175,169 @@ namespace Miniscript.intrinsic {
             return obj.Hash();
         }
         
+        // hasIndex
+        //	Return whether the given index is valid for this object, that is,
+        //	whether it could be used with square brackets to get some value
+        //	from self.  When self is a list or string, the result is true for
+        //	integers from -(length of string) to (length of string-1).  When
+        //	self is a map, it is true for any key (index) in the map.  If
+        //	called on a number, this method throws a runtime exception.
+        // self (string, list, or map): object to check for an index on
+        // index (any): value to consider as a possible index
+        // Returns: 1 if self[index] would be valid; 0 otherwise
+        // Example: "foo".hasIndex(2)		returns 1
+        // Example: "foo".hasIndex(3)		returns 0
+        // See also: indexes
+        public Result HasIndex(Value self, Value index) {
+            switch (self) {
+                case ValList _ when !(index is ValNumber):
+                    return Result.False;	// #3
+                case ValList valList: {
+                    var list = valList.Values;
+                    var i = index.IntValue();
+                    return new Result(ValNumber.Truth(i >= -list.Count && i < list.Count));
+                }
+                case ValString valString: {
+                    var str = valString.Value;
+                    var i = index.IntValue();
+                    return new Result(ValNumber.Truth(i >= -str.Length && i < str.Length));
+                }
+                case ValMap valMap: {
+                    return new Result(ValNumber.Truth(valMap.ContainsKey(index)));
+                }
+                default:
+                    return Result.Null;
+            }
+        }
+        
+        // indexes
+        //	Returns the keys of a dictionary, or the non-negative indexes
+        //	for a string or list.
+        // self (string, list, or map): object to get the indexes of
+        // Returns: a list of valid indexes for self
+        // Example: "foo".indexes		returns [0, 1, 2]
+        // See also: hasIndex
+        public Result Indexes(Value self) {
+            switch (self) {
+                case ValMap valMap: {
+                    var map = valMap;
+                    var keys = new List<Value>(map.Map.Keys);
+                    for (int i = 0; i < keys.Count; i++) if (keys[i] is ValNull) keys[i] = null;
+                    return new Result(new ValList(keys));
+                }
+                case ValString valString: {
+                    var str = valString.Value;
+                    var indexes = new List<Value>(str.Length);
+                    for (int i = 0; i < str.Length; i++) {
+                        indexes.Add(TAC.Num(i));
+                    }
+                    return new Result(new ValList(indexes));
+                }
+                case ValList valList: {
+                    var list = valList.Values;
+                    var indexes = new List<Value>(list.Count);
+                    for (int i = 0; i < list.Count; i++) {
+                        indexes.Add(TAC.Num(i));
+                    }
+                    return new Result(new ValList(indexes));
+                }
+                default:
+                    return Result.Null;
+            }
+        }
+        
+        // indexOf
+        //	Returns index or key of the given value, or if not found,		returns null.
+        // self (string, list, or map): object to search
+        // value (any): value to search for
+        // after (any, optional): if given, starts the search after this index
+        // Returns: first index (after `after`) such that self[index] == value, or null
+        // Example: "Hello World".indexOf("o")		returns 4
+        // Example: "Hello World".indexOf("o", 4)		returns 7
+        // Example: "Hello World".indexOf("o", 7)		returns null
+        public Result IndexOf(Value self, Value value, Value after) {
+            switch (self) {
+                case ValList valList: {
+                    var list = valList.Values;
+                    int idx;
+                    if (after == null) idx = list.FindIndex(x => 
+                        x == null ? value == null : x.Equality(value) == 1);
+                    else {
+                        var afterIdx = after.IntValue();
+                        if (afterIdx < -1) afterIdx += list.Count;
+                        if (afterIdx < -1 || afterIdx >= list.Count-1) return Result.Null;
+                        idx = list.FindIndex(afterIdx + 1, x => 
+                            x == null ? value == null : x.Equality(value) == 1);
+                    }
+                    if (idx >= 0) return new Result(idx);
+                    break;
+                }
+                case ValString valString: {
+                    var str = valString.Value;
+                    if (value == null) return Result.Null;
+                    var s = value.ToString();
+                    int idx;
+                    if (after == null) idx = str.IndexOf(s);
+                    else {
+                        int afterIdx = after.IntValue();
+                        if (afterIdx < -1) afterIdx += str.Length;
+                        if (afterIdx < -1 || afterIdx >= str.Length-1) return Result.Null;
+                        idx = str.IndexOf(s, afterIdx + 1);
+                    }
+                    if (idx >= 0) return new Result(idx);
+                    break;
+                }
+                case ValMap valMap: {
+                    bool sawAfter = (after == null);
+                    foreach (Value k in valMap.Map.Keys) {
+                        if (!sawAfter) {
+                            if (k.Equality(after) == 1) sawAfter = true;
+                        } else {
+                            if (valMap.Map[k].Equality(value) == 1) return new Result(k);
+                        }
+                    }
+
+                    break;
+                }
+            }
+            return Result.Null;
+        }
+        
+        // insert
+        //	Insert a new element into a string or list.  In the case of a list,
+        //	the list is both modified in place and returned.  Strings are immutable,
+        //	so in that case the original string is unchanged, but a new string is
+        //	returned with the value inserted.
+        // self (string or list): sequence to insert into
+        // index (number): position at which to insert the new item
+        // value (any): element to insert at the specified index
+        // Returns: modified list, new string
+        // Example: "Hello".insert(2, 42)		returns "He42llo"
+        // See also: remove
+        public Result Insert(Value self, Value index, Value value) {
+            if (index == null) throw new RuntimeException("insert: index argument required");
+            if (!(index is ValNumber)) throw new RuntimeException("insert: number required for index argument");
+            var idx = index.IntValue();
+            switch (self) {
+                case ValList valList: {
+                    var list = valList.Values;
+                    if (idx < 0) idx += list.Count + 1;	// +1 because we are inserting AND counting from the end.
+                    Check.Range(idx, 0, list.Count);	// and allowing all the way up to .Count here, because insert.
+                    list.Insert(idx, value);
+                    return new Result(valList);
+                }
+                case ValString _: {
+                    var s = self.ToString();
+                    if (idx < 0) idx += s.Length + 1;
+                    Check.Range(idx, 0, s.Length);
+                    s = s.Substring(0, idx) + value.ToString() + s.Substring(idx);
+                    return new Result(s);
+                }
+                default:
+                    throw new RuntimeException("insert called on invalid type");
+            }
+        }
+
         // self.join
         //	Join the elements of a list together to form a string.
         // self (list): list to join
@@ -192,6 +369,18 @@ namespace Miniscript.intrinsic {
             };
         }
         
+        // list type
+        //	Returns a map that represents the list datatype in
+        //	Minisript's core type system.  This can be used with `isa`
+        //	to check whether a variable refers to a list.  You can also
+        //	assign new methods here to make them available to all lists.
+        // Example: [1, 2, 3] isa list		returns 1
+        // See also: number, string, map, funcRef
+        public Result List() {
+            FunctionInjector.Context.Vm.ListType ??= Intrinsic.ListType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
+            return new Result(FunctionInjector.Context.Vm.ListType);
+        }
+        
         // log(x, base)
         //	Returns the logarithm (with the given) of the given number,
         //	that is, the number y such that base^y = x.
@@ -206,7 +395,7 @@ namespace Miniscript.intrinsic {
         
             return result;
         }
-        
+
         // lower
         //	Return a lower-case version of a string.
         //	May be called with function syntax or dot syntax.
@@ -220,6 +409,32 @@ namespace Miniscript.intrinsic {
             return valString.Value.ToLower();
         }
         
+        // map type
+        //	Returns a map that represents the map datatype in
+        //	Minisript's core type system.  This can be used with `isa`
+        //	to check whether a variable refers to a map.  You can also
+        //	assign new methods here to make them available to all maps.
+        // Example: {1:"one"} isa map		returns 1
+        // See also: number, string, list, funcRef
+        public Result Map() {
+            FunctionInjector.Context.Vm.MapType ??= Intrinsic.MapType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext); 
+            return new Result(FunctionInjector.Context.Vm.MapType);
+        }
+        
+        // number type
+        //	Returns a map that represents the number datatype in
+        //	Minisript's core type system.  This can be used with `isa`
+        //	to check whether a variable refers to a number.  You can also
+        //	assign new methods here to make them available to all maps
+        //	(though because of a limitation in Minisript's parser, such
+        //	methods do not work on numeric literals).
+        // Example: 42 isa number		returns 1
+        // See also: string, list, map, funcRef
+        public Result Number() {
+            FunctionInjector.Context.Vm.NumberType ??= Intrinsic.NumberType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
+            return new Result(FunctionInjector.Context.Vm.NumberType);
+        }
+
         // pi
         //	Returns the universal constant π, that is, the ratio of
         //	a circle's circumference to its diameter.
@@ -439,8 +654,7 @@ namespace Miniscript.intrinsic {
             }
             return sum;
         }
-        
-        
+
         // tan
         //	Returns the tangent of the given angle (in radians).
         // radians (number): angle, in radians, to get the tangent of
