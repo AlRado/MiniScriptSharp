@@ -765,39 +765,39 @@ namespace Miniscript.intrinsic {
 			// Example: d={"ichi":"one"}; d.remove "ni"		returns 0
 			// Example: "Spam".remove("S")		returns "pam"
 			// See also: indexOf
-			f = Create(REMOVE);
-			f.AddValueParam(SELF);
-			f.AddValueParam("k");
-			f.Сode = (context, partialResult) => {
-				var self = context.Self;
-				var k = context.GetVar("k");
-				switch (self) {
-					case ValMap valMap: {
-						k ??= ValNull.Instance;
-						if (!valMap.Map.ContainsKey(k)) return Result.False;
-						valMap.Map.Remove(k);
-						return Result.True;
-					}
-					case ValList _ when k == null:
-						throw new RuntimeException("argument to 'remove' must not be null");
-					case ValList valList: {
-						var idx = k.IntValue();
-						if (idx < 0) idx += valList.Values.Count;
-						Check.Range(idx, 0, valList.Values.Count-1);
-						valList.Values.RemoveAt(idx);
-						return Result.Null;
-					}
-					case ValString _ when k == null:
-						throw new RuntimeException("argument to 'remove' must not be null");
-					case ValString valString: {
-						var substr = k.ToString();
-						var foundPos = valString.Value.IndexOf(substr, StringComparison.Ordinal);
-						return foundPos < 0 ? new Result(valString) : new Result(valString.Value.Remove(foundPos, substr.Length));
-					}
-					default:
-						throw new TypeException("Type Error: 'remove' requires map, list, or string");
-				}
-			};
+			// f = Create(REMOVE);
+			// f.AddValueParam(SELF);
+			// f.AddValueParam("k");
+			// f.Сode = (context, partialResult) => {
+			// 	var self = context.Self;
+			// 	var k = context.GetVar("k");
+			// 	switch (self) {
+			// 		case ValMap valMap: {
+			// 			k ??= ValNull.Instance;
+			// 			if (!valMap.Map.ContainsKey(k)) return Result.False;
+			// 			valMap.Map.Remove(k);
+			// 			return Result.True;
+			// 		}
+			// 		case ValList _ when k == null:
+			// 			throw new RuntimeException("argument to 'remove' must not be null");
+			// 		case ValList valList: {
+			// 			var idx = k.IntValue();
+			// 			if (idx < 0) idx += valList.Values.Count;
+			// 			Check.Range(idx, 0, valList.Values.Count-1);
+			// 			valList.Values.RemoveAt(idx);
+			// 			return Result.Null;
+			// 		}
+			// 		case ValString _ when k == null:
+			// 			throw new RuntimeException("argument to 'remove' must not be null");
+			// 		case ValString valString: {
+			// 			var substr = k.ToString();
+			// 			var foundPos = valString.Value.IndexOf(substr, StringComparison.Ordinal);
+			// 			return foundPos < 0 ? new Result(valString) : new Result(valString.Value.Remove(foundPos, substr.Length));
+			// 		}
+			// 		default:
+			// 			throw new TypeException("Type Error: 'remove' requires map, list, or string");
+			// 	}
+			// };
 
 			// replace
 			//	Replace all matching elements of a list or map, or substrings of a string,
@@ -813,76 +813,76 @@ namespace Miniscript.intrinsic {
 			// Example: "Happy Pappy".replace("app", "ol")		returns "Holy Poly"
 			// Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [2, 42, 3, 42, 5]
 			// Example: d = {1: "one"}; d.replace("one", "ichi")		returns (and mutates to) {1: "ichi"}
-			f = Create(REPLACE);
-			f.AddValueParam(SELF);
-			f.AddValueParam("oldVal");
-			f.AddValueParam("newVal");
-			f.AddValueParam("maxCount");
-			f.Сode = (context, partialResult) => {
-				var self = context.Self;
-				if (self == null) throw new RuntimeException("argument to 'replace' must not be null");
-				var oldVal = context.GetVar("oldVal");
-				var newVal = context.GetVar("newVal");
-				var maxCountVal = context.GetVar("maxCount");
-				var maxCount = -1;
-				if (maxCountVal != null) {
-					maxCount = maxCountVal.IntValue();
-					if (maxCount < 1) return new Result(self);
-				}
-				var count = 0;
-				switch (self) {
-					case ValMap selfMap: {
-						// C# doesn't allow changing even the values while iterating
-						// over the keys.  So gather the keys to change, then change
-						// them afterwards.
-						List<Value> keysToChange = null;
-						foreach (var k in selfMap.Map.Keys.Where(k => selfMap.Map[k].Equality(oldVal) == 1)) {
-							keysToChange ??= new List<Value>();
-							keysToChange.Add(k);
-							count++;
-							if (maxCount > 0 && count == maxCount) break;
-						}
-
-						if (keysToChange == null) return new Result(selfMap);
-						{
-							foreach (var k in keysToChange) {
-								selfMap.Map[k] = newVal;
-							}
-						}
-
-						return new Result(selfMap);
-					}
-					case ValList selfList: {
-						var idx = -1;
-						while (true) {
-							idx = selfList.Values.FindIndex(idx+1, x => x.Equality(oldVal) == 1);
-							if (idx < 0) break;
-							selfList.Values[idx] = newVal;
-							count++;
-							if (maxCount > 0 && count == maxCount) break;
-						}
-						return new Result(selfList);
-					}
-					case ValString _: {
-						var str = self.ToString();
-						var oldStr = oldVal == null ? "" : oldVal.ToString();
-						if (string.IsNullOrEmpty(oldStr)) throw new RuntimeException("replace: oldVal argument is empty");
-						var newStr = newVal == null ? "" : newVal.ToString();
-						var idx = 0;
-						while (true) {
-							idx = str.IndexOf(oldStr, idx, StringComparison.Ordinal);
-							if (idx < 0) break;
-							str = str.Substring(0, idx) + newStr + str.Substring(idx + oldStr.Length);
-							idx += newStr.Length;
-							count++;
-							if (maxCount > 0 && count == maxCount) break;
-						}
-						return new Result(str);
-					}
-					default:
-						throw new TypeException("Type Error: 'replace' requires map, list, or string");
-				}
-			};
+			// f = Create(REPLACE);
+			// f.AddValueParam(SELF);
+			// f.AddValueParam("oldVal");
+			// f.AddValueParam("newVal");
+			// f.AddValueParam("maxCount");
+			// f.Сode = (context, partialResult) => {
+			// 	var self = context.Self;
+			// 	if (self == null) throw new RuntimeException("argument to 'replace' must not be null");
+			// 	var oldVal = context.GetVar("oldVal");
+			// 	var newVal = context.GetVar("newVal");
+			// 	var maxCountVal = context.GetVar("maxCount");
+			// 	var maxCount = -1;
+			// 	if (maxCountVal != null) {
+			// 		maxCount = maxCountVal.IntValue();
+			// 		if (maxCount < 1) return new Result(self);
+			// 	}
+			// 	var count = 0;
+			// 	switch (self) {
+			// 		case ValMap selfMap: {
+			// 			// C# doesn't allow changing even the values while iterating
+			// 			// over the keys.  So gather the keys to change, then change
+			// 			// them afterwards.
+			// 			List<Value> keysToChange = null;
+			// 			foreach (var k in selfMap.Map.Keys.Where(k => selfMap.Map[k].Equality(oldVal) == 1)) {
+			// 				keysToChange ??= new List<Value>();
+			// 				keysToChange.Add(k);
+			// 				count++;
+			// 				if (maxCount > 0 && count == maxCount) break;
+			// 			}
+			//
+			// 			if (keysToChange == null) return new Result(selfMap);
+			// 			{
+			// 				foreach (var k in keysToChange) {
+			// 					selfMap.Map[k] = newVal;
+			// 				}
+			// 			}
+			//
+			// 			return new Result(selfMap);
+			// 		}
+			// 		case ValList selfList: {
+			// 			var idx = -1;
+			// 			while (true) {
+			// 				idx = selfList.Values.FindIndex(idx+1, x => x.Equality(oldVal) == 1);
+			// 				if (idx < 0) break;
+			// 				selfList.Values[idx] = newVal;
+			// 				count++;
+			// 				if (maxCount > 0 && count == maxCount) break;
+			// 			}
+			// 			return new Result(selfList);
+			// 		}
+			// 		case ValString _: {
+			// 			var str = self.ToString();
+			// 			var oldStr = oldVal == null ? "" : oldVal.ToString();
+			// 			if (string.IsNullOrEmpty(oldStr)) throw new RuntimeException("replace: oldVal argument is empty");
+			// 			var newStr = newVal == null ? "" : newVal.ToString();
+			// 			var idx = 0;
+			// 			while (true) {
+			// 				idx = str.IndexOf(oldStr, idx, StringComparison.Ordinal);
+			// 				if (idx < 0) break;
+			// 				str = str.Substring(0, idx) + newStr + str.Substring(idx + oldStr.Length);
+			// 				idx += newStr.Length;
+			// 				count++;
+			// 				if (maxCount > 0 && count == maxCount) break;
+			// 			}
+			// 			return new Result(str);
+			// 		}
+			// 		default:
+			// 			throw new TypeException("Type Error: 'replace' requires map, list, or string");
+			// 	}
+			// };
 
 			// round
 			//	Rounds a number to the specified number of decimal places.  If given
@@ -922,19 +922,19 @@ namespace Miniscript.intrinsic {
 			// x (number): number to get the sign of
 			// Returns: sign of the number
 			// Example: sign(-42.6)		returns -1
-			f = Create(SIGN);
-			f.AddDoubleParam("x");
-			f.Сode = (context, partialResult) => new Result(Math.Sign(context.GetLocalDouble("x")));
+			// f = Create(SIGN);
+			// f.AddDoubleParam("x");
+			// f.Сode = (context, partialResult) => new Result(Math.Sign(context.GetLocalDouble("x")));
 
 			// sin
 			//	Returns the sine of the given angle (in radians).
 			// radians (number): angle, in radians, to get the sine of
 			// Returns: sine of the given angle
 			// Example: sin(pi/2)		returns 1
-			f = Create(SIN);
-			f.AddDoubleParam("radians");
-			f.Сode = (context, partialResult) => new Result(Math.Sin(context.GetLocalDouble("radians")));
-				
+			// f = Create(SIN);
+			// f.AddDoubleParam("radians");
+			// f.Сode = (context, partialResult) => new Result(Math.Sin(context.GetLocalDouble("radians")));
+			
 			// slice
 			//	Return a subset of a string or list.  This is equivalent to using
 			//	the square-brackets slice operator seq[from:to], but with ordinary
@@ -946,47 +946,47 @@ namespace Miniscript.intrinsic {
 			// Returns: substring or sublist
 			// Example: slice("Hello", -2)		returns "lo"
 			// Example: slice(["a","b","c","d"], 1, 3)		returns ["b", "c"]
-			f = Create(SLICE);
-			f.AddValueParam("seq");
-			f.AddIntParam("from", 0);
-			f.AddValueParam("to");
-			f.Сode = (context, partialResult) => {
-				var seq = context.GetVar("seq");
-				var fromIdx = context.GetLocalInt("from");
-				var toVal = context.GetVar("to");
-				var toIdx = 0;
-				if (toVal != null) toIdx = toVal.IntValue();
-				switch (seq) {
-					case ValList valList: {
-						var list = valList.Values;
-						if (fromIdx < 0) fromIdx += list.Count;
-						if (fromIdx < 0) fromIdx = 0;
-						if (toVal == null) toIdx = list.Count;
-						if (toIdx < 0) toIdx += list.Count;
-						if (toIdx > list.Count) toIdx = list.Count;
-						var slice = new ValList();
-						if (fromIdx < list.Count && toIdx > fromIdx) {
-							for (int i = fromIdx; i < toIdx; i++) {
-								slice.Values.Add(list[i]);
-							}
-						}
-						return new Result(slice);
-					}
-					case ValString valString: {
-						var str = valString.Value;
-						if (fromIdx < 0) fromIdx += str.Length;
-						if (fromIdx < 0) fromIdx = 0;
-						if (toVal == null) toIdx = str.Length;
-						if (toIdx < 0) toIdx += str.Length;
-						if (toIdx > str.Length) toIdx = str.Length;
-						if (toIdx - fromIdx <= 0) return Result.EmptyString;
-						
-						return new Result(str.Substring(fromIdx, toIdx - fromIdx));
-					}
-					default:
-						return Result.Null;
-				}
-			};
+			// f = Create(SLICE);
+			// f.AddValueParam("seq");
+			// f.AddIntParam("from", 0);
+			// f.AddValueParam("to");
+			// f.Сode = (context, partialResult) => {
+			// 	var seq = context.GetVar("seq");
+			// 	var fromIdx = context.GetLocalInt("from");
+			// 	var toVal = context.GetVar("to");
+			// 	var toIdx = 0;
+			// 	if (toVal != null) toIdx = toVal.IntValue();
+			// 	switch (seq) {
+			// 		case ValList valList: {
+			// 			var list = valList.Values;
+			// 			if (fromIdx < 0) fromIdx += list.Count;
+			// 			if (fromIdx < 0) fromIdx = 0;
+			// 			if (toVal == null) toIdx = list.Count;
+			// 			if (toIdx < 0) toIdx += list.Count;
+			// 			if (toIdx > list.Count) toIdx = list.Count;
+			// 			var slice = new ValList();
+			// 			if (fromIdx < list.Count && toIdx > fromIdx) {
+			// 				for (int i = fromIdx; i < toIdx; i++) {
+			// 					slice.Values.Add(list[i]);
+			// 				}
+			// 			}
+			// 			return new Result(slice);
+			// 		}
+			// 		case ValString valString: {
+			// 			var str = valString.Value;
+			// 			if (fromIdx < 0) fromIdx += str.Length;
+			// 			if (fromIdx < 0) fromIdx = 0;
+			// 			if (toVal == null) toIdx = str.Length;
+			// 			if (toIdx < 0) toIdx += str.Length;
+			// 			if (toIdx > str.Length) toIdx = str.Length;
+			// 			if (toIdx - fromIdx <= 0) return Result.EmptyString;
+			// 			
+			// 			return new Result(str.Substring(fromIdx, toIdx - fromIdx));
+			// 		}
+			// 		default:
+			// 			return Result.Null;
+			// 	}
+			// };
 			
 			// sort
 			//	Sorts a list in place.  With null or no argument, this sorts the

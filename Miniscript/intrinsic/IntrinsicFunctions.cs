@@ -561,7 +561,130 @@ namespace Miniscript.intrinsic {
             return new Result(new ValList(values));
         }
         
+        // remove
+        //	Removes part of a list, map, or string.  Exact behavior depends on
+        //	the data type of self:
+        // 		list: removes one element by its index; the list is mutated in place;
+        //			returns null, and throws an error if the given index out of range
+        //		map: removes one key/value pair by key; the map is mutated in place;
+        //			returns 1 if key was found, 0 otherwise
+        //		string:	returns a new string with the first occurrence of k removed
+        //	May be called with function syntax or dot syntax.
+        // self (list, map, or string): object to remove something from
+        // k (any): index or substring to remove
+        // Returns: (see above)
+        // Example: a=["a","b","c"]; a.remove 1		leaves a == ["a", "c"]
+        // Example: d={"ichi":"one"}; d.remove "ni"		returns 0
+        // Example: "Spam".remove("S")		returns "pam"
+        // See also: indexOf
+        public Result Remove(Value self, Value k) {
+            switch (self) {
+                case ValMap valMap: {
+                    k ??= ValNull.Instance;
+                    if (!valMap.Map.ContainsKey(k)) return Result.False;
+                    valMap.Map.Remove(k);
+                    return Result.True;
+                }
+                case ValList _ when k == null:
+                    throw new RuntimeException("argument to 'remove' must not be null");
+                case ValList valList: {
+                    var idx = k.IntValue();
+                    if (idx < 0) idx += valList.Values.Count;
+                    Check.Range(idx, 0, valList.Values.Count-1);
+                    valList.Values.RemoveAt(idx);
+                    return Result.Null;
+                }
+                case ValString _ when k == null:
+                    throw new RuntimeException("argument to 'remove' must not be null");
+                case ValString valString: {
+                    var substr = k.ToString();
+                    var foundPos = valString.Value.IndexOf(substr, StringComparison.Ordinal);
+                    return foundPos < 0 ? new Result(valString) : new Result(valString.Value.Remove(foundPos, substr.Length));
+                }
+                default:
+                    throw new TypeException("Type Error: 'remove' requires map, list, or string");
+            }
+        }
+        
+        // replace
+        //	Replace all matching elements of a list or map, or substrings of a string,
+        //	with a new value.Lists and maps are mutated in place, and return themselves.
+        //	Strings are immutable, so the original string is (of course) unchanged, but
+        //	a new string with the replacement is returned.  Note that with maps, it is
+        //	the values that are searched for and replaced, not the keys.
+        // self (list, map, or string): object to replace elements of
+        // oldVal (any): value or substring to replace
+        // newVal (any): new value or substring to substitute where oldVal is found
+        // maxCount (number, optional): if given, replace no more than this many
+        // Returns: modified list or map, or new string, with replacements Done
+        // Example: "Happy Pappy".replace("app", "ol")		returns "Holy Poly"
+        // Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [2, 42, 3, 42, 5]
+        // Example: d = {1: "one"}; d.replace("one", "ichi")		returns (and mutates to) {1: "ichi"}
+        public Result Replace(Value self, Value oldVal, Value newVal, Value maxCountVal) {
+            if (self == null) throw new RuntimeException("argument to 'replace' must not be null");
+            var maxCount = -1;
+            if (maxCountVal != null) {
+                maxCount = maxCountVal.IntValue();
+                if (maxCount < 1) return new Result(self);
+            }
 
+            var count = 0;
+            switch (self) {
+                case ValMap selfMap: {
+                    // C# doesn't allow changing even the values while iterating
+                    // over the keys.  So gather the keys to change, then change
+                    // them afterwards.
+                    List<Value> keysToChange = null;
+                    foreach (var k in selfMap.Map.Keys.Where(k => selfMap.Map[k].Equality(oldVal) == 1)) {
+                        keysToChange ??= new List<Value>();
+                        keysToChange.Add(k);
+                        count++;
+                        if (maxCount > 0 && count == maxCount) break;
+                    }
+
+                    if (keysToChange == null) return new Result(selfMap);
+                    {
+                        foreach (var k in keysToChange) {
+                            selfMap.Map[k] = newVal;
+                        }
+                    }
+
+                    return new Result(selfMap);
+                }
+                case ValList selfList: {
+                    var idx = -1;
+                    while (true) {
+                        idx = selfList.Values.FindIndex(idx + 1, x => x.Equality(oldVal) == 1);
+                        if (idx < 0) break;
+                        selfList.Values[idx] = newVal;
+                        count++;
+                        if (maxCount > 0 && count == maxCount) break;
+                    }
+
+                    return new Result(selfList);
+                }
+                case ValString _: {
+                    var str = self.ToString();
+                    var oldStr = oldVal == null ? "" : oldVal.ToString();
+                    if (string.IsNullOrEmpty(oldStr)) throw new RuntimeException("replace: oldVal argument is empty");
+                    var newStr = newVal == null ? "" : newVal.ToString();
+                    var idx = 0;
+                    while (true) {
+                        idx = str.IndexOf(oldStr, idx, StringComparison.Ordinal);
+                        if (idx < 0) break;
+                        str = str.Substring(0, idx) + newStr + str.Substring(idx + oldStr.Length);
+                        idx += newStr.Length;
+                        count++;
+                        if (maxCount > 0 && count == maxCount) break;
+                    }
+
+                    return new Result(str);
+                }
+                default:
+                    throw new TypeException("Type Error: 'replace' requires map, list, or string");
+            }
+        }
+        
         // round
         //	Rounds a number to the specified number of decimal places.  If given
         //	a negative number for decimalPlaces, then rounds to a power of 10:
@@ -592,6 +715,70 @@ namespace Miniscript.intrinsic {
         public double Rnd(int? seed) {
             if (seed != null) random = new Random((int)seed);
             return random.NextDouble();
+        }
+        
+        // sign
+        //	Return -1 for negative numbers, 1 for positive numbers, and 0 for zero.
+        // x (number): number to get the sign of
+        // Returns: sign of the number
+        // Example: sign(-42.6)		returns -1
+        public double Sign(double x) {
+            return Math.Sign(x);
+        }
+        
+        // sin
+        //	Returns the sine of the given angle (in radians).
+        // radians (number): angle, in radians, to get the sine of
+        // Returns: sine of the given angle
+        // Example: sin(pi/2)		returns 1
+        public double Sin(double radians) {
+            return Math.Sin(radians);
+        }
+        
+        // slice
+        //	Return a subset of a string or list.  This is equivalent to using
+        //	the square-brackets slice operator seq[from:to], but with ordinary
+        //	function syntax.
+        // seq (string or list): sequence to get a subsequence of
+        // from (number, default 0): 0-based index to the first element to return (if negative, counts from the end)
+        // to (number, optional): 0-based index of first element to *not* include in the result
+        //		(if negative, count from the end; if omitted, return the rest of the sequence)
+        // Returns: substring or sublist
+        // Example: slice("Hello", -2)		returns "lo"
+        // Example: slice(["a","b","c","d"], 1, 3)		returns ["b", "c"]
+        public Result Slice(Value seq, int from, Value toVal) {
+            var toIdx = 0;
+            if (toVal != null) toIdx = toVal.IntValue();
+            switch (seq) {
+                case ValList valList: {
+                    var list = valList.Values;
+                    if (from < 0) from += list.Count;
+                    if (from < 0) from = 0;
+                    if (toVal == null) toIdx = list.Count;
+                    if (toIdx < 0) toIdx += list.Count;
+                    if (toIdx > list.Count) toIdx = list.Count;
+                    var slice = new ValList();
+                    if (from < list.Count && toIdx > from) {
+                        for (int i = from; i < toIdx; i++) {
+                            slice.Values.Add(list[i]);
+                        }
+                    }
+                    return new Result(slice);
+                }
+                case ValString valString: {
+                    var str = valString.Value;
+                    if (from < 0) from += str.Length;
+                    if (from < 0) from = 0;
+                    if (toVal == null) toIdx = str.Length;
+                    if (toIdx < 0) toIdx += str.Length;
+                    if (toIdx > str.Length) toIdx = str.Length;
+                    if (toIdx - from <= 0) return Result.EmptyString;
+						
+                    return new Result(str.Substring(from, toIdx - from));
+                }
+                default:
+                    return Result.Null;
+            }
         }
         
         // sort
