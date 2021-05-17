@@ -25,6 +25,9 @@ namespace Miniscript.intrinsic {
                 nameChars[0] = char.ToLower(nameChars[0]);
                 var methodName = new string(nameChars);
                 
+                // for test only
+                GetMethodAttribute(info);
+                
                 var function = Intrinsic.Create(methodName);
                 var msg = $"\t{GetAlias(info.ReturnType)} {methodName}(";
                 var isFirstParam = true;
@@ -152,6 +155,15 @@ namespace Miniscript.intrinsic {
             var typeRef = new CodeTypeReference(t);
             
             return provider.GetTypeOutput(typeRef);
+        }
+        
+        public static void GetMethodAttribute(MethodInfo method) {
+            // Get instance of the attribute.
+            var methodOfAttribute = (MethodOfAttribute) Attribute.GetCustomAttribute(method, typeof (MethodOfAttribute));
+
+            if (methodOfAttribute != null) {
+                Console.WriteLine($"methodOfAttribute: {methodOfAttribute.Type}");
+            }
         }
 
     }

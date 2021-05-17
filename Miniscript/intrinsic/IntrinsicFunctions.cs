@@ -983,6 +983,7 @@ namespace Miniscript.intrinsic {
         // Returns: string with all lowercase letters converted to capitals
         // Example: "Mo Spam".upper		returns "MO SPAM"
         // See also: lower
+        [MethodOf(typeof(ValString))]
         public string Upper(Value self) {
             return self is ValString str ? str.Value.ToUpper() : self?.ToString();
         }
