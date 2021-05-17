@@ -722,32 +722,32 @@ namespace Miniscript.intrinsic {
 			// step (number, optional): amount to add to the previous number on each step;
 			//	defaults to 1 if to > from, or -1 if to < from
 			// Example: range(50, 5, -10)		returns [50, 40, 30, 20, 10]
-			f = Create(RANGE);
-			f.AddDoubleParam("from");
-			f.AddDoubleParam("to");
-			f.AddValueParam("step");
-			List<Value> values;
-			f.Сode = (context, partialResult) => {
-				var fromVal = context.GetLocalDouble("from");
-				var toVal = context.GetLocalDouble("to");
-				double step = (toVal >= fromVal ? 1 : -1);
-				var p2 = context.GetVar("step");
-				if (p2 is ValNumber number) step = number.Value;
-				if (step == 0) throw new RuntimeException("range() error (step==0)");
-				var count = (int)((toVal - fromVal) / step) + 1;
-				if (count > ValList.MaxSize) throw new RuntimeException("list too large");
-				try {
-					values = new List<Value>(count);
-					for (double v = fromVal; step > 0 ? (v <= toVal) : (v >= toVal); v += step) {
-						values.Add(TAC.Num(v));
-					}
-				} catch (SystemException e) {
-					// uh-oh... probably out-of-memory exception; clean up and bail out
-					values = null;
-					throw(new LimitExceededException("range() error", e));
-				}
-				return new Result(new ValList(values));
-			};
+			// f = Create(RANGE);
+			// f.AddDoubleParam("from");
+			// f.AddDoubleParam("to");
+			// f.AddValueParam("step");
+			// List<Value> values;
+			// f.Сode = (context, partialResult) => {
+			// 	var fromVal = context.GetLocalDouble("from");
+			// 	var toVal = context.GetLocalDouble("to");
+			// 	double step = (toVal >= fromVal ? 1 : -1);
+			// 	var p2 = context.GetVar("step");
+			// 	if (p2 is ValNumber number) step = number.Value;
+			// 	if (step == 0) throw new RuntimeException("range() error (step==0)");
+			// 	var count = (int)((toVal - fromVal) / step) + 1;
+			// 	if (count > ValList.MaxSize) throw new RuntimeException("list too large");
+			// 	try {
+			// 		values = new List<Value>(count);
+			// 		for (double v = fromVal; step > 0 ? (v <= toVal) : (v >= toVal); v += step) {
+			// 			values.Add(TAC.Num(v));
+			// 		}
+			// 	} catch (SystemException e) {
+			// 		// uh-oh... probably out-of-memory exception; clean up and bail out
+			// 		values = null;
+			// 		throw(new LimitExceededException("range() error", e));
+			// 	}
+			// 	return new Result(new ValList(values));
+			// };
 
 			// remove
 			//	Removes part of a list, map, or string.  Exact behavior depends on

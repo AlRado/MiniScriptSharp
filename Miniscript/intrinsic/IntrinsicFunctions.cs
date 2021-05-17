@@ -534,6 +534,33 @@ namespace Miniscript.intrinsic {
                     return Result.Null;
             }
         }
+        
+        // range
+        //	Return a list containing a series of numbers within a range.
+        // from (number, default 0): first number to include in the list
+        // to (number, default 0): point at which to stop adding numbers to the list
+        // step (number, optional): amount to add to the previous number on each step;
+        //	defaults to 1 if to > from, or -1 if to < from
+        // Example: range(50, 5, -10)		returns [50, 40, 30, 20, 10]
+        public Result Range(double from, double to, int? step = null) {
+            step ??= (to >= from ? 1 : -1);
+            if (step == 0) throw new RuntimeException("range() error (step==0)");
+            var count = (int) ((to - from) / step) + 1;
+            if (count > ValList.MaxSize) throw new RuntimeException("list too large");
+            List<Value> values;
+            try {
+                values = new List<Value>(count);
+                for (var v = from; step > 0 ? (v <= to) : (v >= to); v += (double)step) {
+                    values.Add(TAC.Num(v));
+                }
+            } catch (SystemException e) {
+                // uh-oh... probably out-of-memory exception; clean up and bail out
+                throw (new LimitExceededException("range() error", e));
+            }
+
+            return new Result(new ValList(values));
+        }
+        
 
         // round
         //	Rounds a number to the specified number of decimal places.  If given
