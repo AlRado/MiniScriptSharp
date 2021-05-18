@@ -55,6 +55,7 @@
         <Compile Include="intrinsic\Consts.cs" />
         <Compile Include="intrinsic\HostInfo.cs" />
         <Compile Include="intrinsic\Intrinsic.cs" />
+        <Compile Include="intrinsic\MethodOfAttribute.cs" />
         <Compile Include="intrinsic\IntrinsicCode.cs" />
         <Compile Include="intrinsic\IntrinsicFunctions.cs" />
         <Compile Include="intrinsic\FunctionInjector.cs" />
