@@ -24,10 +24,7 @@ namespace Miniscript.intrinsic {
                 var nameChars = info.Name.ToCharArray();
                 nameChars[0] = char.ToLower(nameChars[0]);
                 var methodName = new string(nameChars);
-                
-                // for test only
-                GetMethodAttribute(info);
-                
+
                 var function = Intrinsic.Create(methodName);
                 var msg = $"\t{GetAlias(info.ReturnType)} {methodName}(";
                 var isFirstParam = true;
@@ -101,6 +98,8 @@ namespace Miniscript.intrinsic {
                     }
                     return GetResult(classInstance, info, parametersValues);
                 };
+                
+                AddDefaultMethod(methodName, info);
             }
             Console.WriteLine();
         }
@@ -145,7 +144,6 @@ namespace Miniscript.intrinsic {
                 }
                 case Type result when ReferenceEquals(result, typeof(Result)):
                     return (Result) method.Invoke(classInstance, parameters);
-                
                 default: throw new Exception($"Returned Type: {method.ReturnType} not supported!");
             };
         }
@@ -157,13 +155,23 @@ namespace Miniscript.intrinsic {
             return provider.GetTypeOutput(typeRef);
         }
         
-        public static void GetMethodAttribute(MethodInfo method) {
-            // Get instance of the attribute.
-            var methodOfAttribute = (MethodOfAttribute) Attribute.GetCustomAttribute(method, typeof (MethodOfAttribute));
+        public static void AddDefaultMethod(string name, MethodInfo method) {
+            var attribute = (MethodOfAttribute) Attribute.GetCustomAttribute(method, typeof (MethodOfAttribute));
+            if (attribute == null) return;
 
-            if (methodOfAttribute != null) {
-                Console.WriteLine($"methodOfAttribute: {methodOfAttribute.Type}");
-            }
+            var map = GetMap(attribute.Type);
+            map[name] = Intrinsic.GetByName(name).GetFunc();
+        }
+
+        private static ValMap GetMap(Type type) {
+            return type switch {
+                Type valFunction when ReferenceEquals(valFunction, typeof(ValFunction)) => Intrinsic.FunctionType,
+                Type valList when ReferenceEquals(valList, typeof(ValList)) => Intrinsic.ListType,
+                Type valString when ReferenceEquals(valString, typeof(ValString)) => Intrinsic.StringType,
+                Type valMap when ReferenceEquals(valMap, typeof(ValMap)) => Intrinsic.MapType,
+                Type valNumber when ReferenceEquals(valNumber, typeof(ValNumber)) => Intrinsic.NumberType,
+                _ => throw new Exception($"Type: {type} not supported!")
+            };
         }
 
     }

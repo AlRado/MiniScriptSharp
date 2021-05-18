@@ -403,6 +403,7 @@ namespace Miniscript.intrinsic {
         // Returns: string with all capital letters converted to lowercase
         // Example: "Mo Spam".lower		returns "mo spam"
         // See also: upper
+        [MethodOf(typeof(ValString))]
         public string Lower(Value self) {
             if (!(self is ValString valString)) return self?.ToString();
             

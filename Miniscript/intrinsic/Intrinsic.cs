@@ -36,41 +36,41 @@ namespace Miniscript.intrinsic {
 		/// <summary>
 		/// FunctionType: a static map that represents the Function type.
 		/// </summary>
-		public static readonly ValMap FunctionType;
+		public static readonly ValMap FunctionType = new ValMap();
 
 		/// <summary>
 		/// ListType: a static map that represents the List type, and provides
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
-		public static readonly ValMap ListType;
+		public static readonly ValMap ListType = new ValMap();
 
 		/// <summary>
 		/// StringType: a static map that represents the String type, and provides
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
-		public static readonly ValMap StringType;
+		public static readonly ValMap StringType = new ValMap();
 
 		/// <summary>
 		/// MapType: a static map that represents the Map type, and provides
 		/// intrinsic methods that can be invoked on it via dot syntax.
 		/// </summary>
-		public static readonly ValMap MapType;
+		public static readonly ValMap MapType = new ValMap();
 
 		/// <summary>
 		/// NumberType: a static map that represents the Number type.
 		/// </summary>
-		public static readonly ValMap NumberType;
+		public static readonly ValMap NumberType = new ValMap();
 
 		// static map from Values to short names, used when displaying lists/maps;
 		// feel free to add to this any values (especially lists/maps) provided
 		// by your own intrinsics.
-		public static readonly Dictionary<Value, string> ShortNames;
+		public static readonly Dictionary<Value, string> ShortNames = new Dictionary<Value, string>();
 
-		private static Random random;
+		private static Random random = new Random();
 		
-		private static readonly List<Intrinsic> all;
+		private static readonly List<Intrinsic> all = new List<Intrinsic>() { null };
 
-		private static readonly Dictionary<string, Intrinsic> nameMap;
+		private static readonly Dictionary<string, Intrinsic> nameMap = new Dictionary<string, Intrinsic>();
 
 		// a numeric ID (used internally -- don't worry about this)
 		public int Id { get; private set; }
@@ -93,19 +93,9 @@ namespace Miniscript.intrinsic {
 		/// than once, no matter how many times this method is called.
 		/// </summary>
 		static Intrinsic() {
-			FunctionType = new ValMap();
-			NumberType = new ValMap();
-			ListType = new ValMap();
-			StringType = new ValMap();
-			MapType = new ValMap();
-			ShortNames = new Dictionary<Value, string>();
-			all = new List<Intrinsic>() { null };
-			nameMap = new Dictionary<string, Intrinsic>();
-			random = new Random();
-
 			FunctionInjector.AddFunctions(new IntrinsicFunctions());
 
-			Intrinsic f;
+			// Intrinsic f;
 			
 			// abs
 			//	Returns the absolute value of the given number.
@@ -1355,12 +1345,12 @@ namespace Miniscript.intrinsic {
 			StringType[INSERT] = GetByName(INSERT).GetFunc();
 			StringType[CODE] = GetByName(CODE).GetFunc();
 			StringType[LEN] = GetByName(LEN).GetFunc();
-			StringType[LOWER] = GetByName(LOWER).GetFunc();
+			// StringType[LOWER] = GetByName(LOWER).GetFunc();
 			StringType[VAL] = GetByName(VAL).GetFunc();
 			StringType[REMOVE] = GetByName(REMOVE).GetFunc();
 			StringType[REPLACE] = GetByName(REPLACE).GetFunc();
 			StringType[SPLIT] = GetByName(SPLIT).GetFunc();
-			StringType[UPPER] = GetByName(UPPER).GetFunc();
+			// StringType[UPPER] = GetByName(UPPER).GetFunc();
 			StringType[VALUES] = GetByName(VALUES).GetFunc();
 
 			MapType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
