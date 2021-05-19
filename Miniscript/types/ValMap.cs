@@ -7,7 +7,7 @@ using static Miniscript.keywords.Consts;
 namespace Miniscript.types {
 
     /// <summary>
-    /// ValMap represents a Minisript map, which under the hood is just a Dictionary
+    /// ValMap represents a MiniScript map, which under the hood is just a Dictionary
     /// of Value, Value pairs.
     /// </summary>
     public class ValMap : Value {

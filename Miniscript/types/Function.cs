@@ -6,7 +6,7 @@ using Miniscript.tac;
 namespace Miniscript.types {
 
     /// <summary>
-    /// Function: our internal representation of a Minisript function.  This includes
+    /// Function: our internal representation of a MiniScript function.  This includes
     /// its parameters and its code.  (It does not include a name -- functions don't 
     /// actually HAVE names; instead there are named variables whose value may happen 
     /// to be a function.)

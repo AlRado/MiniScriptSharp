@@ -3,7 +3,7 @@
 This file is used internally during parsing of the code, breaking source
 code text into a series of tokens.
 
-Unless you’re writing a fancy Minisript code editor, you probably don’t 
+Unless you’re writing a fancy MiniScript code editor, you probably don’t 
 need to worry about this stuff. 
 
 */

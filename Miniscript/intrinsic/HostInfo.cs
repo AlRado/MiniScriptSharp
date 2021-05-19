@@ -1,7 +1,7 @@
 ﻿namespace Miniscript.intrinsic {
 
     /// <summary>
-    /// Information about the app hosting Minisript.  Set this in your main program.
+    /// Information about the app hosting MiniScript.  Set this in your main program.
     /// This is provided to the user via the `version` intrinsic.
     /// </summary>
     public static class HostInfo {

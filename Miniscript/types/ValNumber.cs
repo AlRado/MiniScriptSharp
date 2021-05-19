@@ -4,7 +4,7 @@ using Miniscript.tac;
 namespace Miniscript.types {
 
     /// <summary>
-    /// ValNumber represents a numeric (double-precision floating point) value in Minisript.
+    /// ValNumber represents a numeric (double-precision floating point) value in MiniScript.
     /// Since we also use numbers to represent boolean values, ValNumber does that job too.
     /// </summary>
     public class ValNumber : Value {
@@ -16,7 +16,7 @@ namespace Miniscript.types {
         }
 
         public override string ToString(Machine vm) {
-            // Convert to a string in the standard Minisript way.
+            // Convert to a string in the standard MiniScript way.
             if (Value % 1.0 == 0.0) {
                 // integer values as integers
                 return Value.ToString("0", CultureInfo.InvariantCulture);
@@ -74,7 +74,7 @@ namespace Miniscript.types {
         /// <summary>
         /// Convenience method to get a reference to zero or one, according
         /// to the given boolean.  (Note that this only covers Boolean
-        /// truth values; Minisript also allows fuzzy truth values, like
+        /// truth values; MiniScript also allows fuzzy truth values, like
         /// 0.483, but obviously this method won't help with that.)
         /// IMPORTANT: do not alter the value of the object returned!
         /// </summary>

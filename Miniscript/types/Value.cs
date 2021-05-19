@@ -4,7 +4,7 @@ using Miniscript.tac;
 namespace Miniscript.types {
 
     /// <summary>
-    /// Value: abstract base class for the Minisript type hierarchy.
+    /// Value: abstract base class for the MiniScript type hierarchy.
     /// Defines a number of handy methods that you can call on ANY
     /// value (though some of these do nothing for some types).
     /// </summary>
@@ -85,7 +85,7 @@ namespace Miniscript.types {
         }
 
         /// <summary>
-        /// Get this value in the form of a Minisript literal.
+        /// Get this value in the form of a MiniScript literal.
         /// </summary>
         /// <param name="recursionLimit">how deeply we can recurse, or -1 for no limit</param>
         /// <returns></returns>

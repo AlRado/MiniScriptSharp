@@ -1,12 +1,12 @@
 ﻿/*	MiniscriptInterpreter.cs
 
 The only class in this file is Interpreter, which is your main interface 
-to the Minisript system.  You give Interpreter some Minisript source 
+to the MiniScript system.  You give Interpreter some MiniScript source 
 code, and tell it where to send its output (via delegate functions called
 TextOutputMethod).  Then you typically call RunUntilDone, which returns 
 when either the script has stopped or the given timeout has passed.  
 
-For details, see Chapters 1-3 of the Minisript Integration Guide.
+For details, see Chapters 1-3 of the MiniScript Integration Guide.
 */
 
 using System;
@@ -27,7 +27,7 @@ namespace Miniscript.interpreter {
     public delegate void TextOutputMethod(string output);
 
     /// <summary>
-    /// Interpreter: an object that contains and runs one Minisript script.
+    /// Interpreter: an object that contains and runs one MiniScript script.
     /// </summary>
     public class Interpreter {
 
@@ -74,7 +74,7 @@ namespace Miniscript.interpreter {
         private Parser parser;
 
         /// <summary>
-        /// Constructor taking some Minisript source code, and the output delegates.
+        /// Constructor taking some MiniScript source code, and the output delegates.
         /// </summary>
         public Interpreter(string source = null, TextOutputMethod standardOutput = null, TextOutputMethod errorOutput = null) {
             this.source = source;
@@ -293,7 +293,7 @@ namespace Miniscript.interpreter {
         }
 
         /// <summary>
-        /// Report a Minisript error to the user.  The default implementation 
+        /// Report a MiniScript error to the user.  The default implementation 
         /// simply invokes ErrorOutput with the error description.  If you want
         /// to do something different, then make an Interpreter subclass, and
         /// override this method.

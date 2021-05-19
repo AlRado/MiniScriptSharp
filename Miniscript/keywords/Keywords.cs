@@ -1,7 +1,7 @@
 ﻿/*	MiniscriptKeywords.cs
 
 This file defines a little Keywords class, which contains all the 
-Minisript reserved words (break, for, etc.).  It might be useful 
+MiniScript reserved words (break, for, etc.).  It might be useful 
 if you are doing something like syntax coloring, or want to make 
 sure some user-entered identifier isn’t going to conflict with a 
 reserved word.

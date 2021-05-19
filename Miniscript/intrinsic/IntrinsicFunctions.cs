@@ -118,7 +118,7 @@ namespace Miniscript.intrinsic {
         
         // funcRef
         //	Returns a map that represents a function reference in
-        //	Minisript's core type system.  This can be used with `isa`
+        //	MiniScript's core type system.  This can be used with `isa`
         //	to check whether a variable refers to a function (but be
         //	sure to use @ to avoid invoking the function and testing
         //	the result).
@@ -169,7 +169,7 @@ namespace Miniscript.intrinsic {
         //	In the case of strings, the hash is case-sensitive.  In the case
         //	of a list or map, the hash combines the hash values of all elements.
         //	Note that the value returned is platform-dependent, and may vary
-        //	across different Minisript implementations.
+        //	across different MiniScript implementations.
         // obj (any type): value to hash
         // Returns: integer hash of the given value
         public int Hash(Value obj) {
@@ -387,7 +387,7 @@ namespace Miniscript.intrinsic {
         
         // list type
         //	Returns a map that represents the list datatype in
-        //	Minisript's core type system.  This can be used with `isa`
+        //	MiniScript's core type system.  This can be used with `isa`
         //	to check whether a variable refers to a list.  You can also
         //	assign new methods here to make them available to all lists.
         // Example: [1, 2, 3] isa list		returns 1
@@ -428,7 +428,7 @@ namespace Miniscript.intrinsic {
         
         // map type
         //	Returns a map that represents the map datatype in
-        //	Minisript's core type system.  This can be used with `isa`
+        //	MiniScript's core type system.  This can be used with `isa`
         //	to check whether a variable refers to a map.  You can also
         //	assign new methods here to make them available to all maps.
         // Example: {1:"one"} isa map		returns 1
@@ -440,10 +440,10 @@ namespace Miniscript.intrinsic {
         
         // number type
         //	Returns a map that represents the number datatype in
-        //	Minisript's core type system.  This can be used with `isa`
+        //	MiniScript's core type system.  This can be used with `isa`
         //	to check whether a variable refers to a number.  You can also
         //	assign new methods here to make them available to all maps
-        //	(though because of a limitation in Minisript's parser, such
+        //	(though because of a limitation in MiniScript's parser, such
         //	methods do not work on numeric literals).
         // Example: 42 isa number		returns 1
         // See also: string, list, map, funcRef
@@ -925,7 +925,7 @@ namespace Miniscript.intrinsic {
 
         // string type
         //	Returns a map that represents the string datatype in
-        //	Minisript's core type system.  This can be used with `isa`
+        //	MiniScript's core type system.  This can be used with `isa`
         //	to check whether a variable refers to a string.  You can also
         //	assign new methods here to make them available to all strings.
         // Example: "Hello" isa string		returns 1
@@ -1067,7 +1067,7 @@ namespace Miniscript.intrinsic {
         }
         
         // version
-        //	Get a map with information about the version of Minisript and
+        //	Get a map with information about the version of MiniScript and
         //	the host environment that you're currently running.  This will
         //	include at least the following keys:
         //		miniscript: a string such as "1.5"

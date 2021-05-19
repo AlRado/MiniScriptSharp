@@ -1,9 +1,9 @@
 /*	MiniscriptIntrinsics.cs
 
 This file defines the Intrinsic class, which represents a built-in function
-available to Minisript code.  All intrinsics are held in static storage, so
+available to MiniScript code.  All intrinsics are held in static storage, so
 this class includes static functions such as GetByName to look up 
-already-defined intrinsics.  See Chapter 2 of the Minisript Integration
+already-defined intrinsics.  See Chapter 2 of the MiniScript Integration
 Guide for details on adding your own intrinsics.
 
 This file also contains the Intrinsics static class, where all of the standard
@@ -12,16 +12,13 @@ don’t need to worry about it, though it is a good place to look for examples
 of how to write intrinsic functions.
 
 Note that you should put any intrinsics you add in a separate file; leave the
-Minisript source files untouched, so you can easily replace them when updates
+MiniScript source files untouched, so you can easily replace them when updates
 become available.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
-using Miniscript.errors;
 using Miniscript.tac;
 using Miniscript.types;
 using static Miniscript.intrinsic.Consts;
@@ -29,7 +26,7 @@ using static Miniscript.intrinsic.Consts;
 namespace Miniscript.intrinsic {
 		
 	/// <summary>
-	/// Intrinsic: represents an intrinsic function available to Minisript code.
+	/// Intrinsic: represents an intrinsic function available to MiniScript code.
 	/// </summary>
 	public class Intrinsic {
 		
@@ -73,7 +70,7 @@ namespace Miniscript.intrinsic {
 		// a numeric ID (used internally -- don't worry about this)
 		public int Id { get; private set; }
 		
-		// name of this intrinsic (should be a valid Minisript identifier)
+		// name of this intrinsic (should be a valid MiniScript identifier)
 		public string Name;
 		
 		// actual C# code invoked by the intrinsic
@@ -266,7 +263,7 @@ namespace Miniscript.intrinsic {
 		}
 		
 		/// <summary>
-		/// GetFunc is used internally by the compiler to get the Minisript function
+		/// GetFunc is used internally by the compiler to get the MiniScript function
 		/// that makes an intrinsic call.
 		/// </summary>
 		public ValFunction GetFunc() {

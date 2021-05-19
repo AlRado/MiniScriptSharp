@@ -11,7 +11,7 @@ using Consts = Miniscript.keywords.Consts;
 namespace Miniscript.tac {
 
 		/// <summary>
-		/// Machine implements a complete Minisript virtual machine.  It 
+		/// Machine implements a complete MiniScript virtual machine.  It 
 		/// keeps the context stack, keeps track of run time, and provides 
 		/// methods to step, stop, or reset the program.		
 		/// </summary>

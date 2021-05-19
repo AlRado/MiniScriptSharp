@@ -5,7 +5,7 @@ using Miniscript.tac;
 namespace Miniscript.types {
 
     /// <summary>
-    /// ValList represents a Minisript list (which, under the hood, is
+    /// ValList represents a MiniScript list (which, under the hood, is
     /// just a wrapper for a List of Values).
     /// </summary>
     public class ValList : Value {

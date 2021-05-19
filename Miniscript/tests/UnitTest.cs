@@ -1,7 +1,7 @@
 ﻿/*	MiniscriptUnitTest.cs
 
-This file contains a number of unit tests for various parts of the Minisript
-architecture.  It's used by the Minisript developers to ensure we don't
+This file contains a number of unit tests for various parts of the MiniScript
+architecture.  It's used by the MiniScript developers to ensure we don't
 break something when we make changes.
 
 You can safely ignore this, but if you really want to run the tests yourself,
