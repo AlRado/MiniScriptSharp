@@ -99,7 +99,7 @@ namespace Miniscript.intrinsic {
                     return GetResult(classInstance, info, parametersValues);
                 };
                 
-                AddDefaultMethod(methodName, info);
+                AddDefaultMethods(methodName, info);
             }
             Console.WriteLine();
         }
@@ -155,12 +155,15 @@ namespace Miniscript.intrinsic {
             return provider.GetTypeOutput(typeRef);
         }
         
-        public static void AddDefaultMethod(string name, MethodInfo method) {
-            var attribute = (MethodOfAttribute) Attribute.GetCustomAttribute(method, typeof (MethodOfAttribute));
-            if (attribute == null) return;
-
-            var map = GetMap(attribute.Type);
-            map[name] = Intrinsic.GetByName(name).GetFunc();
+        public static void AddDefaultMethods(string name, MethodInfo method) {
+            var valFunc = Intrinsic.GetByName(name).GetFunc();
+            foreach (var attribute in Attribute.GetCustomAttributes(method)) {
+                if (attribute.GetType() == typeof(MethodOfAttribute)) {
+                    var methodOfAttribute = (MethodOfAttribute)attribute;
+                    var map = GetMap(methodOfAttribute.Type);
+                    map[name] = valFunc;
+                }
+            }
         }
 
         private static ValMap GetMap(Type type) {

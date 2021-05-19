@@ -1323,7 +1323,7 @@ namespace Miniscript.intrinsic {
 			// f = Create(INTRINSIC);
 			// f.Сode = (context, partialResult) => new Result(GetAllIntrinsicInfo());
 
-			ListType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
+			// ListType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
 			ListType[INDEXES] = GetByName(INDEXES).GetFunc();
 			ListType[INDEX_OF] = GetByName(INDEX_OF).GetFunc();
 			ListType[INSERT] = GetByName(INSERT).GetFunc();
@@ -1339,7 +1339,7 @@ namespace Miniscript.intrinsic {
 			ListType[REPLACE] = GetByName(REPLACE).GetFunc();
 			ListType[VALUES] = GetByName(VALUES).GetFunc();
 
-			StringType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
+			// StringType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
 			StringType[INDEXES] = GetByName(INDEXES).GetFunc();
 			StringType[INDEX_OF] = GetByName(INDEX_OF).GetFunc();
 			StringType[INSERT] = GetByName(INSERT).GetFunc();
@@ -1353,7 +1353,7 @@ namespace Miniscript.intrinsic {
 			// StringType[UPPER] = GetByName(UPPER).GetFunc();
 			StringType[VALUES] = GetByName(VALUES).GetFunc();
 
-			MapType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
+			// MapType[HAS_INDEX] = GetByName(HAS_INDEX).GetFunc();
 			MapType[INDEXES] = GetByName(INDEXES).GetFunc();
 			MapType[INDEX_OF] = GetByName(INDEX_OF).GetFunc();
 			MapType[LEN] = GetByName(LEN).GetFunc();

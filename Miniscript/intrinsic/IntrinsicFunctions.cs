@@ -188,6 +188,9 @@ namespace Miniscript.intrinsic {
         // Example: "foo".hasIndex(2)		returns 1
         // Example: "foo".hasIndex(3)		returns 0
         // See also: indexes
+        [MethodOf(typeof(ValString))]
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result HasIndex(Value self, Value index) {
             switch (self) {
                 case ValList _ when !(index is ValNumber):
