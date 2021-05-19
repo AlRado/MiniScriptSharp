@@ -1,4 +1,4 @@
-/*	MiniscriptIntrinsics.cs
+/*	Intrinsics.cs
 
 This file defines the Intrinsic class, which represents a built-in function
 available to MiniScript code.  All intrinsics are held in static storage, so
@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using Miniscript.tac;
 using Miniscript.types;
-using static Miniscript.intrinsic.Consts;
+using static Miniscript.keywords.Consts;
 
 namespace Miniscript.intrinsic {
 		

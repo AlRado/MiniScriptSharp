@@ -29,7 +29,7 @@ namespace Miniscript.types {
 
         public string ToString(Machine vm) {
             var s = new System.Text.StringBuilder();
-            var name = string.IsNullOrEmpty(Name) ? Consts.FUNCTION : Name;
+            var name = string.IsNullOrEmpty(Name) ? "FUNCTION" : Name;
             s.Append($"{name}(");
             for (var i = 0; i < Parameters.Count(); i++) {
                 if (i > 0) s.Append(", ");
