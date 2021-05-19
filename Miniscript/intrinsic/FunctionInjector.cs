@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.CSharp;
 using Miniscript.tac;
@@ -15,6 +16,9 @@ namespace Miniscript.intrinsic {
         public static Result PartialResult { get; private set; }
 
         public static void AddFunctions(object classInstance) {
+            var timer  = new Stopwatch();
+            timer.Start();
+            
             Console.WriteLine($"Function injector added functions:");
             
             var methods = classInstance.GetType()
@@ -102,6 +106,10 @@ namespace Miniscript.intrinsic {
                 AddDefaultMethods(methodName, info);
             }
             Console.WriteLine();
+            
+            timer.Stop();
+            var timeTaken = timer.Elapsed;
+            Console.WriteLine("Time taken: " + timeTaken.ToString(@"m\:ss\.fff"));
         }
         
         private static object GetParam(ParameterInfo param, Context context) {
