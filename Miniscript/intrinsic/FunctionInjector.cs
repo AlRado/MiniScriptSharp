@@ -15,11 +15,11 @@ namespace Miniscript.intrinsic {
 
         public static Result PartialResult { get; private set; }
 
-        public static void AddFunctions(object classInstance) {
+        public static void AddFunctions(object classInstance, bool logEnabled = false) {
             var timer  = new Stopwatch();
             timer.Start();
             
-            Console.WriteLine($"Function injector added functions:");
+            if (logEnabled) Console.WriteLine($"Function injector added functions:");
             
             var methods = classInstance.GetType()
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
@@ -88,7 +88,7 @@ namespace Miniscript.intrinsic {
                     }
                 }
                 msg += ");"; 
-                Console.WriteLine(msg);
+                if (logEnabled) Console.WriteLine(msg);
 
                 function.Сode = (context, partialResult) => {
                     Context = context;
@@ -105,7 +105,7 @@ namespace Miniscript.intrinsic {
                 
                 AddDefaultMethods(methodName, info);
             }
-            Console.WriteLine();
+            if (logEnabled) Console.WriteLine();
             
             timer.Stop();
             var timeTaken = timer.Elapsed;
