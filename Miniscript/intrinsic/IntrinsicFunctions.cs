@@ -137,6 +137,7 @@ namespace Miniscript.intrinsic {
         // Returns: Unicode code point of the first character of self
         // Example: "*".code		returns 42
         // Example: code("*")		returns 42
+        [MethodOf(typeof(ValString))]
         public int Code(Value self) {
             var codepoint = 0;
             if (self != null) codepoint = char.ConvertToUtf32(self.ToString(), 0);
@@ -220,6 +221,9 @@ namespace Miniscript.intrinsic {
         // Returns: a list of valid indexes for self
         // Example: "foo".indexes		returns [0, 1, 2]
         // See also: hasIndex
+        [MethodOf(typeof(ValString))]
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result Indexes(Value self) {
             switch (self) {
                 case ValMap valMap: {
@@ -258,6 +262,9 @@ namespace Miniscript.intrinsic {
         // Example: "Hello World".indexOf("o")		returns 4
         // Example: "Hello World".indexOf("o", 4)		returns 7
         // Example: "Hello World".indexOf("o", 7)		returns null
+        [MethodOf(typeof(ValString))]
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result IndexOf(Value self, Value value, Value after) {
             switch (self) {
                 case ValList valList: {
@@ -317,6 +324,8 @@ namespace Miniscript.intrinsic {
         // Returns: modified list, new string
         // Example: "Hello".insert(2, 42)		returns "He42llo"
         // See also: remove
+        [MethodOf(typeof(ValString))]
+        [MethodOf(typeof(ValList))]
         public Result Insert(Value self, Value index, Value value) {
             if (index == null) throw new RuntimeException("insert: index argument required");
             if (!(index is ValNumber)) throw new RuntimeException("insert: number required for index argument");
@@ -348,6 +357,7 @@ namespace Miniscript.intrinsic {
         // Returns: string built by joining elements of self with delimiter
         // Example: [2,4,8].join("-")		returns "2-4-8"
         // See also: split
+        [MethodOf(typeof(ValList))]
         public string Join(Value self, string delimiter = " ") {
             if (!(self is ValList valList)) return self?.ToString();
             
@@ -363,6 +373,9 @@ namespace Miniscript.intrinsic {
         // self (list, string, or map): object to get the length of
         // Returns: length (number of elements) in self
         // Example: "hello".len		returns 5
+        [MethodOf(typeof(ValString))]
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public int Len(Value self) {
             return self switch {
                 ValList valList => valList.Values.Count,
@@ -467,6 +480,8 @@ namespace Miniscript.intrinsic {
         // Returns: value removed, or null
         // Example: [1, 2, 3].pop		returns (and removes) 3
         // See also: pull; push; remove
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result Pop(Value self) {
             switch (self) {
                 case ValList valList: {
@@ -496,6 +511,8 @@ namespace Miniscript.intrinsic {
         // Returns: value removed, or null
         // Example: [1, 2, 3].pull		returns (and removes) 1
         // See also: pop; push; remove
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result Pull(Value self) {
             switch (self) {
                 case ValList valList: {
@@ -523,6 +540,8 @@ namespace Miniscript.intrinsic {
         // self (list or map): object to append an element to
         // Returns: self
         // See also: pop, pull, insert
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result Push(Value self, Value value) {
             switch (self) {
                 case ValList valList: {
@@ -581,6 +600,9 @@ namespace Miniscript.intrinsic {
         // Example: d={"ichi":"one"}; d.remove "ni"		returns 0
         // Example: "Spam".remove("S")		returns "pam"
         // See also: indexOf
+        [MethodOf(typeof(ValString))]
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result Remove(Value self, Value k) {
             switch (self) {
                 case ValMap valMap: {
@@ -624,6 +646,9 @@ namespace Miniscript.intrinsic {
         // Example: "Happy Pappy".replace("app", "ol")		returns "Holy Poly"
         // Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [2, 42, 3, 42, 5]
         // Example: d = {1: "one"}; d.replace("one", "ichi")		returns (and mutates to) {1: "ichi"}
+        [MethodOf(typeof(ValString))]
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result Replace(Value self, Value oldVal, Value newVal, Value maxCountVal) {
             if (self == null) throw new RuntimeException("argument to 'replace' must not be null");
             var maxCount = -1;
@@ -797,6 +822,7 @@ namespace Miniscript.intrinsic {
         // Returns: self (which has been sorted in place)
         // Example: a = [5,3,4,1,2]; a.sort		results in a == [1, 2, 3, 4, 5]
         // See also: shuffle
+        [MethodOf(typeof(ValList))]
         public Result Sort(Value self, Value byKey, bool ascending = true) {
             if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
 
@@ -859,6 +885,7 @@ namespace Miniscript.intrinsic {
         // Example: "foo bar baz".split		returns ["foo", "bar", "baz"]
         // Example: "foo bar baz".split("a", 2)		returns ["foo b", "r baz"]
         // See also: join
+        [MethodOf(typeof(ValString))]
         public Result Split(Value self, string delimiter = " ", double maxCount = -1) {
             var selfStr = self.ToString();
             var result = new ValList();
@@ -913,6 +940,8 @@ namespace Miniscript.intrinsic {
         //	keys to values in a map.  This is Done in place.
         // self (list or map): object to shuffle
         // Returns: null
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public void Shuffle(Value self) {
             switch (self) {
                 case ValList valList: {
@@ -950,6 +979,8 @@ namespace Miniscript.intrinsic {
         // self (list or map): object to sum
         // Returns: result of adding up all values in self
         // Example: range(3).sum		returns 6 (3 + 2 + 1 + 0)
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public double Sum(Value self) {
             double sum = 0;
             switch (self) {
@@ -1000,6 +1031,7 @@ namespace Miniscript.intrinsic {
         // Returns: numeric value of the given string
         // Example: "1234.56".val		returns 1234.56
         // See also: str
+        [MethodOf(typeof(ValString))]
         public double Val(Value self) {
             return double.TryParse(self.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var value) ? value : 0; 
         }
@@ -1012,6 +1044,9 @@ namespace Miniscript.intrinsic {
         // Example: d={1:"one", 2:"two"}; d.values		returns ["one", "two"]
         // Example: "abc".values		returns ["a", "b", "c"]
         // See also: indexes
+        [MethodOf(typeof(ValString))]
+        [MethodOf(typeof(ValList))]
+        [MethodOf(typeof(ValMap))]
         public Result Values(Value self) {
             switch (self) {
                 case ValMap valMap: {
