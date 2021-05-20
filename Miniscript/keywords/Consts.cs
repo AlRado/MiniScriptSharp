@@ -23,7 +23,6 @@
         public const string TRUE = "true";
         public const string FALSE = "false";
         
-        
         public const string SELF = "self";
         public const string IF_MARK = "if:MARK";
         public const string SUPER = "super";

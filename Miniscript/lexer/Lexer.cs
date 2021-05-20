@@ -1,4 +1,4 @@
-﻿/*	MiniscriptLexer.cs
+﻿/*	Lexer.cs
 
 This file is used internally during parsing of the code, breaking source
 code text into a series of tokens.

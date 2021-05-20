@@ -1,4 +1,4 @@
-﻿/*	MiniscriptUnitTest.cs
+﻿/*	UnitTest.cs
 
 This file contains a number of unit tests for various parts of the MiniScript
 architecture.  It's used by the MiniScript developers to ensure we don't

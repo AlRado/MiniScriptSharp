@@ -1,4 +1,4 @@
-﻿/*	MiniscriptParser.cs
+﻿/*	Parser.cs
 
 This file is responsible for parsing MiniScript source code, and converting
 it into an internal format (a three-address byte code) that is considerably

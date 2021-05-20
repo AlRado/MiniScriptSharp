@@ -1,4 +1,4 @@
-﻿/*	MiniscriptInterpreter.cs
+﻿/*	Interpreter.cs
 
 The only class in this file is Interpreter, which is your main interface 
 to the MiniScript system.  You give Interpreter some MiniScript source 

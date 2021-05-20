@@ -1,4 +1,4 @@
-﻿/*	MiniscriptKeywords.cs
+﻿/*	Keywords.cs
 
 This file defines a little Keywords class, which contains all the 
 MiniScript reserved words (break, for, etc.).  It might be useful 
@@ -9,30 +9,31 @@ reserved word.
 */
 
 using System;
+using static Miniscript.keywords.Consts;
 
 namespace Miniscript.keywords {
 	public static class Keywords {
 		public static readonly string[] All = {
-			Consts.BREAK,
-			Consts.CONTINUE,
-			Consts.ELSE,
-			Consts.END,
-			Consts.FOR,
-			Consts.FUNCTION,
-			Consts.IF,
-			Consts.IN,
-			Consts.ISA,
-			Consts.NEW,
-			Consts.NULL,
-			Consts.THEN,
-			Consts.REPEAT,
-			Consts.RETURN,
-			Consts.WHILE,
-			Consts.AND,
-			Consts.OR,
-			Consts.NOT,
-			Consts.TRUE,
-			Consts.FALSE
+			BREAK,
+			CONTINUE,
+			ELSE,
+			END,
+			FOR,
+			FUNCTION,
+			IF,
+			IN,
+			ISA,
+			NEW,
+			NULL,
+			THEN,
+			REPEAT,
+			RETURN,
+			WHILE,
+			AND,
+			OR,
+			NOT,
+			TRUE,
+			FALSE
 		};
 
 		public static bool IsKeyword(string text) {

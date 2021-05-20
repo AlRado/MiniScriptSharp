@@ -1,10 +1,9 @@
 ﻿using System;
-using Miniscript.types;
 
 namespace Miniscript.intrinsic {
     
     /*
-     * Атрибут для добавления функций в качестве методов указанным типам
+     * Attribute for adding functions as methods to the specified types
      */
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class MethodOfAttribute : Attribute {  
