@@ -52,7 +52,6 @@
         <Compile Include="errors\TypeException.cs" />
         <Compile Include="errors\UndefinedIdentifierException.cs" />
         <Compile Include="interpreter\Interpreter.cs" />
-        <Compile Include="intrinsic\Consts.cs" />
         <Compile Include="intrinsic\HostInfo.cs" />
         <Compile Include="intrinsic\Intrinsic.cs" />
         <Compile Include="intrinsic\MethodOfAttribute.cs" />
