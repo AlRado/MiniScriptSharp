@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using Miniscript.errors;
@@ -1011,39 +1012,48 @@ namespace Miniscript.intrinsic {
             return FunctionInjector.Context.Vm.RunTime;
         }
         
-        // upper
-        //	Return an upper-case (all capitals) version of a string.
-        //	May be called with function syntax or dot syntax.
-        // self (string): string to upper-case
-        // Returns: string with all lowercase letters converted to capitals
-        // Example: "Mo Spam".upper		returns "MO SPAM"
-        // See also: lower
+        [Description(
+            "\n upper" +
+            "\n   Return an upper-case (all capitals) version of a string." +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (string): string to upper-case" +
+            "\n Returns: string with all lowercase letters converted to capitals" +
+            "\n Example: \"Mo Spam\".upper		returns \"MO SPAM\"" +
+            "\n See also: lower" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         public string Upper(Value self) {
             return self is ValString str ? str.Value.ToUpper() : self?.ToString();
         }
         
-        // val
-        //	Return the numeric value of a given string.  (If given a number,
-        //	returns it as-is; if given a list or map, returns null.)
-        //	May be called with function syntax or dot syntax.
-        // self (string or number): string to get the value of
-        // Returns: numeric value of the given string
-        // Example: "1234.56".val		returns 1234.56
-        // See also: str
+        [Description(
+            "\n val" +
+            "\n   Return the numeric value of a given string.  (If given a number," +
+            "\n   returns it as-is; if given a list or map, returns null.)" +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (string or number): string to get the value of" +
+            "\n Returns: numeric value of the given string" +
+            "\n Example: \"1234.56\".val		returns 1234.56" +
+            "\n See also: str" + 
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         public double Val(Value self) {
             return double.TryParse(self.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var value) ? value : 0; 
         }
         
-        // values
-        //	Returns the values of a dictionary, or the characters of a string.
-        //  (Returns any other value as-is.)
-        //	May be called with function syntax or dot syntax.
-        // self (any): object to get the values of.
-        // Example: d={1:"one", 2:"two"}; d.values		returns ["one", "two"]
-        // Example: "abc".values		returns ["a", "b", "c"]
-        // See also: indexes
+        [Description(
+            "\n values" +
+            "\n   Returns the values of a dictionary, or the characters of a string." +
+            "\n   (Returns any other value as-is.)" +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (any): object to get the values of." +
+            "\n Example: d={1:\"one\", 2:\"two\"}; d.values		returns [\"one\", \"two\"]" +
+            "\n Example: \"abc\".values		returns [\"a\", \"b\", \"c\"]" +
+            "\n See also: indexes" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]

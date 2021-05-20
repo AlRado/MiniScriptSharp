@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.CSharp;
@@ -170,6 +171,12 @@ namespace Miniscript.intrinsic {
                     var methodOfAttribute = (MethodOfAttribute)attribute;
                     var map = GetMap(methodOfAttribute.Type);
                     map[name] = valFunc;
+                }
+
+                if (attribute.GetType() == typeof(DescriptionAttribute)) {
+                    var descriptionAttribute = (DescriptionAttribute)attribute;
+                    // TODO: for test only
+                    Console.WriteLine(descriptionAttribute.Description);
                 }
             }
         }
