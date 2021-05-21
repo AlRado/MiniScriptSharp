@@ -1013,7 +1013,6 @@ namespace Miniscript.intrinsic {
         }
         
         [Description(
-            "\n upper" +
             "\n   Return an upper-case (all capitals) version of a string." +
             "\n   May be called with function syntax or dot syntax." +
             "\n self (string): string to upper-case" +
@@ -1028,7 +1027,6 @@ namespace Miniscript.intrinsic {
         }
         
         [Description(
-            "\n val" +
             "\n   Return the numeric value of a given string.  (If given a number," +
             "\n   returns it as-is; if given a list or map, returns null.)" +
             "\n   May be called with function syntax or dot syntax." +
@@ -1044,7 +1042,6 @@ namespace Miniscript.intrinsic {
         }
         
         [Description(
-            "\n values" +
             "\n   Returns the values of a dictionary, or the characters of a string." +
             "\n   (Returns any other value as-is.)" +
             "\n   May be called with function syntax or dot syntax." +

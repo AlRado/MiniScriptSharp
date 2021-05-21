@@ -176,7 +176,7 @@ namespace Miniscript.intrinsic {
                 if (attribute.GetType() == typeof(DescriptionAttribute)) {
                     var descriptionAttribute = (DescriptionAttribute)attribute;
                     // TODO: for test only
-                    Console.WriteLine(descriptionAttribute.Description);
+                    Console.WriteLine(valFunc + descriptionAttribute.Description);
                 }
             }
         }
