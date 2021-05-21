@@ -1,9 +1,8 @@
 ﻿using System;
-using System.CodeDom;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using Microsoft.CSharp;
 using Miniscript.keywords;
 using Miniscript.tac;
 using Miniscript.types;
@@ -158,10 +157,7 @@ namespace Miniscript.intrinsic {
         }
         
         private static string GetAlias(Type t) {
-            using var provider = new CSharpCodeProvider();
-            var typeRef = new CodeTypeReference(t);
-            
-            return provider.GetTypeOutput(typeRef);
+            return TypeAliases.TryGetValue(t, out var alias) ? alias : t.ToString();
         }
         
         public static void AddDefaultMethods(string name, MethodInfo method) {
@@ -191,6 +187,44 @@ namespace Miniscript.intrinsic {
                 _ => throw new Exception($"Type: {type} not supported!")
             };
         }
+        
+        private static readonly Dictionary<Type, string> TypeAliases = new Dictionary<Type, string> {
+            {typeof(byte), "byte"},
+            {typeof(sbyte), "sbyte"},
+            {typeof(short), "short"},
+            {typeof(ushort), "ushort"},
+            {typeof(int), "int"},
+            {typeof(uint), "uint"},
+            {typeof(long), "long"},
+            {typeof(ulong), "ulong"},
+            {typeof(float), "float"},
+            {typeof(double), "double"},
+            {typeof(decimal), "decimal"},
+            {typeof(object), "object"},
+            {typeof(bool), "bool"},
+            {typeof(char), "char"},
+            {typeof(string), "string"},
+            {typeof(void), "void"},
+            {typeof(byte?), "byte?"},
+            {typeof(sbyte?), "sbyte?"},
+            {typeof(short?), "short?"},
+            {typeof(ushort?), "ushort?"},
+            {typeof(int?), "int?"},
+            {typeof(uint?), "uint?"},
+            {typeof(long?), "long?"},
+            {typeof(ulong?), "ulong?"},
+            {typeof(float?), "float?"},
+            {typeof(double?), "double?"},
+            {typeof(decimal?), "decimal?"},
+            {typeof(bool?), "bool?"},
+            {typeof(char?), "char?"},
+            {typeof(Result), "Result"},
+            {typeof(Value), "Value"},
+            {typeof(ValList), "ValList"},
+            {typeof(ValMap), "ValMap"},
+            {typeof(ValFunction), "ValFunction"},
+            {typeof(ValString), "ValString"}
+        };
 
     }
 

@@ -88,7 +88,7 @@ namespace Miniscript.intrinsic {
 		/// than once, no matter how many times this method is called.
 		/// </summary>
 		static Intrinsic() {
-			FunctionInjector.AddFunctions(new IntrinsicFunctions());
+			FunctionInjector.AddFunctions(new IntrinsicFunctions(), true);
 
 			// You can use the manual method to add intrinsic functions, like this:
 			
