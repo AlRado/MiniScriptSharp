@@ -66,6 +66,8 @@ namespace Miniscript.intrinsic {
 		private static readonly List<Intrinsic> all = new List<Intrinsic>() { null };
 
 		private static readonly Dictionary<string, Intrinsic> nameMap = new Dictionary<string, Intrinsic>();
+		
+		private static readonly Dictionary<string, string> descriptionMap = new Dictionary<string, string>();
 
 		// a numeric ID (used internally -- don't worry about this)
 		public int Id { get; private set; }
@@ -274,6 +276,22 @@ namespace Miniscript.intrinsic {
 				function.Code.Add(new Line(TAC.LTemp(0), Op.CallIntrinsicA, TAC.Num(Id)));
 			}
 			return valFunction;
+		}
+
+		public static void AddDescription(string functionName, string description) {
+			if (string.IsNullOrEmpty(functionName)) return;
+			
+			descriptionMap[functionName] = description;
+		}
+
+		public static string GetDescription(string functionName) {
+			if (string.IsNullOrEmpty(functionName)) 
+				return "To see the signatures of all the intrinsic functions"  
+					+ $"Try write: help \"function name\"";
+			
+			return descriptionMap.TryGetValue(functionName, out var description) ? 
+				description : 
+				$"Help description for function '{functionName}' not founded!";
 		}
 		
 	}

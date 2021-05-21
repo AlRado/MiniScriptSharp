@@ -1135,6 +1135,10 @@ namespace Miniscript.intrinsic {
         public string AllIntrinsic() {
             return Intrinsic.GetAllIntrinsicInfo();
         }
+        
+        public string Help(string functionName) {
+            return Intrinsic.GetDescription(functionName);
+        }
 
     }
 
