@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using Miniscript.errors;
+using Miniscript.keywords;
 using Miniscript.tac;
 using Miniscript.types;
 
@@ -1131,13 +1132,9 @@ namespace Miniscript.intrinsic {
         public void Yield() {
             FunctionInjector.Context.Vm.Yielding = true;
         }
-
-        public string AllIntrinsic() {
-            return Intrinsic.GetAllIntrinsicInfo();
-        }
         
-        public string Help(string functionName) {
-            return Intrinsic.GetDescription(functionName);
+        public string Help(string topicName) {
+            return topicName == Consts.ALL ? Intrinsic.GetAllIntrinsicInfo() : Intrinsic.GetDescription(topicName);
         }
 
     }

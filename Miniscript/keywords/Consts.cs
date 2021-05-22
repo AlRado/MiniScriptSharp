@@ -45,6 +45,9 @@
 
         public const string KEY = "key";
         public const string VALUE = "value";
+        
+        public const string HELP = "help";
+        public const string ALL = "all";
 
     }
 
