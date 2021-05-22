@@ -1133,6 +1133,11 @@ namespace Miniscript.intrinsic {
             FunctionInjector.Context.Vm.Yielding = true;
         }
         
+        [Description(
+            "\n   To see the signatures of all the intrinsic functions try write: help \"all\"" +
+            "\n   To see the description of function try write: help \"function name\"" +
+            "\n"
+        )]
         public string Help(string topicName) {
             return topicName == Consts.ALL ? Intrinsic.GetAllIntrinsicInfo() : Intrinsic.GetDescription(topicName);
         }

@@ -286,12 +286,11 @@ namespace Miniscript.intrinsic {
 
 		public static string GetDescription(string functionName) {
 			if (string.IsNullOrEmpty(functionName)) 
-				return $"To see the signatures of all the intrinsic functions try write: {HELP} \"{ALL}\"\n" + 
-				       $"To see the description of function try write: {HELP} \"function name\"";
+				return GetDescription(HELP);
 			
 			return descriptionMap.TryGetValue(functionName, out var description) ? 
 				description : 
-				$"Help description for function '{functionName}' not founded!";
+				$"Help description for function \"{functionName}\" not founded!";
 		}
 		
 	}
