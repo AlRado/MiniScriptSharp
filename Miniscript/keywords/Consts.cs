@@ -48,6 +48,7 @@
         
         public const string HELP = "help";
         public const string ALL = "all";
+        public const string SLICE = "slice";
 
     }
 

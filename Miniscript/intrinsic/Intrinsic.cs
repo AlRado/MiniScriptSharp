@@ -189,7 +189,7 @@ namespace Miniscript.intrinsic {
 			code.Add(new Line(null, Op.PushParam, list));
 			code.Add(new Line(null, Op.PushParam, fromIdx ?? TAC.Num(0)));
 			code.Add(new Line(null, Op.PushParam, toIdx));// toIdx == null ? TAC.Num(0) : toIdx));
-			var func = GetByName("slice").GetFunc();
+			var func = GetByName(SLICE).GetFunc();
 			code.Add(new Line(TAC.LTemp(resultTempNum), Op.CallFunctionA, func, TAC.Num(3)));
 		}
 
