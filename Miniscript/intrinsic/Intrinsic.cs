@@ -101,22 +101,6 @@ namespace Miniscript.intrinsic {
 			// var f = Create("abs");
 			// f.AddDoubleParam("x");
 			// f.Сode = (context, partialResult) => new Result(Math.Abs(context.GetLocalDouble("x")));
-
-			// rnd
-			//	Generates a pseudorandom number between 0 and 1 (including 0 but
-			//	not including 1).  If given a seed, then the generator is reset
-			//	with that seed value, allowing you to create repeatable sequences
-			//	of random numbers.  If you never specify a seed, then it is
-			//	initialized automatically, generating a unique sequence on each run.
-			// seed (number, optional): if given, reset the sequence with this value
-			// Returns: pseudorandom number in the range [0,1)
-			// f = Create("rnd");
-			// f.AddParam("seed");
-			// f.Сode = (context, partialResult) => {
-			// 	var seed = context.GetLocalInt("seed");
-			// 	if (seed != 0) random = new Random(seed);
-			// 	return new Result(random.NextDouble());
-			// };
 			
 			// self.len
 			//	Return the number of characters in a string, elements in
