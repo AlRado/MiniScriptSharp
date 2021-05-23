@@ -136,27 +136,31 @@ namespace Miniscript.intrinsic {
             return Math.Ceiling(x);
         }
         
-        // funcRef
-        //	Returns a map that represents a function reference in
-        //	MiniScript's core type system.  This can be used with `isa`
-        //	to check whether a variable refers to a function (but be
-        //	sure to use @ to avoid invoking the function and testing
-        //	the result).
-        // Example: @floor isa funcRef		returns 1
-        // See also: number, string, list, map
+        [Description(
+            "\n   Returns a map that represents a function reference in" +
+            "\n   MiniScript's core type system.  This can be used with `isa`" +
+            "\n   to check whether a variable refers to a function (but be" +
+            "\n   sure to use @ to avoid invoking the function and testing" +
+            "\n   the result)." +
+            "\n Example: @floor isa funcRef		returns 1" +
+            "\n See also: number, string, list, map" +
+            "\n"
+        )]
         public Result FuncRef() {
             FunctionInjector.Context.Vm.FunctionType ??= Intrinsic.FunctionType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
             return new Result(FunctionInjector.Context.Vm.FunctionType);
         }
         
-        // code
-        //	Return the Unicode code point of the first character of
-        //	the given string.  This is the inverse of `char`.
-        //	May be called with function syntax or dot syntax.
-        // self (string): string to get the code point of
-        // Returns: Unicode code point of the first character of self
-        // Example: "*".code		returns 42
-        // Example: code("*")		returns 42
+        [Description(
+            "\n   Return the Unicode code point of the first character of" +
+            "\n   the given string.  This is the inverse of `char`." +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (string): string to get the code point of" +
+            "\n Returns: Unicode code point of the first character of self" +
+            "\n Example: \"*\".code		returns 42" +
+            "\n Example: code(\"*\")		returns 42" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         public int Code(Value self) {
             var codepoint = 0;
@@ -164,51 +168,59 @@ namespace Miniscript.intrinsic {
             return codepoint;
         }
         
-        // cos
-        //	Returns the cosine of the given angle (in radians).
-        // radians (number): angle, in radians, to get the cosine of
-        // Returns: cosine of the given angle
-        // Example: cos(0)		returns 1
+        [Description(
+            "\n   Returns the cosine of the given angle (in radians)." +
+            "\n radians (number): angle, in radians, to get the cosine of" +
+            "\n Returns: cosine of the given angle" +
+            "\n Example: cos(0)		returns 1" +
+            "\n"
+        )]
         public double Cos(double radians = 0) {
             return Math.Cos(radians);
         }
-        
-        // floor
-        //	Returns the "floor", i.e. closest whole number 
-        //	less than or equal to the given number.
-        // x (number, default 0): number to get the floor of
-        // Returns: closest whole number not more than x
-        // Example: floor(42.9)		returns 42
-        // See also: floor
+
+        [Description(
+            "\n   Returns the \"floor\", i.e. closest whole number" +
+            "\n   less than or equal to the given number." +
+            "\n x (number, default 0): number to get the floor of" +
+            "\n Returns: closest whole number not more than x" +
+            "\n Example: floor(42.9)		returns 42" +
+            "\n See also: floor" +
+            "\n"
+        )]
         public double Floor(double x = 0) {
             return Math.Floor(x);
         }
-        
-        // hash
-        //	Returns an integer that is "relatively unique" to the given value.
-        //	In the case of strings, the hash is case-sensitive.  In the case
-        //	of a list or map, the hash combines the hash values of all elements.
-        //	Note that the value returned is platform-dependent, and may vary
-        //	across different MiniScript implementations.
-        // obj (any type): value to hash
-        // Returns: integer hash of the given value
+
+        [Description(
+            "\n   Returns an integer that is \"relatively unique\" to the given value." +
+            "\n   In the case of strings, the hash is case-sensitive.  In the case" +
+            "\n   of a list or map, the hash combines the hash values of all elements." +
+            "\n   Note that the value returned is platform-dependent, and may vary" +
+            "\n   across different MiniScript implementations." +
+            "\n obj (any type): value to hash" +
+            "\n Returns: integer hash of the given value" +
+            "\n"
+        )]
         public int Hash(Value obj) {
             return obj.Hash();
         }
-        
-        // hasIndex
-        //	Return whether the given index is valid for this object, that is,
-        //	whether it could be used with square brackets to get some value
-        //	from self.  When self is a list or string, the result is true for
-        //	integers from -(length of string) to (length of string-1).  When
-        //	self is a map, it is true for any key (index) in the map.  If
-        //	called on a number, this method throws a runtime exception.
-        // self (string, list, or map): object to check for an index on
-        // index (any): value to consider as a possible index
-        // Returns: 1 if self[index] would be valid; 0 otherwise
-        // Example: "foo".hasIndex(2)		returns 1
-        // Example: "foo".hasIndex(3)		returns 0
-        // See also: indexes
+
+        [Description(
+            "\n   Return whether the given index is valid for this object, that is," +
+            "\n   whether it could be used with square brackets to get some value" +
+            "\n   from self.  When self is a list or string, the result is true for" +
+            "\n   integers from -(length of string) to (length of string-1).  When" +
+            "\n   self is a map, it is true for any key (index) in the map.  If" +
+            "\n   called on a number, this method throws a runtime exception." +
+            "\n self (string, list, or map): object to check for an index on" +
+            "\n index (any): value to consider as a possible index" +
+            "\n Returns: 1 if self[index] would be valid; 0 otherwise" +
+            "\n Example: \"foo\".hasIndex(2)		returns 1" +
+            "\n Example: \"foo\".hasIndex(3)		returns 0" +
+            "\n See also: indexes" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
@@ -234,13 +246,15 @@ namespace Miniscript.intrinsic {
             }
         }
         
-        // indexes
-        //	Returns the keys of a dictionary, or the non-negative indexes
-        //	for a string or list.
-        // self (string, list, or map): object to get the indexes of
-        // Returns: a list of valid indexes for self
-        // Example: "foo".indexes		returns [0, 1, 2]
-        // See also: hasIndex
+        [Description(
+            "\n   Returns the keys of a dictionary, or the non-negative indexes" +
+            "\n   for a string or list." +
+            "\n self (string, list, or map): object to get the indexes of" +
+            "\n Returns: a list of valid indexes for self" +
+            "\n Example: \"foo\".indexes		returns [0, 1, 2]" +
+            "\n See also: hasIndex" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
@@ -273,15 +287,17 @@ namespace Miniscript.intrinsic {
             }
         }
         
-        // indexOf
-        //	Returns index or key of the given value, or if not found,		returns null.
-        // self (string, list, or map): object to search
-        // value (any): value to search for
-        // after (any, optional): if given, starts the search after this index
-        // Returns: first index (after `after`) such that self[index] == value, or null
-        // Example: "Hello World".indexOf("o")		returns 4
-        // Example: "Hello World".indexOf("o", 4)		returns 7
-        // Example: "Hello World".indexOf("o", 7)		returns null
+        [Description(
+            "\n   Returns index or key of the given value, or if not found,		returns null." +
+            "\n self (string, list, or map): object to search" +
+            "\n value (any): value to search for" +
+            "\n after (any, optional): if given, starts the search after this index" +
+            "\n Returns: first index (after `after`) such that self[index] == value, or null" +
+            "\n Example: \"Hello World\".indexOf(\"o\")		returns 4" +
+            "\n Example: \"Hello World\".indexOf(\"o\", 4)		returns 7" +
+            "\n Example: \"Hello World\".indexOf(\"o\", 7)		returns null" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
@@ -332,18 +348,20 @@ namespace Miniscript.intrinsic {
             }
             return Result.Null;
         }
-        
-        // insert
-        //	Insert a new element into a string or list.  In the case of a list,
-        //	the list is both modified in place and returned.  Strings are immutable,
-        //	so in that case the original string is unchanged, but a new string is
-        //	returned with the value inserted.
-        // self (string or list): sequence to insert into
-        // index (number): position at which to insert the new item
-        // value (any): element to insert at the specified index
-        // Returns: modified list, new string
-        // Example: "Hello".insert(2, 42)		returns "He42llo"
-        // See also: remove
+
+        [Description(
+            "\n   Insert a new element into a string or list.  In the case of a list," +
+            "\n   the list is both modified in place and returned.  Strings are immutable," +
+            "\n   so in that case the original string is unchanged, but a new string is" +
+            "\n   returned with the value inserted." +
+            "\n self (string or list): sequence to insert into" +
+            "\n index (number): position at which to insert the new item" +
+            "\n value (any): element to insert at the specified index" +
+            "\n Returns: modified list, new string" +
+            "\n Example: \"Hello\".insert(2, 42)		returns \"He42llo\"" +
+            "\n See also: remove" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         public Result Insert(Value self, Value index, Value value) {
@@ -370,13 +388,15 @@ namespace Miniscript.intrinsic {
             }
         }
 
-        // self.join
-        //	Join the elements of a list together to form a string.
-        // self (list): list to join
-        // delimiter (string, default " "): string to insert between each pair of elements
-        // Returns: string built by joining elements of self with delimiter
-        // Example: [2,4,8].join("-")		returns "2-4-8"
-        // See also: split
+        [Description(
+            "\n   Join the elements of a list together to form a string." +
+            "\n self (list): list to join" +
+            "\n delimiter (string, default \" \"): string to insert between each pair of elements" +
+            "\n Returns: string built by joining elements of self with delimiter" +
+            "\n Example: [2,4,8].join(\"-\")		returns \"2-4-8\"" +
+            "\n See also: split" +
+            "\n"
+        )]
         [MethodOf(typeof(ValList))]
         public string Join(Value self, string delimiter = " ") {
             if (!(self is ValList valList)) return self?.ToString();
@@ -385,14 +405,16 @@ namespace Miniscript.intrinsic {
             list.AddRange(valList.Values.Select(t => t?.ToString()));
             return string.Join(delimiter, list.ToArray());
         }
-        
-        // self.len
-        //	Return the number of characters in a string, elements in
-        //	a list, or key/value pairs in a map.
-        //	May be called with function syntax or dot syntax.
-        // self (list, string, or map): object to get the length of
-        // Returns: length (number of elements) in self
-        // Example: "hello".len		returns 5
+
+        [Description(
+            "\n   Return the number of characters in a string, elements in" +
+            "\n   a list, or key/value pairs in a map." +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (list, string, or map): object to get the length of" +
+            "\n Returns: length (number of elements) in self" +
+            "\n Example: \"hello\".len		returns 5" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
@@ -405,25 +427,29 @@ namespace Miniscript.intrinsic {
             };
         }
         
-        // list type
-        //	Returns a map that represents the list datatype in
-        //	MiniScript's core type system.  This can be used with `isa`
-        //	to check whether a variable refers to a list.  You can also
-        //	assign new methods here to make them available to all lists.
-        // Example: [1, 2, 3] isa list		returns 1
-        // See also: number, string, map, funcRef
+        [Description(
+            "\n   Returns a map that represents the list datatype in" +
+            "\n   MiniScript's core type system.  This can be used with `isa`" +
+            "\n   to check whether a variable refers to a list.  You can also" +
+            "\n   assign new methods here to make them available to all lists." +
+            "\n Example: [1, 2, 3] isa list		returns 1" +
+            "\n See also: number, string, map, funcRef" +
+            "\n"
+        )]
         public Result List() {
             FunctionInjector.Context.Vm.ListType ??= Intrinsic.ListType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
             return new Result(FunctionInjector.Context.Vm.ListType);
         }
-        
-        // log(x, base)
-        //	Returns the logarithm (with the given) of the given number,
-        //	that is, the number y such that base^y = x.
-        // x (number): number to take the log of
-        // base (number, default 10): logarithm base
-        // Returns: a number that, when base is raised to it, produces x
-        // Example: log(1000)		returns 3 (because 10^3 == 1000)
+
+        [Description(
+            "\n   Returns the logarithm (with the given) of the given number," +
+            "\n   that is, the number y such that base^y = x." +
+            "\n x (number): number to take the log of" +
+            "\n base (number, default 10): logarithm base" +
+            "\n Returns: a number that, when base is raised to it, produces x" +
+            "\n Example: log(1000)		returns 3 (because 10^3 == 1000)" +
+            "\n"
+        )]
         public double Log(double x = 0, double @base = 10) {
             double result;
             if (Math.Abs(@base - 2.718282) < 0.000001) result = Math.Log(x);
@@ -431,14 +457,16 @@ namespace Miniscript.intrinsic {
         
             return result;
         }
-
-        // lower
-        //	Return a lower-case version of a string.
-        //	May be called with function syntax or dot syntax.
-        // self (string): string to lower-case
-        // Returns: string with all capital letters converted to lowercase
-        // Example: "Mo Spam".lower		returns "mo spam"
-        // See also: upper
+        
+        [Description(
+            "\n   Return a lower-case version of a string." +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (string): string to lower-case" +
+            "\n Returns: string with all capital letters converted to lowercase" +
+            "\n Example: \"Mo Spam\".lower		returns \"mo spam\"" +
+            "\n See also: upper" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         public string Lower(Value self) {
             if (!(self is ValString valString)) return self?.ToString();
@@ -446,60 +474,70 @@ namespace Miniscript.intrinsic {
             return valString.Value.ToLower();
         }
         
-        // map type
-        //	Returns a map that represents the map datatype in
-        //	MiniScript's core type system.  This can be used with `isa`
-        //	to check whether a variable refers to a map.  You can also
-        //	assign new methods here to make them available to all maps.
-        // Example: {1:"one"} isa map		returns 1
-        // See also: number, string, list, funcRef
+        [Description(
+            "\n   Returns a map that represents the map datatype in" +
+            "\n   MiniScript's core type system.  This can be used with `isa`" +
+            "\n   to check whether a variable refers to a map.  You can also" +
+            "\n   assign new methods here to make them available to all maps." +
+            "\n Example: {1:\"one\"} isa map		returns 1" +
+            "\n See also: number, string, list, funcRef" +
+            "\n"
+        )]
         public Result Map() {
             FunctionInjector.Context.Vm.MapType ??= Intrinsic.MapType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext); 
             return new Result(FunctionInjector.Context.Vm.MapType);
         }
-        
-        // number type
-        //	Returns a map that represents the number datatype in
-        //	MiniScript's core type system.  This can be used with `isa`
-        //	to check whether a variable refers to a number.  You can also
-        //	assign new methods here to make them available to all maps
-        //	(though because of a limitation in MiniScript's parser, such
-        //	methods do not work on numeric literals).
-        // Example: 42 isa number		returns 1
-        // See also: string, list, map, funcRef
+
+        [Description(
+            "\n   Returns a map that represents the number datatype in" +
+            "\n   MiniScript's core type system.  This can be used with `isa`" +
+            "\n   to check whether a variable refers to a number.  You can also" +
+            "\n   assign new methods here to make them available to all maps" +
+            "\n   (though because of a limitation in MiniScript's parser, such" +
+            "\n   methods do not work on numeric literals)." +
+            "\n Example: 42 isa number		returns 1" +
+            "\n See also: string, list, map, funcRef" +
+            "\n"
+        )]
         public Result Number() {
             FunctionInjector.Context.Vm.NumberType ??= Intrinsic.NumberType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
             return new Result(FunctionInjector.Context.Vm.NumberType);
         }
 
-        // pi
-        //	Returns the universal constant π, that is, the ratio of
-        //	a circle's circumference to its diameter.
-        // Example: pi		returns 3.141593
+        [Description(
+            "\n   Returns the universal constant π, that is, the ratio of" +
+            "\n   a circle's circumference to its diameter." +
+            "\n Example: pi		returns 3.141593" +
+            "\n"
+        )]
         public double Pi() {
             return Math.PI;
         }
         
-        // print
-        //	Display the given value on the default output stream.  The
-        //	exact effect may vary with the environment.  In most cases, the
-        //	given string will be followed by the standard line delimiter.
-        // s (any): value to print (converted to a string as needed)
-        // Returns: null
-        // Example: print 6*7
+        [Description(
+            "\n   Display the given value on the default output stream.  The" +
+            "\n   exact effect may vary with the environment.  In most cases, the" +
+            "\n   given string will be followed by the standard line delimiter." +
+            "\n s (any): value to print (converted to a string as needed)" +
+            "\n Returns: null" +
+            "\n Example: print 6*7" +
+            "\n"
+        )]
         public void Print(string s) {
             FunctionInjector.Context.Vm.StandardOutput(s ?? "null");
         }
-        
-        // pop
-        //	Removes and	returns the last item in a list, or an arbitrary
-        //	key of a map.  If the list or map is empty (or if called on
-        //	any other data type), returns null.
-        //	May be called with function syntax or dot syntax.
-        // self (list or map): object to remove an element from the end of
-        // Returns: value removed, or null
-        // Example: [1, 2, 3].pop		returns (and removes) 3
-        // See also: pull; push; remove
+
+        [Description(
+            "\n   Removes and	returns the last item in a list, or an arbitrary" +
+            "\n   key of a map.  If the list or map is empty (or if called on" +
+            "\n   any other data type), returns null." +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (list or map): object to remove an element from the end of" +
+            "\n Returns: value removed, or null" +
+            "\n Example: [1, 2, 3].pop		returns (and removes) 3" +
+            "\n See also: pull; push; remove" +
+            "\n"
+        )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
         public Result Pop(Value self) {
@@ -522,15 +560,17 @@ namespace Miniscript.intrinsic {
             }
         }
         
-        // pull
-        //	Removes and	returns the first item in a list, or an arbitrary
-        //	key of a map.  If the list or map is empty (or if called on
-        //	any other data type), returns null.
-        //	May be called with function syntax or dot syntax.
-        // self (list or map): object to remove an element from the end of
-        // Returns: value removed, or null
-        // Example: [1, 2, 3].pull		returns (and removes) 1
-        // See also: pop; push; remove
+        [Description(
+            "\n   Removes and	returns the first item in a list, or an arbitrary" +
+            "\n   key of a map.  If the list or map is empty (or if called on" +
+            "\n   any other data type), returns null." +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (list or map): object to remove an element from the end of" +
+            "\n Returns: value removed, or null" +
+            "\n Example: [1, 2, 3].pull		returns (and removes) 1" +
+            "\n See also: pop; push; remove" +
+            "\n"
+        )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
         public Result Pull(Value self) {
@@ -553,13 +593,15 @@ namespace Miniscript.intrinsic {
             }
         }
         
-        // push
-        //	Appends an item to the end of a list, or inserts it into a map
-        //	as a key with a value of 1.
-        //	May be called with function syntax or dot syntax.
-        // self (list or map): object to append an element to
-        // Returns: self
-        // See also: pop, pull, insert
+        [Description(
+            "\n   Appends an item to the end of a list, or inserts it into a map" +
+            "\n   as a key with a value of 1." +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (list or map): object to append an element to" +
+            "\n Returns: self" +
+            "\n See also: pop, pull, insert" +
+            "\n"
+        )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
         public Result Push(Value self, Value value) {
@@ -577,14 +619,16 @@ namespace Miniscript.intrinsic {
                     return Result.Null;
             }
         }
-        
-        // range
-        //	Return a list containing a series of numbers within a range.
-        // from (number, default 0): first number to include in the list
-        // to (number, default 0): point at which to stop adding numbers to the list
-        // step (number, optional): amount to add to the previous number on each step;
-        //	defaults to 1 if to > from, or -1 if to < from
-        // Example: range(50, 5, -10)		returns [50, 40, 30, 20, 10]
+
+        [Description(
+            "\n   Return a list containing a series of numbers within a range." +
+            "\n from (number, default 0): first number to include in the list" +
+            "\n to (number, default 0): point at which to stop adding numbers to the list" +
+            "\n step (number, optional): amount to add to the previous number on each step;" +
+            "\n   defaults to 1 if to > from, or -1 if to < from" +
+            "\n Example: range(50, 5, -10)		returns [50, 40, 30, 20, 10]" +
+            "\n"
+        )]
         public Result Range(double from, double to, int? step = null) {
             step ??= (to >= from ? 1 : -1);
             if (step == 0) throw new RuntimeException("range() error (step==0)");
@@ -604,22 +648,24 @@ namespace Miniscript.intrinsic {
             return new Result(new ValList(values));
         }
         
-        // remove
-        //	Removes part of a list, map, or string.  Exact behavior depends on
-        //	the data type of self:
-        // 		list: removes one element by its index; the list is mutated in place;
-        //			returns null, and throws an error if the given index out of range
-        //		map: removes one key/value pair by key; the map is mutated in place;
-        //			returns 1 if key was found, 0 otherwise
-        //		string:	returns a new string with the first occurrence of k removed
-        //	May be called with function syntax or dot syntax.
-        // self (list, map, or string): object to remove something from
-        // k (any): index or substring to remove
-        // Returns: (see above)
-        // Example: a=["a","b","c"]; a.remove 1		leaves a == ["a", "c"]
-        // Example: d={"ichi":"one"}; d.remove "ni"		returns 0
-        // Example: "Spam".remove("S")		returns "pam"
-        // See also: indexOf
+        [Description(
+            "\n   Removes part of a list, map, or string.  Exact behavior depends on" +
+            "\n   the data type of self:" +
+            "\n     list: removes one element by its index; the list is mutated in place;" +
+            "\n       returns null, and throws an error if the given index out of range" +
+            "\n     map: removes one key/value pair by key; the map is mutated in place;" +
+            "\n       returns 1 if key was found, 0 otherwise" +
+            "\n     string:	returns a new string with the first occurrence of k removed" +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (list, map, or string): object to remove something from" +
+            "\n k (any): index or substring to remove" +
+            "\n Returns: (see above)" +
+            "\n Example: a=[\"a\",\"b\",\"c\"]; a.remove 1		leaves a == [\"a\", \"c\"]" +
+            "\n Example: d={\"ichi\":\"one\"}; d.remove \"ni\"		returns 0" +
+            "\n Example: \"Spam\".remove(\"S\")		returns \"pam\"" +
+            "\n See also: indexOf" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
@@ -652,20 +698,22 @@ namespace Miniscript.intrinsic {
             }
         }
         
-        // replace
-        //	Replace all matching elements of a list or map, or substrings of a string,
-        //	with a new value.Lists and maps are mutated in place, and return themselves.
-        //	Strings are immutable, so the original string is (of course) unchanged, but
-        //	a new string with the replacement is returned.  Note that with maps, it is
-        //	the values that are searched for and replaced, not the keys.
-        // self (list, map, or string): object to replace elements of
-        // oldVal (any): value or substring to replace
-        // newVal (any): new value or substring to substitute where oldVal is found
-        // maxCount (number, optional): if given, replace no more than this many
-        // Returns: modified list or map, or new string, with replacements Done
-        // Example: "Happy Pappy".replace("app", "ol")		returns "Holy Poly"
-        // Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [2, 42, 3, 42, 5]
-        // Example: d = {1: "one"}; d.replace("one", "ichi")		returns (and mutates to) {1: "ichi"}
+        [Description(
+            "\n   Replace all matching elements of a list or map, or substrings of a string," +
+            "\n   with a new value.Lists and maps are mutated in place, and return themselves." +
+            "\n   Strings are immutable, so the original string is (of course) unchanged, but" +
+            "\n   a new string with the replacement is returned.  Note that with maps, it is" +
+            "\n   the values that are searched for and replaced, not the keys." +
+            "\n self (list, map, or string): object to replace elements of" +
+            "\n oldVal (any): value or substring to replace" +
+            "\n newVal (any): new value or substring to substitute where oldVal is found" +
+            "\n maxCount (number, optional): if given, replace no more than this many" +
+            "\n Returns: modified list or map, or new string, with replacements Done" +
+            "\n Example: \"Happy Pappy\".replace(\"app\", \"ol\")		returns \"Holy Poly\"" +
+            "\n Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [2, 42, 3, 42, 5]" +
+            "\n Example: d = {1: \"one\"}; d.replace(\"one\", \"ichi\")		returns (and mutates to) {1: \"ichi\"}" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
@@ -733,15 +781,17 @@ namespace Miniscript.intrinsic {
                     throw new TypeException("Type Error: 'replace' requires map, list, or string");
             }
         }
-        
-        // round
-        //	Rounds a number to the specified number of decimal places.  If given
-        //	a negative number for decimalPlaces, then rounds to a power of 10:
-        //	-1 rounds to the nearest 10, -2 rounds to the nearest 100, etc.
-        // x (number): number to round
-        // decimalPlaces (number, defaults to 0): how many places past the decimal point to round to
-        // Example: round(pi, 2)		returns 3.14
-        // Example: round(12345, -3)		returns 12000
+
+        [Description(
+            "\n   Rounds a number to the specified number of decimal places.  If given" +
+            "\n   a negative number for decimalPlaces, then rounds to a power of 10:" +
+            "\n   -1 rounds to the nearest 10, -2 rounds to the nearest 100, etc." +
+            "\n x (number): number to round" +
+            "\n decimalPlaces (number, defaults to 0): how many places past the decimal point to round to" +
+            "\n Example: round(pi, 2)		returns 3.14" +
+            "\n Example: round(12345, -3)		returns 12000" +
+            "\n"
+        )]
         public double Round(double x, int decimalPlaces) {
             if (decimalPlaces >= 0) {
                 x = Math.Round(x, decimalPlaces);
@@ -752,49 +802,57 @@ namespace Miniscript.intrinsic {
 
             return x;
         }
-        
-        // rnd
-        //	Generates a pseudorandom number between 0 and 1 (including 0 but
-        //	not including 1).  If given a seed, then the generator is reset
-        //	with that seed value, allowing you to create repeatable sequences
-        //	of random numbers.  If you never specify a seed, then it is
-        //	initialized automatically, generating a unique sequence on each run.
-        // seed (number, optional): if given, reset the sequence with this value
-        // Returns: pseudorandom number in the range [0,1)
+
+        [Description(
+            "\n   Generates a pseudorandom number between 0 and 1 (including 0 but" +
+            "\n   not including 1).  If given a seed, then the generator is reset" +
+            "\n   with that seed value, allowing you to create repeatable sequences" +
+            "\n   of random numbers.  If you never specify a seed, then it is" +
+            "\n   initialized automatically, generating a unique sequence on each run." +
+            "\n seed (number, optional): if given, reset the sequence with this value" +
+            "\n Returns: pseudorandom number in the range [0,1)" +
+            "\n"
+        )]
         public double Rnd(int? seed) {
             if (seed != null) random = new Random((int)seed);
             return random.NextDouble();
         }
-        
-        // sign
-        //	Return -1 for negative numbers, 1 for positive numbers, and 0 for zero.
-        // x (number): number to get the sign of
-        // Returns: sign of the number
-        // Example: sign(-42.6)		returns -1
+
+        [Description(
+            "\n   Return -1 for negative numbers, 1 for positive numbers, and 0 for zero." +
+            "\n x (number): number to get the sign of" +
+            "\n Returns: sign of the number" +
+            "\n Example: sign(-42.6)		returns -1" +
+            "\n"
+        )]
         public double Sign(double x) {
             return Math.Sign(x);
         }
-        
-        // sin
-        //	Returns the sine of the given angle (in radians).
-        // radians (number): angle, in radians, to get the sine of
-        // Returns: sine of the given angle
-        // Example: sin(pi/2)		returns 1
+
+        [Description(
+            "\n   Returns the sine of the given angle (in radians)." +
+            "\n radians (number): angle, in radians, to get the sine of" +
+            "\n Returns: sine of the given angle" +
+            "\n Example: sin(pi/2)		returns 1" +
+            "\n"
+        )]
         public double Sin(double radians) {
             return Math.Sin(radians);
         }
-        
-        // slice
-        //	Return a subset of a string or list.  This is equivalent to using
-        //	the square-brackets slice operator seq[from:to], but with ordinary
-        //	function syntax.
-        // seq (string or list): sequence to get a subsequence of
-        // from (number, default 0): 0-based index to the first element to return (if negative, counts from the end)
-        // to (number, optional): 0-based index of first element to *not* include in the result
-        //		(if negative, count from the end; if omitted, return the rest of the sequence)
-        // Returns: substring or sublist
-        // Example: slice("Hello", -2)		returns "lo"
-        // Example: slice(["a","b","c","d"], 1, 3)		returns ["b", "c"]
+
+        [Description(
+            "\n   Return a subset of a string or list.  This is equivalent to using" +
+            "\n   the square-brackets slice operator seq[from:to], but with ordinary" +
+            "\n   function syntax." +
+            "\n seq (string or list): sequence to get a subsequence of" +
+            "\n from (number, default 0): 0-based index to the first element to return (if negative, counts from the end)" +
+            "\n to (number, optional): 0-based index of first element to *not* include in the result" +
+            "\n     (if negative, count from the end; if omitted, return the rest of the sequence)" +
+            "\n Returns: substring or sublist" +
+            "\n Example: slice(\"Hello\", -2)		returns \"lo\"" +
+            "\n Example: slice([\"a\",\"b\",\"c\",\"d\"], 1, 3)		returns [\"b\", \"c\"]" +
+            "\n"
+        )]
         public Result Slice(Value seq, int from, Value toVal) {
             var toIdx = 0;
             if (toVal != null) toIdx = toVal.IntValue();
@@ -829,19 +887,21 @@ namespace Miniscript.intrinsic {
                     return Result.Null;
             }
         }
-        
-        // sort
-        //	Sorts a list in place.  With null or no argument, this sorts the
-        //	list elements by their own values.  With the byKey argument, each
-        //	element is indexed by that argument, and the elements are sorted
-        //	by the result.  (This only works if the list elements are maps, or
-        //	they are lists and byKey is an integer index.)
-        // self (list): list to sort
-        // byKey (optional): if given, sort each element by indexing with this key
-        // ascending (optional, default true): if false, sort in descending order
-        // Returns: self (which has been sorted in place)
-        // Example: a = [5,3,4,1,2]; a.sort		results in a == [1, 2, 3, 4, 5]
-        // See also: shuffle
+ 
+        [Description(
+            "\n   Sorts a list in place.  With null or no argument, this sorts the" +
+            "\n   list elements by their own values.  With the byKey argument, each" +
+            "\n   element is indexed by that argument, and the elements are sorted" +
+            "\n   by the result.  (This only works if the list elements are maps, or" +
+            "\n   they are lists and byKey is an integer index.)" +
+            "\n self (list): list to sort" +
+            "\n byKey (optional): if given, sort each element by indexing with this key" +
+            "\n ascending (optional, default true): if false, sort in descending order" +
+            "\n Returns: self (which has been sorted in place)" +
+            "\n Example: a = [5,3,4,1,2]; a.sort		results in a == [1, 2, 3, 4, 5]" +
+            "\n See also: shuffle" +
+            "\n"
+        )]
         [MethodOf(typeof(ValList))]
         public Result Sort(Value self, Value byKey, bool ascending = true) {
             if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
@@ -895,16 +955,18 @@ namespace Miniscript.intrinsic {
             return new Result(list);
         }
 
-        // split
-        //	Split a string into a list, by some delimiter.
-        //	May be called with function syntax or dot syntax.
-        // self (string): string to split
-        // delimiter (string, default " "): substring to split on
-        // maxCount (number, default -1): if > 0, split into no more than this many strings
-        // Returns: list of substrings found by splitting on delimiter
-        // Example: "foo bar baz".split		returns ["foo", "bar", "baz"]
-        // Example: "foo bar baz".split("a", 2)		returns ["foo b", "r baz"]
-        // See also: join
+        [Description(
+            "\n   Split a string into a list, by some delimiter." +
+            "\n   May be called with function syntax or dot syntax." +
+            "\n self (string): string to split" +
+            "\n delimiter (string, default \" \"): substring to split on" +
+            "\n maxCount (number, default -1): if > 0, split into no more than this many strings" +
+            "\n Returns: list of substrings found by splitting on delimiter" +
+            "\n Example: \"foo bar baz\".split		returns [\"foo\", \"bar\", \"baz\"]" +
+            "\n Example: \"foo bar baz\".split(\"a\", 2)		returns [\"foo b\", \"r baz\"]" +
+            "\n See also: join" +
+            "\n"
+        )]
         [MethodOf(typeof(ValString))]
         public Result Split(Value self, string delimiter = " ", double maxCount = -1) {
             var selfStr = self.ToString();
@@ -924,42 +986,50 @@ namespace Miniscript.intrinsic {
             return new Result(result);
         }
         
-        // sqrt
-        //	Returns the square root of a number.
-        // x (number): number to get the square root of
-        // Returns: square root of x
-        // Example: sqrt(1764)		returns 42
+        [Description(
+            "\n   Returns the square root of a number." +
+            "\n x (number): number to get the square root of" +
+            "\n Returns: square root of x" +
+            "\n Example: sqrt(1764)		returns 42" +
+            "\n"
+        )]
         public double Sqrt(double x) {
             return Math.Sqrt(x);
         }
         
-        // str
-        //	Convert any value to a string.
-        // x (any): value to convert
-        // Returns: string representation of the given value
-        // Example: str(42)		returns "42"
-        // See also: val
+        [Description(
+            "\n   Convert any value to a string." +
+            "\n x (any): value to convert" +
+            "\n Returns: string representation of the given value" +
+            "\n Example: str(42)		returns \"42\"" +
+            "\n See also: val" +
+            "\n"
+        )]
         public string Str(Value x) {
             return x.ToString();
         }
 
-        // string type
-        //	Returns a map that represents the string datatype in
-        //	MiniScript's core type system.  This can be used with `isa`
-        //	to check whether a variable refers to a string.  You can also
-        //	assign new methods here to make them available to all strings.
-        // Example: "Hello" isa string		returns 1
-        // See also: number, list, map, funcRef
+        [Description(
+            "\n   Returns a map that represents the string datatype in" +
+            "\n   MiniScript's core type system.  This can be used with `isa`" +
+            "\n   to check whether a variable refers to a string.  You can also" +
+            "\n   assign new methods here to make them available to all strings." +
+            "\n Example: \"Hello\" isa string		returns 1" +
+            "\n See also: number, list, map, funcRef" +
+            "\n"
+        )]
         public Result String() {
             FunctionInjector.Context.Vm.StringType ??= Intrinsic.StringType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
             return new Result(FunctionInjector.Context.Vm.StringType);
         }
         
-        // shuffle
-        //	Randomize the order of elements in a list, or the mappings from
-        //	keys to values in a map.  This is Done in place.
-        // self (list or map): object to shuffle
-        // Returns: null
+        [Description(
+            "\n   Randomize the order of elements in a list, or the mappings from" +
+            "\n   keys to values in a map.  This is Done in place." +
+            "\n self (list or map): object to shuffle" +
+            "\n Returns: null" +
+            "\n"
+        )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
         public void Shuffle(Value self) {
@@ -993,12 +1063,14 @@ namespace Miniscript.intrinsic {
                 }
             }
         }
-
-        // sum
-        //	Returns the total of all elements in a list, or all values in a map.
-        // self (list or map): object to sum
-        // Returns: result of adding up all values in self
-        // Example: range(3).sum		returns 6 (3 + 2 + 1 + 0)
+        
+        [Description(
+            "\n   Returns the total of all elements in a list, or all values in a map." +
+            "\n self (list or map): object to sum" +
+            "\n Returns: result of adding up all values in self" +
+            "\n Example: range(3).sum		returns 6 (3 + 2 + 1 + 0)" +
+            "\n"
+        )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
         public double Sum(Value self) {
@@ -1016,17 +1088,22 @@ namespace Miniscript.intrinsic {
             return sum;
         }
 
-        // tan
-        //	Returns the tangent of the given angle (in radians).
-        // radians (number): angle, in radians, to get the tangent of
-        // Returns: tangent of the given angle
-        // Example: tan(pi/4)		returns 1
+
+        [Description(
+            "\n   Returns the tangent of the given angle (in radians)." +
+            "\n radians (number): angle, in radians, to get the tangent of" +
+            "\n Returns: tangent of the given angle" +
+            "\n Example: tan(pi/4)		returns 1" +
+            "\n"
+        )]
         public double Tan(double radians) {
             return Math.Tan(radians);
         }
         
-        // time
-        //	Returns the number of seconds since the script started running.
+        [Description(
+            "\n   Returns the number of seconds since the script started running." +
+            "\n"
+        )]
         public double Time() {
             return FunctionInjector.Context.Vm.RunTime;
         }
@@ -1092,15 +1169,17 @@ namespace Miniscript.intrinsic {
             }
         }
         
-        // version
-        //	Get a map with information about the version of MiniScript and
-        //	the host environment that you're currently running.  This will
-        //	include at least the following keys:
-        //		miniscript: a string such as "1.5"
-        //		buildDate: a date in yyyy-mm-dd format, like "2020-05-28"
-        //		host: a number for the host major and minor version, like 0.9
-        //		hostName: name of the host application, e.g. "Mini Micro"
-        //		hostInfo: URL or other short info about the host app
+        [Description(
+            "\n   Get a map with information about the version of MiniScript and" +
+            "\n   the host environment that you're currently running.  This will" +
+            "\n   include at least the following keys:" +
+            "\n     miniscript: a string such as \"1.5\"" +
+            "\n     buildDate: a date in yyyy-mm-dd format, like \"2020-05-28\"" +
+            "\n     host: a number for the host major and minor version, like 0.9" +
+            "\n     hostName: name of the host application, e.g. \"Mini Micro\"" +
+            "\n     hostInfo: URL or other short info about the host app" +
+            "\n"
+        )]
         public Result Version() {
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             if (FunctionInjector.Context.Vm.VersionMap != null) return new Result(FunctionInjector.Context.Vm.VersionMap);
@@ -1123,11 +1202,13 @@ namespace Miniscript.intrinsic {
             return new Result(FunctionInjector.Context.Vm.VersionMap);
         }
         
-        // wait
-        //	Pause execution of this script for some amount of time.
-        // seconds (default 1.0): how many seconds to wait
-        // Example: wait 2.5		pauses the script for 2.5 seconds
-        // See also: time, yield
+        [Description(
+            "\n   Pause execution of this script for some amount of time." +
+            "\n seconds (default 1.0): how many seconds to wait" +
+            "\n Example: wait 2.5		pauses the script for 2.5 seconds" +
+            "\n See also: time, yield" +
+            "\n"
+        )]
         public Result Wait(double seconds = 1) {
             var now = FunctionInjector.Context.Vm.RunTime;
             if (FunctionInjector.PartialResult == null) {
@@ -1140,13 +1221,15 @@ namespace Miniscript.intrinsic {
                     FunctionInjector.PartialResult;
             }
         }
-
-        // yield
-        //	Pause the execution of the script until the next "tick" of
-        //	the host app.  In Mini Micro, for example, this waits until
-        //	the next 60Hz frame.  Exact meaning may very, but generally
-        //	if you're doing something in a tight loop, calling yield is
-        //	polite to the host app or other scripts.
+        
+        [Description(
+            "\n   Pause the execution of the script until the next \"tick\" of" +
+            "\n   the host app.  In Mini Micro, for example, this waits until" +
+            "\n   the next 60Hz frame.  Exact meaning may very, but generally" +
+            "\n   if you're doing something in a tight loop, calling yield is" +
+            "\n   polite to the host app or other scripts." +
+            "\n"
+        )]
         public void Yield() {
             FunctionInjector.Context.Vm.Yielding = true;
         }
