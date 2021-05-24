@@ -1230,6 +1230,7 @@ namespace Miniscript.intrinsic {
             "\n   polite to the host app or other scripts." +
             "\n"
         )]
+        [Category("Graphics")]
         public void Yield() {
             FunctionInjector.Context.Vm.Yielding = true;
         }
@@ -1239,8 +1240,21 @@ namespace Miniscript.intrinsic {
             "\n   To see the description of function try write: help \"function name\"" +
             "\n"
         )]
+        [Category("Intrinsic")]
         public string Help(string topicName) {
             return topicName == Consts.ALL ? Intrinsic.GetAllIntrinsicInfo() : Intrinsic.GetDescription(topicName);
+        }
+        
+        [Description(
+            "\n   To see all categories of the intrinsic functions try write: category \"all\"" +
+            "\n   To see all functions of category try write: category \"category name\"" +
+            "\n Example: category \"Intrinsic\"" +
+            "\n See also: help" +
+            "\n"
+        )]
+        [Category("Intrinsic")]
+        public string Category(string topicName) {
+            return topicName == Consts.ALL ? Intrinsic.GetAllCategoriesInfo() : Intrinsic.GetCategory(topicName);
         }
 
     }

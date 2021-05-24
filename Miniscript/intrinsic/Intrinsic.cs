@@ -68,6 +68,7 @@ namespace Miniscript.intrinsic {
 		private static readonly Dictionary<string, Intrinsic> nameMap = new Dictionary<string, Intrinsic>();
 		
 		private static readonly Dictionary<string, string> descriptionMap = new Dictionary<string, string>();
+		private static readonly Dictionary<string, string> categoryMap = new Dictionary<string, string>();
 
 		// a numeric ID (used internally -- don't worry about this)
 		public int Id { get; private set; }
@@ -277,6 +278,34 @@ namespace Miniscript.intrinsic {
 				$"Help description for function \"{functionName}\" not founded!";
 		}
 		
+		public static void AddToCategory(string category, string functionSignature) {
+			if (string.IsNullOrEmpty(category)) return;
+
+			var functionInfo = $"\n {functionSignature}";
+			if (categoryMap.TryGetValue(category, out var categoryInfo)) {
+				categoryMap[category] += functionInfo;
+			} else {
+				categoryMap[category] = functionInfo;
+			}
+		}
+
+		public static string GetCategory(string category) {
+			if (string.IsNullOrEmpty(category)) 
+				return GetDescription(CATEGORY);
+			
+			return categoryMap.TryGetValue(category, out var signatures) ? 
+				signatures : 
+				$"Functions not found in the category \"{category}\"!";
+		}
+		
+		public static string GetAllCategoriesInfo() {
+			var result = "";
+			foreach (var name in categoryMap.Keys) {
+				result += $"\n {name}";
+			}
+			return result;
+		}
+
 	}
 }
 
