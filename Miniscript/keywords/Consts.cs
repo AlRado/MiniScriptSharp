@@ -50,6 +50,10 @@
         public const string ALL = "all";
         public const string SLICE = "slice";
         public const string CATEGORY = "category";
+        
+        // Function categories
+        public const string NONE = "None";
+        public const string INTRINSIC = "Intrinsic";
 
 
     }

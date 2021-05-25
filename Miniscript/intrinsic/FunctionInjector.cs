@@ -179,6 +179,9 @@ namespace Miniscript.intrinsic {
                     Intrinsic.AddToCategory(categoryAttribute.Category, valFunc.ToString());
                 }
             }
+
+            if (Attribute.GetCustomAttribute(method, typeof(CategoryAttribute)) == null)
+                Intrinsic.AddToCategory(Consts.NONE, valFunc.ToString());
         }
 
         private static ValMap GetMap(Type type) {

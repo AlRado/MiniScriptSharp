@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using Miniscript.errors;
-using Miniscript.keywords;
 using Miniscript.tac;
 using Miniscript.types;
+using static Miniscript.keywords.Consts;
 
 namespace Miniscript.intrinsic {
 
@@ -1240,9 +1240,9 @@ namespace Miniscript.intrinsic {
             "\n   To see the description of function try write: help \"function name\"" +
             "\n"
         )]
-        [Category("Intrinsic")]
+        [Category(INTRINSIC)]
         public string Help(string topicName) {
-            return topicName == Consts.ALL ? Intrinsic.GetAllIntrinsicInfo() : Intrinsic.GetDescription(topicName);
+            return topicName == ALL ? Intrinsic.GetAllIntrinsicInfo() : Intrinsic.GetDescription(topicName);
         }
         
         [Description(
@@ -1252,9 +1252,9 @@ namespace Miniscript.intrinsic {
             "\n See also: help" +
             "\n"
         )]
-        [Category("Intrinsic")]
+        [Category(INTRINSIC)]
         public string Category(string topicName) {
-            return topicName == Consts.ALL ? Intrinsic.GetAllCategoriesInfo() : Intrinsic.GetCategory(topicName);
+            return topicName == ALL ? Intrinsic.GetAllCategoriesInfo() : Intrinsic.GetCategory(topicName);
         }
 
     }
