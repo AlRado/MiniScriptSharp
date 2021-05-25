@@ -46,13 +46,13 @@
         public const string KEY = "key";
         public const string VALUE = "value";
         
-        public const string HELP = "help";
-        public const string ALL = "all";
         public const string SLICE = "slice";
+        public const string HELP = "help";
         public const string CATEGORY = "category";
         
         // Function categories
         public const string NONE = "None";
+        public const string ALL = "All";
         public const string INTRINSIC = "Intrinsic";
 
 
