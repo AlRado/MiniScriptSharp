@@ -20,6 +20,7 @@ namespace Miniscript.intrinsic {
             "\n Example: abs(-42)		returns 42" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Abs(double x = 0) {
             return Math.Abs(x);
         }
@@ -32,6 +33,7 @@ namespace Miniscript.intrinsic {
             "\n Example: acos(0) 		returns 1.570796" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Acos(double x = 0) {
             return Math.Acos(x);
         }
@@ -44,6 +46,7 @@ namespace Miniscript.intrinsic {
             "\n Example: asin(1) return 1.570796" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Asin(double x = 0) {
             return Math.Asin(x);
         }
@@ -62,6 +65,7 @@ namespace Miniscript.intrinsic {
             "\n Example: atan(1, -1)		returns 2.356194" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Atan(double y = 0, double x = 1) {
             return x == 1.0 ? Math.Atan(y) : Math.Atan2(y, x);
         }
@@ -77,6 +81,7 @@ namespace Miniscript.intrinsic {
             "\n See also: bitOr; bitXor" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public int BitAnd(int i, int j) {
             return i & j;
         }
@@ -92,6 +97,7 @@ namespace Miniscript.intrinsic {
             "\n See also: bitAnd; bitXor" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public int BitOr(int i, int j) {
             return i | j;
         }
@@ -107,6 +113,7 @@ namespace Miniscript.intrinsic {
             "\n See also: bitAnd; bitOr" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public int BitXor(int i, int j) {
             return i ^ j;
         }
@@ -119,6 +126,7 @@ namespace Miniscript.intrinsic {
             "\n See also: code" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public string Char(int codePoint = 65) {
             return char.ConvertFromUtf32(codePoint);
         }
@@ -132,6 +140,7 @@ namespace Miniscript.intrinsic {
             "\n See also: floor" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Ceil(double x = 0) {
             return Math.Ceiling(x);
         }
@@ -146,6 +155,7 @@ namespace Miniscript.intrinsic {
             "\n See also: number, string, list, map" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result FuncRef() {
             FunctionInjector.Context.Vm.FunctionType ??= Intrinsic.FunctionType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
             return new Result(FunctionInjector.Context.Vm.FunctionType);
@@ -162,6 +172,7 @@ namespace Miniscript.intrinsic {
             "\n"
         )]
         [MethodOf(typeof(ValString))]
+        [Category(INTRINSIC)]
         public int Code(Value self) {
             var codepoint = 0;
             if (self != null) codepoint = char.ConvertToUtf32(self.ToString(), 0);
@@ -175,6 +186,7 @@ namespace Miniscript.intrinsic {
             "\n Example: cos(0)		returns 1" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Cos(double radians = 0) {
             return Math.Cos(radians);
         }
@@ -188,6 +200,7 @@ namespace Miniscript.intrinsic {
             "\n See also: floor" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Floor(double x = 0) {
             return Math.Floor(x);
         }
@@ -202,6 +215,7 @@ namespace Miniscript.intrinsic {
             "\n Returns: integer hash of the given value" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public int Hash(Value obj) {
             return obj.Hash();
         }
@@ -224,6 +238,7 @@ namespace Miniscript.intrinsic {
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result HasIndex(Value self, Value index) {
             switch (self) {
                 case ValList _ when !(index is ValNumber):
@@ -258,6 +273,7 @@ namespace Miniscript.intrinsic {
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result Indexes(Value self) {
             switch (self) {
                 case ValMap valMap: {
@@ -301,6 +317,7 @@ namespace Miniscript.intrinsic {
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result IndexOf(Value self, Value value, Value after) {
             switch (self) {
                 case ValList valList: {
@@ -364,6 +381,7 @@ namespace Miniscript.intrinsic {
         )]
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
+        [Category(INTRINSIC)]
         public Result Insert(Value self, Value index, Value value) {
             if (index == null) throw new RuntimeException("insert: index argument required");
             if (!(index is ValNumber)) throw new RuntimeException("insert: number required for index argument");
@@ -398,6 +416,7 @@ namespace Miniscript.intrinsic {
             "\n"
         )]
         [MethodOf(typeof(ValList))]
+        [Category(INTRINSIC)]
         public string Join(Value self, string delimiter = " ") {
             if (!(self is ValList valList)) return self?.ToString();
             
@@ -418,6 +437,7 @@ namespace Miniscript.intrinsic {
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public int Len(Value self) {
             return self switch {
                 ValList valList => valList.Values.Count,
@@ -436,6 +456,7 @@ namespace Miniscript.intrinsic {
             "\n See also: number, string, map, funcRef" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result List() {
             FunctionInjector.Context.Vm.ListType ??= Intrinsic.ListType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
             return new Result(FunctionInjector.Context.Vm.ListType);
@@ -450,6 +471,7 @@ namespace Miniscript.intrinsic {
             "\n Example: log(1000)		returns 3 (because 10^3 == 1000)" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Log(double x = 0, double @base = 10) {
             double result;
             if (Math.Abs(@base - 2.718282) < 0.000001) result = Math.Log(x);
@@ -468,6 +490,7 @@ namespace Miniscript.intrinsic {
             "\n"
         )]
         [MethodOf(typeof(ValString))]
+        [Category(INTRINSIC)]
         public string Lower(Value self) {
             if (!(self is ValString valString)) return self?.ToString();
             
@@ -483,6 +506,7 @@ namespace Miniscript.intrinsic {
             "\n See also: number, string, list, funcRef" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result Map() {
             FunctionInjector.Context.Vm.MapType ??= Intrinsic.MapType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext); 
             return new Result(FunctionInjector.Context.Vm.MapType);
@@ -499,6 +523,7 @@ namespace Miniscript.intrinsic {
             "\n See also: string, list, map, funcRef" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result Number() {
             FunctionInjector.Context.Vm.NumberType ??= Intrinsic.NumberType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
             return new Result(FunctionInjector.Context.Vm.NumberType);
@@ -510,6 +535,7 @@ namespace Miniscript.intrinsic {
             "\n Example: pi		returns 3.141593" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Pi() {
             return Math.PI;
         }
@@ -523,6 +549,7 @@ namespace Miniscript.intrinsic {
             "\n Example: print 6*7" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public void Print(string s) {
             FunctionInjector.Context.Vm.StandardOutput(s ?? "null");
         }
@@ -540,6 +567,7 @@ namespace Miniscript.intrinsic {
         )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result Pop(Value self) {
             switch (self) {
                 case ValList valList: {
@@ -573,6 +601,7 @@ namespace Miniscript.intrinsic {
         )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result Pull(Value self) {
             switch (self) {
                 case ValList valList: {
@@ -604,6 +633,7 @@ namespace Miniscript.intrinsic {
         )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result Push(Value self, Value value) {
             switch (self) {
                 case ValList valList: {
@@ -629,6 +659,7 @@ namespace Miniscript.intrinsic {
             "\n Example: range(50, 5, -10)		returns [50, 40, 30, 20, 10]" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result Range(double from, double to, int? step = null) {
             step ??= (to >= from ? 1 : -1);
             if (step == 0) throw new RuntimeException("range() error (step==0)");
@@ -669,6 +700,7 @@ namespace Miniscript.intrinsic {
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result Remove(Value self, Value k) {
             switch (self) {
                 case ValMap valMap: {
@@ -717,6 +749,7 @@ namespace Miniscript.intrinsic {
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result Replace(Value self, Value oldVal, Value newVal, Value maxCountVal) {
             if (self == null) throw new RuntimeException("argument to 'replace' must not be null");
             var maxCount = -1;
@@ -792,6 +825,7 @@ namespace Miniscript.intrinsic {
             "\n Example: round(12345, -3)		returns 12000" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Round(double x, int decimalPlaces) {
             if (decimalPlaces >= 0) {
                 x = Math.Round(x, decimalPlaces);
@@ -813,6 +847,7 @@ namespace Miniscript.intrinsic {
             "\n Returns: pseudorandom number in the range [0,1)" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Rnd(int? seed) {
             if (seed != null) random = new Random((int)seed);
             return random.NextDouble();
@@ -825,6 +860,7 @@ namespace Miniscript.intrinsic {
             "\n Example: sign(-42.6)		returns -1" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Sign(double x) {
             return Math.Sign(x);
         }
@@ -836,6 +872,7 @@ namespace Miniscript.intrinsic {
             "\n Example: sin(pi/2)		returns 1" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Sin(double radians) {
             return Math.Sin(radians);
         }
@@ -853,6 +890,7 @@ namespace Miniscript.intrinsic {
             "\n Example: slice([\"a\",\"b\",\"c\",\"d\"], 1, 3)		returns [\"b\", \"c\"]" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result Slice(Value seq, int from, Value toVal) {
             var toIdx = 0;
             if (toVal != null) toIdx = toVal.IntValue();
@@ -903,6 +941,7 @@ namespace Miniscript.intrinsic {
             "\n"
         )]
         [MethodOf(typeof(ValList))]
+        [Category(INTRINSIC)]
         public Result Sort(Value self, Value byKey, bool ascending = true) {
             if (!(self is ValList list) || list.Values.Count < 2) return new Result(self);
 
@@ -968,6 +1007,7 @@ namespace Miniscript.intrinsic {
             "\n"
         )]
         [MethodOf(typeof(ValString))]
+        [Category(INTRINSIC)]
         public Result Split(Value self, string delimiter = " ", double maxCount = -1) {
             var selfStr = self.ToString();
             var result = new ValList();
@@ -993,6 +1033,7 @@ namespace Miniscript.intrinsic {
             "\n Example: sqrt(1764)		returns 42" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Sqrt(double x) {
             return Math.Sqrt(x);
         }
@@ -1005,6 +1046,7 @@ namespace Miniscript.intrinsic {
             "\n See also: val" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public string Str(Value x) {
             return x.ToString();
         }
@@ -1018,6 +1060,7 @@ namespace Miniscript.intrinsic {
             "\n See also: number, list, map, funcRef" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result String() {
             FunctionInjector.Context.Vm.StringType ??= Intrinsic.StringType.EvalCopy(FunctionInjector.Context.Vm.GlobalContext);
             return new Result(FunctionInjector.Context.Vm.StringType);
@@ -1032,6 +1075,7 @@ namespace Miniscript.intrinsic {
         )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public void Shuffle(Value self) {
             switch (self) {
                 case ValList valList: {
@@ -1073,6 +1117,7 @@ namespace Miniscript.intrinsic {
         )]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public double Sum(Value self) {
             double sum = 0;
             switch (self) {
@@ -1096,6 +1141,7 @@ namespace Miniscript.intrinsic {
             "\n Example: tan(pi/4)		returns 1" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Tan(double radians) {
             return Math.Tan(radians);
         }
@@ -1104,6 +1150,7 @@ namespace Miniscript.intrinsic {
             "\n   Returns the number of seconds since the script started running." +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public double Time() {
             return FunctionInjector.Context.Vm.RunTime;
         }
@@ -1118,6 +1165,7 @@ namespace Miniscript.intrinsic {
             "\n"
         )]
         [MethodOf(typeof(ValString))]
+        [Category(INTRINSIC)]
         public string Upper(Value self) {
             return self is ValString str ? str.Value.ToUpper() : self?.ToString();
         }
@@ -1133,6 +1181,7 @@ namespace Miniscript.intrinsic {
             "\n"
         )]
         [MethodOf(typeof(ValString))]
+        [Category(INTRINSIC)]
         public double Val(Value self) {
             return double.TryParse(self.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var value) ? value : 0; 
         }
@@ -1150,6 +1199,7 @@ namespace Miniscript.intrinsic {
         [MethodOf(typeof(ValString))]
         [MethodOf(typeof(ValList))]
         [MethodOf(typeof(ValMap))]
+        [Category(INTRINSIC)]
         public Result Values(Value self) {
             switch (self) {
                 case ValMap valMap: {
@@ -1180,6 +1230,7 @@ namespace Miniscript.intrinsic {
             "\n     hostInfo: URL or other short info about the host app" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result Version() {
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             if (FunctionInjector.Context.Vm.VersionMap != null) return new Result(FunctionInjector.Context.Vm.VersionMap);
@@ -1209,6 +1260,7 @@ namespace Miniscript.intrinsic {
             "\n See also: time, yield" +
             "\n"
         )]
+        [Category(INTRINSIC)]
         public Result Wait(double seconds = 1) {
             var now = FunctionInjector.Context.Vm.RunTime;
             if (FunctionInjector.PartialResult == null) {
@@ -1230,7 +1282,7 @@ namespace Miniscript.intrinsic {
             "\n   polite to the host app or other scripts." +
             "\n"
         )]
-        [Category("Graphics")]
+        [Category(INTRINSIC)]
         public void Yield() {
             FunctionInjector.Context.Vm.Yielding = true;
         }
