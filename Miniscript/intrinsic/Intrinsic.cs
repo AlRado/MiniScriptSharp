@@ -16,6 +16,7 @@ MiniScript source files untouched, so you can easily replace them when updates
 become available.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -91,7 +92,7 @@ namespace Miniscript.intrinsic {
 		/// than once, no matter how many times this method is called.
 		/// </summary>
 		static Intrinsic() {
-			FunctionInjector.AddFunctions(new IntrinsicFunctions(), true);
+			FunctionInjector.AddFunctions(new IntrinsicFunctions(), Console.WriteLine);
 
 			// You can use the manual method to add intrinsic functions, like this:
 			
