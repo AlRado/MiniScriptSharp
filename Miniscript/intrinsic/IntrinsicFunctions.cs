@@ -1288,7 +1288,7 @@ namespace Miniscript.intrinsic {
         }
         
         [Description(
-            "\n   To see the signatures of all the intrinsic functions try write: help \"" + ALL + "\"" +
+            "\n   To see the signatures of all the intrinsic functions try write: help all" +
             "\n   To see the description of function try write: help \"function name\"" +
             "\n"
         )]
@@ -1298,7 +1298,7 @@ namespace Miniscript.intrinsic {
         }
         
         [Description(
-            "\n   To see all categories of the intrinsic functions try write: category \"" + ALL + "\"" +
+            "\n   To see all categories of the intrinsic functions try write: category all" +
             "\n   To see all functions of category try write: category \"category name\"" +
             "\n Example: category \"Intrinsic\"" +
             "\n See also: help" +
@@ -1309,6 +1309,14 @@ namespace Miniscript.intrinsic {
             return topicName == ALL ? Intrinsic.GetAllCategoriesInfo() : Intrinsic.GetCategory(topicName);
         }
 
+        [Description(
+            "\n   Reserved function by interpreter, returns '" + ALL + "'" +
+            "\n See also: help, category" +
+            "\n"
+        )]
+        public string All() {
+            return ALL;
+        }
     }
 
 }

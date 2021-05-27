@@ -50,10 +50,10 @@
         public const string HELP = "help";
         public const string CATEGORY = "category";
         
-        // Function categories
-        public const string NONE = "None";
-        public const string ALL = "All";
-        public const string INTRINSIC = "Intrinsic";
+        // reserved terms, e.g. for function categories
+        public const string NONE = "none";
+        public const string ALL = "all";
+        public const string INTRINSIC = "intrinsic";
 
 
     }
