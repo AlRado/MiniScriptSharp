@@ -19,7 +19,46 @@ Tested in Unity `2020.3.3f1` and `NetFramework v4.7.1`
 
 Example of using it in Unity:
 `
+using System.ComponentModel;
+using Miniscript.interpreter;
+using Miniscript.intrinsic;
+using UnityEngine;
 
+public class Demo : MonoBehaviour {
+
+    private const string CODE = "drawPixel 10, 10" + "\n" +
+                                "a = help(\"getPixel\")" + "\n" +
+                                "print a" + "\n" +
+                                "b = help(\"drawPixel\")" + "\n" +
+                                "print b" + "\n" +
+                                "c = category(all)" + "\n" +
+                                "print c" + "\n" +
+                                "d = help(all)" + "\n" +
+                                "print d";
+    
+    private void Start() {
+        var interpreter = new Interpreter(CODE, Debug.Log, Debug.Log );
+        // I embed public methods from this class into MiniScript
+        FunctionInjector.AddFunctions(this, Debug.Log);
+        
+        interpreter.Compile();
+        interpreter.RunUntilDone(60, false);
+    }
+    
+    [Description(
+        "\n   Draw pixel on screen." +
+        "\n"
+    )]
+    [Category("graphics")]
+    public void DrawPixel(int x, int y) {
+        Debug.Log($"DrawPixel at x: {x}, y: {y}");
+    }
+    
+    public void GetPixel(int x, int y) {
+        Debug.Log($"GetPixel at x: {x}, y: {y}");
+    }
+
+}
 `
 
 
