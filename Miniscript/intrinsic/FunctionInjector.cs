@@ -109,6 +109,7 @@ namespace Miniscript.intrinsic {
             
             timer.Stop();
             var timeTaken = timer.Elapsed;
+            // time may be longer than it actually is due to logOutput?.Invoke()
             logOutput?.Invoke("Time taken: " + timeTaken.ToString(@"m\:ss\.fff"));
         }
         
