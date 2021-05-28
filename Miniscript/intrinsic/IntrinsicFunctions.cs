@@ -742,7 +742,7 @@ namespace Miniscript.intrinsic {
             "\n maxCount (number, optional): if given, replace no more than this many" +
             "\n Returns: modified list or map, or new string, with replacements Done" +
             "\n Example: \"Happy Pappy\".replace(\"app\", \"ol\")		returns \"Holy Poly\"" +
-            "\n Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [2, 42, 3, 42, 5]" +
+            "\n Example: [1,2,3,2,5].replace(2, 42)		returns (and mutates to) [1, 42, 3, 42, 5]" +
             "\n Example: d = {1: \"one\"}; d.replace(\"one\", \"ichi\")		returns (and mutates to) {1: \"ichi\"}" +
             "\n"
         )]
@@ -1300,7 +1300,7 @@ namespace Miniscript.intrinsic {
         [Description(
             "\n   To see all categories of the intrinsic functions try write: category all" +
             "\n   To see all functions of category try write: category \"category name\"" +
-            "\n Example: category \"Intrinsic\"" +
+            "\n Example: category \"" + INTRINSIC + "\"" +
             "\n See also: help" +
             "\n"
         )]
