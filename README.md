@@ -15,7 +15,7 @@ Despite the fact that I wanted to make the code as compatible as possible with t
 There may be other differences, but I will try to keep them to a minimum.
 You can always see the differences by comparing the files for testing `TestSuiteData.txt` in repositories.
 
-Tested in Unity `2020.3.3f1` and `NetFramework v4.7.1`
+Tested in Unity `2020.3.3f1, 2021.1.4f1` and `NetFramework v4.7.1`
 
 Example of using it in Unity:
 `
@@ -26,36 +26,37 @@ using UnityEngine;
 
 public class Demo : MonoBehaviour {
 
-    private const string CODE = "drawPixel 10, 10" + "\n" +
-                                "a = help(\"getPixel\")" + "\n" +
-                                "print a" + "\n" +
-                                "b = help(\"drawPixel\")" + "\n" +
-                                "print b" + "\n" +
-                                "c = category(all)" + "\n" +
-                                "print c" + "\n" +
-                                "d = help(all)" + "\n" +
-                                "print d";
+    private const string CODE = "print \"Help 'foo':\n\" + help(\"foo\");" +
+                                "foo 10, 10;" +
+                                "print \"Help 'bar':\n\" + help(\"bar\");" +
+                                "bar;" +
+                                "print \"All categories of functions:\" + category(all);" +
+                                "print \"All functions:\" + help(all)";
     
     private void Start() {
-        var interpreter = new Interpreter(CODE, Debug.Log, Debug.Log );
-        // I embed public methods from this class into MiniScript
+        // I embed public methods from this class into MiniScript and specify log output
+        // to see information about all injected functions
         FunctionInjector.AddFunctions(this, Debug.Log);
         
+        var interpreter = new Interpreter(CODE, Debug.Log, Debug.Log );
         interpreter.Compile();
         interpreter.RunUntilDone(60, false);
     }
     
     [Description(
-        "\n   Draw pixel on screen." +
-        "\n"
+        "\n   Description of function 'foo'."
     )]
-    [Category("graphics")]
-    public void DrawPixel(int x, int y) {
-        Debug.Log($"DrawPixel at x: {x}, y: {y}");
+    [Category("foo_bar")]
+    public void Foo(int x, int y) {
+        Debug.Log($"Here the function 'foo' performs some actions with parameters x: {x}, y: {y}");
     }
     
-    public void GetPixel(int x, int y) {
-        Debug.Log($"GetPixel at x: {x}, y: {y}");
+    public void Bar() {
+        Debug.Log($"Here the function 'bar' performs some actions");
+    }
+    
+    private void Baz() {
+        // Private functions will not be injected!
     }
 
 }
