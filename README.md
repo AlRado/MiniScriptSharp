@@ -15,10 +15,13 @@ Despite the fact that I wanted to make the code as compatible as possible with t
 There may be other differences, but I will try to keep them to a minimum.
 You can always see the differences by comparing the files for testing `TestSuiteData.txt` in repositories.
 
-Tested in Unity `2020.3.3f1, 2021.1.4f1` and `NetFramework v4.7.1`
+Tested in Unity `2020.3.3f1, 2021.1.4f1` and `NetFramework v4.7.1, netcoreapp2.2, net5.0`.
+
+Supported language version: `C# 8`.
+
 
 Example of using it in Unity:
-`
+```
 using System.ComponentModel;
 using Miniscript.interpreter;
 using Miniscript.intrinsic;
@@ -60,6 +63,6 @@ public class Demo : MonoBehaviour {
     }
 
 }
-`
+```
 
 
