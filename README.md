@@ -1,6 +1,6 @@
 # MiniScript-cs
 
-This is an alternative version of the excellent MiniScript language by Joe Strout [MiniScript scripting language](http://miniscript.org) written in C#.
+This is an alternative version of the excellent [MiniScript scripting language](http://miniscript.org) by Joe Strout written in C#.
 
 The main idea was to use the features of modern versions of C# and to add new features that make it easier to embed functions and support them.
 Here is a list of the main features:
@@ -41,7 +41,7 @@ public class Demo : MonoBehaviour {
         // to see information about all injected functions
         FunctionInjector.AddFunctions(this, Debug.Log);
         
-        var interpreter = new Interpreter(CODE, Debug.Log, Debug.Log );
+        var interpreter = new Interpreter(CODE, Debug.Log, Debug.Log);
         interpreter.Compile();
         interpreter.RunUntilDone(60, false);
     }
