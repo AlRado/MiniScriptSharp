@@ -1,4 +1,4 @@
-# MiniScript-cs
+# MiniScript#
 
 This is an alternative version of the excellent [MiniScript scripting language](http://miniscript.org) by Joe Strout written in C#.
 

@@ -88,9 +88,7 @@ namespace Miniscript.intrinsic {
 
 		/// <summary>
 		/// Intrinsic static constructor: called automatically during script setup to make sure
-		/// that all our standard intrinsics are defined.  Note how we use a
-		/// private bool flag to ensure that we don't create our intrinsics more
-		/// than once, no matter how many times this method is called.
+		/// that all our standard intrinsics are defined.
 		/// </summary>
 		static Intrinsic() {
 			FunctionInjector.AddFunctions(new IntrinsicFunctions(), Console.WriteLine);
