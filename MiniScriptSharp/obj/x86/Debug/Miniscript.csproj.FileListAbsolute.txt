@@ -1,5 +1,0 @@
-C:\miniscript\MiniScript-cs\bin\Debug\Miniscript.exe
-C:\miniscript\MiniScript-cs\bin\Debug\Miniscript.pdb
-C:\miniscript\MiniScript-cs\obj\x86\Debug\Miniscript.csprojResolveAssemblyReference.cache
-C:\miniscript\MiniScript-cs\obj\x86\Debug\Miniscript.exe
-C:\miniscript\MiniScript-cs\obj\x86\Debug\Miniscript.pdb

@@ -1,6 +1,0 @@
-C:\Projects\test\Mini\miniscript-cs\Miniscript\bin\Release\Miniscript.exe
-C:\Projects\test\Mini\miniscript-cs\Miniscript\bin\Release\Miniscript.pdb
-C:\Projects\test\Mini\miniscript-cs\Miniscript\obj\Release\Miniscript.csprojAssemblyReference.cache
-C:\Projects\test\Mini\miniscript-cs\Miniscript\obj\Release\Miniscript.csproj.CoreCompileInputs.cache
-C:\Projects\test\Mini\miniscript-cs\Miniscript\obj\Release\Miniscript.exe
-C:\Projects\test\Mini\miniscript-cs\Miniscript\obj\Release\Miniscript.pdb

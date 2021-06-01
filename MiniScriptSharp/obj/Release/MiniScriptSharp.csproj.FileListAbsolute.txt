@@ -1,0 +1,12 @@
+C:\Projects\test\Mini\miniscript-cs\MiniScriptSharp\obj\Release\MiniScriptSharp.csprojAssemblyReference.cache
+C:\Projects\test\Mini\miniscript-cs\MiniScriptSharp\obj\Release\MiniScriptSharp.csproj.CoreCompileInputs.cache
+C:\Projects\test\Mini\miniscript-cs\MiniScriptSharp\bin\Release\MiniScriptSharp.exe
+C:\Projects\test\Mini\miniscript-cs\MiniScriptSharp\bin\Release\MiniScriptSharp.pdb
+C:\Projects\test\Mini\miniscript-cs\MiniScriptSharp\obj\Release\MiniScriptSharp.exe
+C:\Projects\test\Mini\miniscript-cs\MiniScriptSharp\obj\Release\MiniScriptSharp.pdb
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\bin\Release\MiniScriptSharp.exe
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\bin\Release\MiniScriptSharp.pdb
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\obj\Release\MiniScriptSharp.csprojAssemblyReference.cache
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\obj\Release\MiniScriptSharp.csproj.CoreCompileInputs.cache
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\obj\Release\MiniScriptSharp.exe
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\obj\Release\MiniScriptSharp.pdb

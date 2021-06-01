@@ -1,0 +1,6 @@
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\bin\Debug\MiniScriptSharp.exe
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\bin\Debug\MiniScriptSharp.pdb
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\obj\Debug\MiniScriptSharp.csprojAssemblyReference.cache
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\obj\Debug\MiniScriptSharp.csproj.CoreCompileInputs.cache
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\obj\Debug\MiniScriptSharp.exe
+C:\Projects\test\Mini\MiniScriptSharp\MiniScriptSharp\obj\Debug\MiniScriptSharp.pdb

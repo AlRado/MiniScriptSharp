@@ -1,0 +1,607 @@
+There are 602 objects in the Scene with overlapping UV's. Please see the details list below or use the 'UV Overlap' visualisation mode in the Scene View or Lightmaps in Lighting Settings for more information.
+
+- House6 (4): 3397 texels
+- Stairs: 3096 texels
+- TruckTrailer2 (7): 3062 texels
+- BookShelfWhite (1): 3037 texels
+- BookShelfWhite (10): 3026 texels
+- BookShelfWhite: 3026 texels
+- BookShelfWhite (2): 3011 texels
+- BookShelfWhite (9): 2953 texels
+- CarTiger (1): 2904 texels
+- CarTiger (2): 2902 texels
+- Stairs (2): 2881 texels
+- CarTiger: 2816 texels
+- Truck (5): 2785 texels
+- Blockage: 1818 texels
+- Blockage: 1818 texels
+- Blockage: 1753 texels
+- Blockage: 1752 texels
+- Blockage: 1752 texels
+- Blockage: 1750 texels
+- MedicBed (2): 1453 texels
+- Car7 (3): 1448 texels
+- MedicBed (4): 1436 texels
+- MedicBed (12): 1436 texels
+- MedicBed (6): 1435 texels
+- MedicBed (11): 1435 texels
+- MedicBed (8): 1435 texels
+- MedicBed (10): 1434 texels
+- MedicBed (3): 1434 texels
+- MedicBed (5): 1434 texels
+- MedicBed (2): 1434 texels
+- MedicBed (7): 1434 texels
+- MedicBed (6): 1434 texels
+- MedicBed: 1434 texels
+- MedicBed (9): 1432 texels
+- MedicBed (5): 1432 texels
+- MedicBed (1): 1430 texels
+- Car7 (4): 1374 texels
+- AnesthesiaMachine (2): 1360 texels
+- AnesthesiaMachine (3): 1353 texels
+- HospitalReceptionist: 1146 texels
+- Powertrans (5): 958 texels
+- MedicMonitor (2): 881 texels
+- MedicMonitor (1): 876 texels
+- MedicMonitor (6): 876 texels
+- MedicMonitor: 876 texels
+- DoorFrame: 865 texels
+- DoorFrame: 830 texels
+- DoorFrame: 812 texels
+- DoorFrame: 812 texels
+- Car3: 809 texels
+- FoldingScreen (7): 788 texels
+- FoldingScreen (1): 778 texels
+- FoldingScreen (2): 769 texels
+- FoldingScreen (5): 768 texels
+- Bench (2): 752 texels
+- Bench (1): 752 texels
+- Car2 (3): 743 texels
+- Car1 (1): 741 texels
+- Box3: 721 texels
+- Box3: 721 texels
+- Box3: 721 texels
+- DoorFrame: 720 texels
+- DoorFrame: 720 texels
+- DoorFrame: 720 texels
+- Car1 (3): 719 texels
+- Box3: 702 texels
+- CarTaxi (2): 697 texels
+- CarTaxi (3): 696 texels
+- CarTaxi (3): 695 texels
+- DoorFrame: 679 texels
+- TrafficLight (15): 602 texels
+- TrafficLight (16): 602 texels
+- TrafficLight (17): 598 texels
+- MetalNetFence1 (50): 570 texels
+- MetalNetFence1 (43): 570 texels
+- MetalNetFence1 (42): 570 texels
+- MetalNetFence1 (48): 570 texels
+- MetalNetFence1 (41): 538 texels
+- Barricade3 (9): 486 texels
+- BesideTable: 485 texels
+- TankOfGas: 476 texels
+- TankOfGas (1): 476 texels
+- Wheelchair (1): 476 texels
+- Barricade3 (7): 474 texels
+- Barricade3 (13): 473 texels
+- Barricade3 (2): 472 texels
+- box3 2: 467 texels
+- Barricade3 (12): 462 texels
+- box3 2: 461 texels
+- box3 2: 460 texels
+- box3 2: 455 texels
+- Barricade4 (2): 450 texels
+- Barricade4 (8): 450 texels
+- Barricade4 (6): 450 texels
+- Barricade4 (9): 450 texels
+- Barricade4 (4): 450 texels
+- Barricade4 (5): 450 texels
+- Barricade4 (7): 450 texels
+- Barricade3 (6): 444 texels
+- Barricade3 (8): 444 texels
+- Bags (6): 433 texels
+- Bags (55): 433 texels
+- Bags (43): 432 texels
+- Bags (49): 432 texels
+- Bags (36): 432 texels
+- Bags (26): 431 texels
+- Bags (10): 431 texels
+- Bags (53): 431 texels
+- Bags (35): 430 texels
+- Bags (51): 428 texels
+- Bags (30): 428 texels
+- Bags (57): 426 texels
+- Bags (27): 425 texels
+- Bags (32): 424 texels
+- Bags (39): 424 texels
+- Bags (5): 424 texels
+- Bags (47): 423 texels
+- Bags (33): 411 texels
+- Bags (37): 411 texels
+- Bags (59): 411 texels
+- Bags (31): 410 texels
+- Bags (12): 410 texels
+- Bags (24): 410 texels
+- Bags (29): 410 texels
+- Bags (34): 409 texels
+- Bags (9): 408 texels
+- Bags (7): 408 texels
+- Bags (40): 408 texels
+- Bags (45): 408 texels
+- Bags (44): 408 texels
+- Bags (17): 407 texels
+- Bags (19): 407 texels
+- Bags (58): 407 texels
+- Bags (28): 407 texels
+- Bags (11): 406 texels
+- Bags (38): 406 texels
+- Bags (42): 395 texels
+- Curtain (2): 391 texels
+- Curtain (3): 390 texels
+- Bags (25): 378 texels
+- Bags (8): 378 texels
+- Bags (52): 378 texels
+- Bags (48): 376 texels
+- Bags (41): 376 texels
+- Bags (54): 376 texels
+- Bags (46): 374 texels
+- Bags (56): 372 texels
+- Bags (23): 372 texels
+- Bags (20): 371 texels
+- Bags (16): 370 texels
+- Bags (13): 370 texels
+- Bags (22): 370 texels
+- Bags (21): 369 texels
+- Bags (18): 369 texels
+- Bags (50): 369 texels
+- WallPillar: 353 texels
+- WallPillar: 305 texels
+- WallPillar: 305 texels
+- WallPillar: 304 texels
+- WallPillar: 304 texels
+- WallPillar: 304 texels
+- WaitingChair (3): 301 texels
+- WaitingChair (1): 301 texels
+- Flower (1): 301 texels
+- WaitingChair (2): 301 texels
+- WaitingChair (4): 300 texels
+- WaitingChair (5): 300 texels
+- WaitingChair: 300 texels
+- Flower: 299 texels
+- Border (11): 294 texels
+- Border (9): 276 texels
+- Border (12): 273 texels
+- Border (1): 270 texels
+- Border: 270 texels
+- Border (2): 267 texels
+- Border (6): 264 texels
+- Border (3): 263 texels
+- Fence3: 224 texels
+- Fence3 (1): 224 texels
+- Mailbox (3): 209 texels
+- Border (4): 209 texels
+- Barrel (5): 207 texels
+- Barrel (2): 207 texels
+- Barrel (3): 207 texels
+- Barrel (4): 207 texels
+- CardboardBox2 (6): 205 texels
+- CardboardBox2 (12): 205 texels
+- CardboardBox2 (17): 205 texels
+- CardboardBox2 (16): 205 texels
+- CardboardBox2 (18): 205 texels
+- CardboardBox2 (12): 205 texels
+- CardboardBox2 (13): 205 texels
+- CardboardBox2 (14): 205 texels
+- CardboardBox2 (13): 205 texels
+- CardboardBox2 (19): 205 texels
+- Border (10): 204 texels
+- CardboardBox2 (15): 204 texels
+- Border (5): 203 texels
+- Mailbox (1): 202 texels
+- CardboardBox2 (7): 199 texels
+- SurgicalInstrumensTable (3): 197 texels
+- SurgicalInstrumensTable (2): 197 texels
+- Pillar (5): 193 texels
+- lawn3: 192 texels
+- lawn2 (48): 192 texels
+- Pillar (12): 192 texels
+- lawn2 (47): 192 texels
+- lawn2 (1): 192 texels
+- lawn2 (2): 192 texels
+- lawn3 (1): 192 texels
+- Pillar (9): 191 texels
+- Pillar (10): 191 texels
+- lawn2 (46): 186 texels
+- lawn3 (3): 186 texels
+- lawn2 (49): 186 texels
+- Pillar (8): 179 texels
+- Pillar (11): 178 texels
+- CoffeeMachine (1): 166 texels
+- Pipe01_A (58): 155 texels
+- CoffeeMachine (7): 151 texels
+- CoffeeMachine: 151 texels
+- CoffeeMachine (2): 151 texels
+- CoffeeMachine (6): 151 texels
+- CoffeeMachine (8): 151 texels
+- CoffeeMachine (3): 151 texels
+- CoffeeMachine (5): 151 texels
+- Pipe01_A (26): 145 texels
+- Pipe01_A (13): 144 texels
+- Pipe01_A (61): 144 texels
+- Pipe01_A (49): 142 texels
+- Pipe01_A (76): 141 texels
+- Pipe01_A (55): 141 texels
+- Pipe01_A (45): 140 texels
+- Pipe01_A (15): 140 texels
+- Pipe01_A (63): 140 texels
+- Pipe01_A (20): 140 texels
+- Pipe01_A (22): 140 texels
+- Pipe01_A (30): 140 texels
+- Pipe01_A (75): 140 texels
+- Pipe01_A (27): 140 texels
+- Pipe01_A (85): 140 texels
+- Pipe01_A (69): 140 texels
+- Pipe01_A (59): 140 texels
+- Pipe01_A (52): 140 texels
+- Pipe01_A (19): 140 texels
+- Pipe01_A (21): 140 texels
+- Pipe01_A (60): 140 texels
+- Pipe01_A (25): 140 texels
+- Pipe01_A (82): 139 texels
+- FoldingChair (2): 139 texels
+- Pipe01_A (78): 137 texels
+- Pipe01_A (8): 137 texels
+- Pipe01_A (83): 137 texels
+- Pipe01_A (11): 136 texels
+- Pipe01_A (7): 136 texels
+- Pipe01_A (54): 136 texels
+- Pipe01_A (79): 136 texels
+- Pipe01_A (77): 136 texels
+- Pipe01_A (10): 136 texels
+- Pipe01_A (24): 136 texels
+- Pipe01_A (16): 136 texels
+- Pipe01_A (80): 136 texels
+- Pipe01_A (50): 136 texels
+- Pipe01_A (5): 136 texels
+- Pipe01_A (12): 136 texels
+- Pipe01_A (81): 135 texels
+- Pipe01_A (62): 135 texels
+- FoldingChair (4): 135 texels
+- Pipe01_A (40): 131 texels
+- Pipe01_A (47): 131 texels
+- Pipe01_A (56): 131 texels
+- Pipe01_A (48): 130 texels
+- Pipe01_A (43): 130 texels
+- Pipe01_A (70): 130 texels
+- Pipe01_A (46): 130 texels
+- Pipe01_A (66): 130 texels
+- Pipe01_A (65): 130 texels
+- FoldingChair (1): 127 texels
+- Pipe01_A (17): 126 texels
+- Pipe01_A (23): 126 texels
+- Pipe01_A (68): 126 texels
+- Pipe01_A (18): 126 texels
+- Pipe01_B (18): 123 texels
+- Pipe01_B (17): 123 texels
+- Pipe01_B (9): 123 texels
+- Pipe01_B (15): 123 texels
+- Pipe01_B (14): 123 texels
+- Pipe01_B (6): 122 texels
+- Pipe01_B (16): 122 texels
+- Pipe01_B (22): 122 texels
+- Pipe01_B (10): 122 texels
+- Pipe01_B (20): 122 texels
+- Pipe01_B (8): 121 texels
+- Pipe01_B (12): 121 texels
+- Pipe01_B (11): 121 texels
+- Pipe01_B (7): 121 texels
+- LampLong: 121 texels
+- Pipe01_B (13): 120 texels
+- Pipe01_B (5): 120 texels
+- Pipe01_A (37): 120 texels
+- FoldingChair (3): 120 texels
+- Pipe01_B (19): 119 texels
+- Pipe01_A (6): 118 texels
+- Pipe01_A (51): 114 texels
+- Pipe01_A (57): 114 texels
+- Pipe01_A (39): 113 texels
+- Pipe01_A (84): 113 texels
+- Pipe01_A (74): 113 texels
+- Pipe01_B (21): 112 texels
+- Pipe01_A (42): 108 texels
+- border (140): 108 texels
+- border (115): 108 texels
+- border (169): 108 texels
+- Pipe01_A (14): 108 texels
+- border (93): 108 texels
+- border (142): 108 texels
+- border (200): 108 texels
+- Pipe01_A (28): 108 texels
+- Pipe01_A (64): 108 texels
+- Pipe01_A (41): 108 texels
+- border (171): 108 texels
+- border (94): 108 texels
+- border (185): 108 texels
+- Pipe01_A (72): 108 texels
+- border (160): 108 texels
+- Pipe01_A (33): 108 texels
+- border (101): 108 texels
+- border (254): 108 texels
+- Pipe01_A (71): 108 texels
+- border (150): 108 texels
+- border (196): 108 texels
+- Pipe01_A (67): 108 texels
+- border (182): 108 texels
+- Pipe01_A (73): 108 texels
+- Pipe01_A (31): 108 texels
+- border (202): 108 texels
+- border (163): 108 texels
+- Pipe01_A (44): 108 texels
+- border (156): 108 texels
+- Pipe01_A (32): 108 texels
+- border (252): 108 texels
+- border (249): 108 texels
+- border (118): 106 texels
+- border (153): 106 texels
+- border (165): 106 texels
+- border (167): 106 texels
+- border (186): 106 texels
+- border (170): 106 texels
+- Trashbag: 103 texels
+- Border (7): 102 texels
+- Trashbag (1): 101 texels
+- CardboardBox5 (15): 100 texels
+- CardboardBox5 (21): 100 texels
+- Pipe01_A (53): 100 texels
+- CardboardBox5 (20): 100 texels
+- CardboardBox5 (18): 100 texels
+- CardboardBox5 (19): 100 texels
+- CardboardBox5 (16): 100 texels
+- CardboardBox5 (17): 100 texels
+- CardboardBox5 (14): 100 texels
+- CardboardBox5 (19): 100 texels
+- Border (8): 99 texels
+- Pipe01_A (36): 96 texels
+- Pipe01_A (35): 96 texels
+- sign X (1): 96 texels
+- Pipe01_A (29): 95 texels
+- Pipe01_A (34): 95 texels
+- Dropper (2): 93 texels
+- Dropper (1): 91 texels
+- Pipe01_A (38): 90 texels
+- Dropper: 87 texels
+- Dropper (13): 86 texels
+- Dropper (11): 86 texels
+- CardboardBox5 (22): 86 texels
+- Pipe01_A (9): 84 texels
+- Pipe01_C (2): 84 texels
+- border (172): 83 texels
+- border (117): 83 texels
+- border (116): 83 texels
+- border (184): 83 texels
+- border (154): 83 texels
+- border (162): 83 texels
+- border (158): 83 texels
+- Pipe01_C (13): 83 texels
+- border (102): 83 texels
+- border (250): 83 texels
+- border (253): 83 texels
+- border (279): 83 texels
+- border (198): 83 texels
+- CardboardBox (26): 83 texels
+- border (129): 83 texels
+- border (141): 83 texels
+- border (143): 83 texels
+- border (119): 83 texels
+- Pipe01_C (7): 83 texels
+- border (166): 83 texels
+- Pipe01_C (8): 83 texels
+- border (255): 83 texels
+- border (139): 83 texels
+- border (100): 83 texels
+- border (183): 83 texels
+- border (260): 83 texels
+- border (164): 83 texels
+- border (145): 83 texels
+- border (181): 83 texels
+- Pipe01_C (5): 83 texels
+- CardboardBox (32): 83 texels
+- border (204): 83 texels
+- border (206): 83 texels
+- border (159): 83 texels
+- border (256): 83 texels
+- border (111): 83 texels
+- border (251): 83 texels
+- border (161): 83 texels
+- border (257): 83 texels
+- border (155): 83 texels
+- border (168): 83 texels
+- border (144): 81 texels
+- border (157): 81 texels
+- Pipe01_C (11): 80 texels
+- Pipe01_C (12): 80 texels
+- Pipe01_C (3): 80 texels
+- Pipe01_C (1): 80 texels
+- Pipe01_C (6): 80 texels
+- Pipe01_C (4): 80 texels
+- Pipe01_C (10): 80 texels
+- CardboardBox (25): 78 texels
+- Pipe01_C (9): 78 texels
+- CardboardBox (22): 69 texels
+- SubwayLamp: 68 texels
+- MaleTorsoArm (1): 67 texels
+- lampBase: 65 texels
+- lampBase: 65 texels
+- lampBase: 65 texels
+- MaleTorsoArm: 65 texels
+- lampBase: 64 texels
+- lampBase: 63 texels
+- lampBase: 62 texels
+- SubwayLamp: 61 texels
+- SubwayLamp: 60 texels
+- SubwayLamp: 60 texels
+- SubwayLamp: 60 texels
+- SubwayLamp: 60 texels
+- SubwayLamp: 59 texels
+- SubwayLamp: 59 texels
+- Wire2: 48 texels
+- Wire2: 46 texels
+- TreeStump: 44 texels
+- TreeStump: 44 texels
+- TreeStump: 44 texels
+- TreeStump: 44 texels
+- TreeStump: 44 texels
+- Object003: 41 texels
+- Object003: 41 texels
+- Object003: 41 texels
+- PineStump: 41 texels
+- Object003: 41 texels
+- PineStump: 41 texels
+- Object003: 41 texels
+- Object003: 41 texels
+- Object003: 41 texels
+- Object003: 41 texels
+- PineStump: 41 texels
+- PlateClock: 40 texels
+- PlateClock: 40 texels
+- Object003: 39 texels
+- PlateClock: 39 texels
+- PineStump: 37 texels
+- PineStump: 37 texels
+- PineStump: 37 texels
+- PineStump: 37 texels
+- PineStump: 36 texels
+- Object003: 36 texels
+- PineStump: 36 texels
+- Wire2: 36 texels
+- Wire2: 34 texels
+- Wire2: 34 texels
+- Wire2: 34 texels
+- Wire2: 34 texels
+- Wire2: 34 texels
+- Wire2: 34 texels
+- Wire2: 34 texels
+- PlateQuarantine: 32 texels
+- Wire2: 32 texels
+- Wire2: 32 texels
+- PlateQuarantine: 32 texels
+- PlateQuarantine: 32 texels
+- PlateQuarantine: 32 texels
+- PlateQuarantine: 32 texels
+- Wire2: 32 texels
+- Wire2: 32 texels
+- Wire2: 32 texels
+- PlateQuarantine: 32 texels
+- PlateQuarantine: 32 texels
+- PlateQuarantine (1): 32 texels
+- Wire1 (8): 31 texels
+- Object003: 30 texels
+- Object003: 30 texels
+- Object003: 30 texels
+- Object006: 29 texels
+- Object007: 29 texels
+- Object006: 29 texels
+- Object006: 29 texels
+- Wire1 (3): 28 texels
+- Wire1: 28 texels
+- Wire1 (12): 28 texels
+- Wire1 (9): 28 texels
+- Wire1 (13): 28 texels
+- Wire1 (11): 27 texels
+- Object006: 27 texels
+- Wire2: 27 texels
+- Object006: 27 texels
+- Object007: 27 texels
+- Object007: 27 texels
+- Wire1 (10): 27 texels
+- Object006: 27 texels
+- Object007: 27 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object006: 26 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object002: 26 texels
+- Object007: 26 texels
+- Object002: 26 texels
+- Object006: 25 texels
+- Object006: 24 texels
+- Object007: 24 texels
+- Object007: 24 texels
+- Wire2: 24 texels
+- Object006: 24 texels
+- Object007: 24 texels
+- Object007: 24 texels
+- Object006: 24 texels
+- Object007: 24 texels
+- Object006: 23 texels
+- Object007: 23 texels
+- Object001: 22 texels
+- Object001: 22 texels
+- Object001: 22 texels
+- Object006: 22 texels
+- Object001: 22 texels
+- Object001: 22 texels
+- Wire1 (7): 22 texels
+- Wire1 (1): 22 texels
+- Object001: 22 texels
+- Object001: 22 texels
+- Object007: 22 texels
+- Wire1 (2): 22 texels
+- Wire1 (6): 22 texels
+- Object001: 22 texels
+- Object001: 22 texels
+- Object001: 22 texels
+- Wire1 (5): 22 texels
+- Object001: 22 texels
+- Object001: 22 texels
+- Object001: 22 texels
+- Wire1 (4): 22 texels
+- Object008: 15 texels
+- Object004: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 15 texels
+- Object008: 14 texels
+- Object004: 13 texels
+- Object004: 13 texels
+- Object004: 13 texels
+- Object004: 13 texels
+- Object004: 13 texels
+- Object004: 13 texels
+- Object004: 13 texels
+- Object004: 10 texels
+- Object004: 10 texels
+- Object004: 10 texels
+- Object004: 10 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- Object005: 8 texels
+- PowertransWires (2): 5 texels
+- PowertransWires (4): 4 texels
+
+Please see this webpage for more information about objects with overlapping UVs:
+https://docs.unity3d.com/Manual/ProgressiveLightmapper-UVOverlap.html
