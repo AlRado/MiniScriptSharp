@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{B2EC7258-6770-49FA-922C-AFEC49045705}</ProjectGuid>
+        <OutputType>Exe</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>MiniScriptSharp</RootNamespace>
+        <AssemblyName>MiniScriptSharp</AssemblyName>
+        <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <LangVersion>8</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Errors\CompilerException.cs" />
+        <Compile Include="Errors\Check.cs" />
+        <Compile Include="Errors\IndexException.cs" />
+        <Compile Include="Errors\KeyException.cs" />
+        <Compile Include="Errors\LexerException.cs" />
+        <Compile Include="Errors\LimitExceededException.cs" />
+        <Compile Include="Errors\MiniscriptException.cs" />
+        <Compile Include="Errors\RuntimeException.cs" />
+        <Compile Include="Errors\SourceLoc.cs" />
+        <Compile Include="Errors\TooManyArgumentsException.cs" />
+        <Compile Include="Errors\TypeException.cs" />
+        <Compile Include="Errors\UndefinedIdentifierException.cs" />
+        <Compile Include="Inject\FunctionInjector.cs" />
+        <Compile Include="Inject\IntrinsicFunctions.cs" />
+        <Compile Include="Inject\MethodOfAttribute.cs" />
+        <Compile Include="Interpreter.cs" />
+        <Compile Include="Intrinsics\HostInfo.cs" />
+        <Compile Include="Intrinsics\Intrinsic.cs" />
+        <Compile Include="Intrinsics\IntrinsicCode.cs" />
+        <Compile Include="Intrinsics\KeyedValue.cs" />
+        <Compile Include="Intrinsics\Result.cs" />
+        <Compile Include="Constants\Consts.cs" />
+        <Compile Include="Constants\Keywords.cs" />
+        <Compile Include="Lexis\Lexer.cs" />
+        <Compile Include="Lexis\Token.cs" />
+        <Compile Include="Lexis\TokenType.cs" />
+        <Compile Include="Parse\BackPatch.cs" />
+        <Compile Include="Parse\JumpPoint.cs" />
+        <Compile Include="Parse\Parser.cs" />
+        <Compile Include="Parse\ParseState.cs" />
+        <Compile Include="Program.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Tac\Context.cs" />
+        <Compile Include="Tac\Line.cs" />
+        <Compile Include="Tac\Machine.cs" />
+        <Compile Include="Tac\Op.cs" />
+        <Compile Include="Tac\TAC.cs" />
+        <Compile Include="Tests\TestSuite.cs" />
+        <Compile Include="Tests\UnitTest.cs" />
+        <Compile Include="Types\Function.cs" />
+        <Compile Include="Types\Param.cs" />
+        <Compile Include="Types\RValueEqualityComparer.cs" />
+        <Compile Include="Types\TempValString.cs" />
+        <Compile Include="Types\ValFunction.cs" />
+        <Compile Include="Types\ValList.cs" />
+        <Compile Include="Types\ValMap.cs" />
+        <Compile Include="Types\ValNull.cs" />
+        <Compile Include="Types\ValNumber.cs" />
+        <Compile Include="Types\ValSeqElem.cs" />
+        <Compile Include="Types\ValString.cs" />
+        <Compile Include="Types\ValTemp.cs" />
+        <Compile Include="Types\Value.cs" />
+        <Compile Include="Types\ValueReverseSorter.cs" />
+        <Compile Include="Types\ValueSorter.cs" />
+        <Compile Include="Types\ValVar.cs" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+
+</Project>
