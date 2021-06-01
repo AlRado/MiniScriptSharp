@@ -18,7 +18,7 @@ namespace MiniScriptSharp.Errors {
 
     public class CompilerException : MiniscriptException {
 
-        public CompilerException() : base("Syntax Error") {}
+        public CompilerException() : base("Compiler Error") {}
 
         public CompilerException(string message) : base(message) {}
 
