@@ -22,7 +22,8 @@ using static MiniScriptSharp.Constants.Consts;
 namespace MiniScriptSharp.Parse {
 	public class Parser {
 
-		private string errorContext;	// name of file, etc., used for error reporting
+		// name of file, etc., used for error reporting
+		public string ErrorContext;
 
 		// Partial input, in the case where line continuation has been used.
 		private string partialInput;
@@ -106,7 +107,7 @@ namespace MiniScriptSharp.Parse {
 			// Whoops, we need more input but we don't have any.  This is an error.
 			tokens.LineNum++;	// (so we report PAST the last line, making it clear this is an EOF problem)
 			if (outputStack.Count > 1) {
-				throw new CompilerException(errorContext, tokens.LineNum,
+				throw new CompilerException(ErrorContext, tokens.LineNum,
 					"'function' without matching 'end function'");
 			} else if (output.BackPatches.Count > 0) {
 				var bp = output.BackPatches[output.BackPatches.Count - 1];
@@ -116,7 +117,7 @@ namespace MiniScriptSharp.Parse {
 					END_WHILE => "'while' without matching 'end while'",
 					_ => "unmatched block opener"
 				};
-				throw new CompilerException(errorContext, tokens.LineNum, msg);
+				throw new CompilerException(ErrorContext, tokens.LineNum, msg);
 			}
 		}
 
@@ -171,7 +172,7 @@ namespace MiniScriptSharp.Parse {
 				}
 
 				// Prepare a source code location for error reporting
-				var location = new SourceLoc(errorContext, tokens.LineNum);
+				var location = new SourceLoc(ErrorContext, tokens.LineNum);
 
 				// Pop our context if we reach 'end function'.
 				if (tokens.Peek().TokenType == TokenType.Keyword && tokens.Peek().Text == END_FUNCTION) {
@@ -297,7 +298,7 @@ namespace MiniScriptSharp.Parse {
 							RequireToken(tokens, TokenType.Keyword, IN);
 							var stuff = ParseExpr(tokens);
 							if (stuff == null) {
-								throw new CompilerException(errorContext, tokens.LineNum,
+								throw new CompilerException(ErrorContext, tokens.LineNum,
 									"sequence expression expected for 'for' loop");
 							}
 
@@ -340,14 +341,14 @@ namespace MiniScriptSharp.Parse {
 					case CONTINUE: {
 							// Jump unconditionally back to the current open jump point.
 							if (output.JumpPoints.Count == 0) {
-								throw new CompilerException(errorContext, tokens.LineNum, "'continue' without open loop block");
+								throw new CompilerException(ErrorContext, tokens.LineNum, "'continue' without open loop block");
 							}
 							JumpPoint jump = output.JumpPoints.Last();
 							output.Add(new Line(null, Op.GotoA, TAC.Num(jump.LineNum)));
 						}
 						break;
 					default:
-						throw new CompilerException(errorContext, tokens.LineNum, $"unexpected keyword '{keyword}' at start of line");
+						throw new CompilerException(ErrorContext, tokens.LineNum, $"unexpected keyword '{keyword}' at start of line");
 				}
 			} else {
 				ParseAssignment(tokens, allowExtra);
@@ -469,7 +470,7 @@ namespace MiniScriptSharp.Parse {
 				//			identifier
 				//	or...	identifier = expr
 				var id = tokens.Dequeue();
-				if (id.TokenType != TokenType.Identifier) throw new CompilerException(errorContext, tokens.LineNum,
+				if (id.TokenType != TokenType.Identifier) throw new CompilerException(ErrorContext, tokens.LineNum,
 					$"got {id} where an identifier is required");
 				Value defaultValue = null;
 				if (tokens.Peek().TokenType == TokenType.OpAssign) {
@@ -486,7 +487,7 @@ namespace MiniScriptSharp.Parse {
 			// Now, we need to parse the function body into its own parsing context.
 			// But don't push it yet -- we're in the middle of parsing some expression
 			// or statement in the current context, and need to finish that.
-			if (pendingState != null) throw new CompilerException(errorContext, tokens.LineNum,
+			if (pendingState != null) throw new CompilerException(ErrorContext, tokens.LineNum,
 				"can't start two functions in one statement");
 			pendingState = new ParseState {nextTempNum = 1};
 			// (since 0 is used to hold return value)
@@ -1034,7 +1035,7 @@ namespace MiniScriptSharp.Parse {
 			if (got.TokenType == type && (text == null || got.Text == text)) return got;
 			
 			var expected = new Token(type, text);
-			throw new CompilerException(errorContext, tokens.LineNum, $"got {got} where {expected} is required");
+			throw new CompilerException(ErrorContext, tokens.LineNum, $"got {got} where {expected} is required");
 		}
 
 		private Token RequireEitherToken(Lexer tokens, TokenType type1, string text1, TokenType type2, string text2=null) {
@@ -1044,7 +1045,7 @@ namespace MiniScriptSharp.Parse {
 			
 			var expected1 = new Token(type1, text1);
 			var expected2 = new Token(type2, text2);
-			throw new CompilerException(errorContext, tokens.LineNum, $"got {got} where {expected1} or {expected2} is required");
+			throw new CompilerException(ErrorContext, tokens.LineNum, $"got {got} where {expected1} or {expected2} is required");
 		}
 
 		private Token RequireEitherToken(Lexer tokens, TokenType type1, TokenType type2, string text2=null) {
