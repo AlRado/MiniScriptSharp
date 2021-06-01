@@ -1,8 +1,10 @@
 ﻿namespace MiniScriptSharp.Types {
 
-    // We frequently need to generate a ValString out of a string for fleeting purposes,
-    // like looking up an identifier in a map (which we do ALL THE TIME).  So, here's
-    // a little recycling pool of reusable ValStrings, for this purpose only.
+    /// <summary>
+    /// We frequently need to generate a ValString out of a string for fleeting purposes,
+    /// like looking up an identifier in a map (which we do ALL THE TIME).  So, here's
+    /// a little recycling pool of reusable ValStrings, for this purpose only.
+    /// </summary>
     class TempValString : ValString {
 
         private TempValString next;

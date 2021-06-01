@@ -1,13 +1,13 @@
-﻿/*	UnitTest.cs
-
-This file contains a number of unit tests for various parts of the MiniScript
-architecture.  It's used by the MiniScript developers to ensure we don't
-break something when we make changes.
-
-You can safely ignore this, but if you really want to run the tests yourself,
-just call Miniscript.UnitTest.Run().
-
-*/
+﻿/*
+ * UnitTest.cs
+ *
+ * This file contains a number of unit tests for various parts of the MiniScript
+ * architecture.  It's used by the MiniScript developers to ensure we don't
+ * break something when we make changes.
+ * 
+ * You can safely ignore this, but if you really want to run the tests yourself,
+ * just call MiniScriptSharp.Tests.UnitTest.Run().
+ */
 
 using System;
 using MiniScriptSharp.Lexis;

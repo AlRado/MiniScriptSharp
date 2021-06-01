@@ -1,6 +1,7 @@
 ﻿namespace MiniScriptSharp.Tac {
 
     public enum Op {
+        
         Noop = 0,
         AssignA,
         AssignImplicit,
@@ -33,6 +34,7 @@
         ElemBofA,
         ElemBofIterA,
         LengthOfA
+        
     }
 
 }

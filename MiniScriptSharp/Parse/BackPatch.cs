@@ -1,7 +1,9 @@
 ﻿namespace MiniScriptSharp.Parse {
 
-    // BackPatch: represents a place where we need to patch the code to fill
-    // in a jump destination (once we figure out where that destination is).
+    /// <summary>
+    /// BackPatch: represents a place where we need to patch the code to fill
+    /// in a jump destination (once we figure out where that destination is).
+    /// </summary>
     internal class BackPatch {
 
         public int LineNum; // which code line to patch

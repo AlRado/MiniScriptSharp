@@ -1,12 +1,13 @@
-﻿/*	Parser.cs
-
-This file is responsible for parsing MiniScript source code, and converting
-it into an internal format (a three-address byte code) that is considerably
-faster to execute.
-
-This is normally wrapped by the Interpreter class, so you probably don't
-need to deal with Parser directly.
-*/
+﻿/*
+ * Parser.cs
+ *
+ * This file is responsible for parsing MiniScript source code, and converting
+ * it into an internal format (a three-address byte code) that is considerably
+ * faster to execute.
+ * 
+ * This is normally wrapped by the Interpreter class, so you probably don't
+ * need to deal with Parser directly.
+ */
 
 using System;
 using System.Collections.Generic;
