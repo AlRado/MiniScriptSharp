@@ -51,13 +51,13 @@
         <Compile Include="errors\TooManyArgumentsException.cs" />
         <Compile Include="errors\TypeException.cs" />
         <Compile Include="errors\UndefinedIdentifierException.cs" />
+        <Compile Include="inject\FunctionInjector.cs" />
+        <Compile Include="inject\IntrinsicFunctions.cs" />
+        <Compile Include="inject\MethodOfAttribute.cs" />
         <Compile Include="interpreter\Interpreter.cs" />
         <Compile Include="intrinsic\HostInfo.cs" />
         <Compile Include="intrinsic\Intrinsic.cs" />
-        <Compile Include="intrinsic\MethodOfAttribute.cs" />
         <Compile Include="intrinsic\IntrinsicCode.cs" />
-        <Compile Include="intrinsic\IntrinsicFunctions.cs" />
-        <Compile Include="intrinsic\FunctionInjector.cs" />
         <Compile Include="intrinsic\KeyedValue.cs" />
         <Compile Include="intrinsic\Result.cs" />
         <Compile Include="keywords\Consts.cs" />

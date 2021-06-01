@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Miniscript.intrinsic {
+namespace Miniscript.inject {
     
-    /*
-     * Attribute for adding functions as methods to the specified types
-     */
+    /// <summary>
+    /// Attribute for adding functions as methods to the specified types
+    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class MethodOfAttribute : Attribute {  
         public readonly Type Type;  

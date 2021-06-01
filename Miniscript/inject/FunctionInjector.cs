@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using Miniscript.intrinsic;
 using Miniscript.keywords;
 using Miniscript.tac;
 using Miniscript.types;
 
-namespace Miniscript.intrinsic {
-
+namespace Miniscript.inject {
+    
+    /// <summary>
+    /// Static class for embed public methods from instance of target class into MiniScript
+    /// You can specify log output to see information about all injected functions
+    /// </summary>
     public static class FunctionInjector {
 
         public static Context Context { get; private set; }

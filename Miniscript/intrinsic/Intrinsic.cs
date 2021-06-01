@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Miniscript.inject;
 using Miniscript.tac;
 using Miniscript.types;
 using static Miniscript.keywords.Consts;

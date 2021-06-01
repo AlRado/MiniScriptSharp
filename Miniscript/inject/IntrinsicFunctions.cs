@@ -4,12 +4,16 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using Miniscript.errors;
+using Miniscript.intrinsic;
 using Miniscript.tac;
 using Miniscript.types;
 using static Miniscript.keywords.Consts;
 
-namespace Miniscript.intrinsic {
-
+namespace Miniscript.inject {
+    
+    /// <summary>
+    /// All standard intrinsics are defined in this class
+    /// </summary>
     public class IntrinsicFunctions {
         
         private static Random random = new Random();
