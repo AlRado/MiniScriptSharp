@@ -1,20 +1,21 @@
-/*	Intrinsics.cs
-
-This file defines the Intrinsic class, which represents a built-in function
-available to MiniScript code.  All intrinsics are held in static storage, so
-this class includes static functions such as GetByName to look up 
-already-defined intrinsics.  See Chapter 2 of the MiniScript Integration
-Guide for details on adding your own intrinsics.
-
-This file also contains the Intrinsics static class, where all of the standard
-intrinsics are defined.  This is initialized automatically, so normally you
-don’t need to worry about it, though it is a good place to look for examples
-of how to write intrinsic functions.
-
-Note that you should put any intrinsics you add in a separate file; leave the
-MiniScript source files untouched, so you can easily replace them when updates
-become available.
-*/
+/*
+ * Intrinsic.cs
+ * 
+ * This file defines the Intrinsic class, which represents a built-in function
+ * available to MiniScript code.  All intrinsics are held in static storage, so
+ * this class includes static functions such as GetByName to look up 
+ * already-defined intrinsics.  See Chapter 2 of the MiniScript Integration
+ * Guide for details on adding your own intrinsics.
+ * 
+ * This file also contains the Intrinsics static class, where all of the standard
+ * intrinsics are defined.  This is initialized automatically, so normally you
+ * don’t need to worry about it, though it is a good place to look for examples
+ * of how to write intrinsic functions.
+ * 
+ * Note that you should put any intrinsics you add in a separate file; leave the
+ * MiniScript source files untouched, so you can easily replace them when updates
+ * become available.
+ */
 
 using System;
 using System.Collections.Generic;

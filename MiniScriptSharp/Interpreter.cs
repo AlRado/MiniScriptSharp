@@ -1,13 +1,14 @@
-﻿/*	Interpreter.cs
-
-The only class in this file is Interpreter, which is your main interface 
-to the MiniScript system.  You give Interpreter some MiniScript source 
-code, and tell it where to send its output (via delegate functions called
-TextOutputMethod).  Then you typically call RunUntilDone, which returns 
-when either the script has stopped or the given timeout has passed.  
-
-For details, see Chapters 1-3 of the MiniScript Integration Guide.
-*/
+﻿/*
+ * Interpreter.cs
+ *
+ * The only class in this file is Interpreter, which is your main interface 
+ * to the MiniScript system.  You give Interpreter some MiniScript source 
+ * code, and tell it where to send its output (via delegate functions called
+ * TextOutputMethod).  Then you typically call RunUntilDone, which returns 
+ * when either the script has stopped or the given timeout has passed.  
+ * 
+ * For details, see Chapters 1-3 of the MiniScript Integration Guide.
+ */
 
 using System;
 using System.Collections.Generic;

@@ -1,14 +1,14 @@
-﻿/*	MiniscriptTAC.cs
-
-This file defines the three-address code (TAC) which represents compiled
-MiniScript code.  TAC is sort of a pseudo-assembly language, composed of
-simple instructions containing an opcode and up to three variable/value 
-references.
-
-This is all internal MiniScript virtual machine code.  You don't need to
-deal with it directly (see MiniscriptInterpreter instead).
-
-*/
+﻿/*
+ * TAC.cs
+ *
+ * This file defines the three-address code (TAC) which represents compiled
+ * MiniScript code.  TAC is sort of a pseudo-assembly language, composed of
+ * simple instructions containing an opcode and up to three variable/value 
+ * references.
+ * 
+ * This is all internal MiniScript virtual machine code.  You don't need to
+ * deal with it directly (see Interpreter instead).
+ */
 
 using System;
 using System.Collections.Generic;

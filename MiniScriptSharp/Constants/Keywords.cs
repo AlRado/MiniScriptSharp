@@ -1,17 +1,18 @@
-﻿/*	Keywords.cs
-
-This file defines a little Keywords class, which contains all the 
-MiniScript reserved words (break, for, etc.).  It might be useful 
-if you are doing something like syntax coloring, or want to make 
-sure some user-entered identifier isn’t going to conflict with a 
-reserved word.
-
-*/
+﻿/*
+ * Keywords.cs
+ * 
+ * This file defines a little Keywords class, which contains all the 
+ * MiniScript reserved words (break, for, etc.).  It might be useful 
+ * if you are doing something like syntax coloring, or want to make 
+ * sure some user-entered identifier isn’t going to conflict with a 
+ * reserved word.
+ */
 
 using System;
 using static MiniScriptSharp.Constants.Consts;
 
 namespace MiniScriptSharp.Constants {
+	
 	public static class Keywords {
 		public static readonly string[] All = {
 			BREAK,

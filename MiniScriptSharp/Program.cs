@@ -3,9 +3,11 @@ using System.IO;
 using MiniScriptSharp.Intrinsics;
 using MiniScriptSharp.Tests;
 
-// Unit and integration tests, quick test script from file and REPL in console
 namespace MiniScriptSharp {
-
+	
+	/// <summary>
+	/// Unit and integration tests, quick test script from file and REPL in console
+	/// </summary>
 	internal static class Program {
 
 		private const string TestSuiteFilePath = "../../tests/TestSuiteData.txt";
