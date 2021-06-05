@@ -23,8 +23,8 @@ Supported language version: `C# 8`.
 Example of using it in Unity:
 ```
 using System.ComponentModel;
-using Miniscript.interpreter;
-using Miniscript.intrinsic;
+using MiniScriptSharp;
+using MiniScriptSharp.Inject;
 using UnityEngine;
 
 public class Demo : MonoBehaviour {
