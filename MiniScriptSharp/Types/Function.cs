@@ -6,10 +6,7 @@ using MiniScriptSharp.Tac;
 namespace MiniScriptSharp.Types {
 
     /// <summary>
-    /// Function: our internal representation of a MiniScript function.  This includes
-    /// its parameters and its code.  (It does not include a name -- functions don't 
-    /// actually HAVE names; instead there are named variables whose value may happen 
-    /// to be a function.)
+    /// Function: our internal representation of a MiniScript function.
     /// </summary>
     public class Function {
 

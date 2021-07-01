@@ -182,12 +182,12 @@ namespace MiniScriptSharp.Inject {
                 
                 if (attribute.GetType() == typeof(CategoryAttribute)) {
                     var categoryAttribute = (CategoryAttribute)attribute;
-                    Intrinsic.AddToCategory(categoryAttribute.Category, valFunc.ToString());
+                    Intrinsic.AddCategory(valFunc.ToString(), categoryAttribute.Category);
                 }
             }
 
             if (Attribute.GetCustomAttribute(method, typeof(CategoryAttribute)) == null)
-                Intrinsic.AddToCategory(Consts.NONE, valFunc.ToString());
+                Intrinsic.AddCategory(valFunc.ToString(), Consts.NONE);
         }
 
         private static ValMap GetMap(Type type) {
