@@ -4,7 +4,7 @@
     "displayName": "MiniScript Sharp",
     "description": "This is an alternative version of the excellent MiniScript scripting language by Joe Strout written in C#",
     "unity": "2020.3",
-    "version": "0.1",
+    "version": "2021.07.16",
     "keywords": [
         "miniscript",
         "sharp",
