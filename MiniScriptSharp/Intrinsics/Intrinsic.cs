@@ -94,33 +94,31 @@ namespace MiniScriptSharp.Intrinsics {
 		static Intrinsic() {
 			FunctionInjector.AddFunctions(new IntrinsicFunctions(), Console.WriteLine);
 
-			// You can use the manual method to add intrinsic functions, like this:
-			
-			// abs
-			//	Returns the absolute value of the given number.
-			// x (number, default 0): number to take the absolute value of.
-			// Example: abs(-42)		returns 42
-			// var f = Create("abs");
-			// f.AddDoubleParam("x");
-			// f.Сode = (context, partialResult) => new Result(Math.Abs(context.GetLocalDouble("x")));
-			
-			// self.len
-			//	Return the number of characters in a string, elements in
-			//	a list, or key/value pairs in a map.
-			//	May be called with function syntax or dot syntax.
-			// self (list, string, or map): object to get the length of
-			// Returns: length (number of elements) in self
-			// Example: "hello".len		returns 5
-			// f = Create("len");
-			// f.AddParam("self");
-			// f.Сode = (context, partialResult) => {
-			// 	return context.Self switch {
-			// 		ValList valList => new Result(valList.Values.Count),
-			// 		ValString valString => new Result(valString.Value.Length),
-			// 		ValMap map => new Result(map.Count),
-			// 		_ => Result.Null
-			// 	};
-			// };
+			// You can use the manual method to add intrinsic functions.
+			// This method is not as convenient as adding functions using FunctionInjector,
+			// but in some cases it can give a performance boost because in this case reflection will not be used 
+			var intrinsicFunc = Create("wait");
+			intrinsicFunc.AddDoubleParam("seconds", 1);
+			intrinsicFunc.Сode = (context, partialResult) => {
+				var now = context.Vm.RunTime;
+				if (partialResult == null) {
+					// Just starting our wait; calculate end time and return as partial result
+					var interval = context.GetVar("seconds").DoubleValue();
+					return new Result(new ValNumber(now + interval), false);
+				} else {
+					// Continue until current time exceeds the time in the partial result
+					if (now > partialResult.ResultValue.DoubleValue()) return Result.Null;
+					return partialResult;
+				}
+			};
+			AddDescription(intrinsicFunc,
+				"\n   Pause execution of this script for some amount of time." +
+				"\n seconds (default 1.0): how many seconds to wait" +
+				"\n Example: wait 2.5		pauses the script for 2.5 seconds" +
+				"\n See also: time, yield" +
+				"\n"
+			);
+			AddCategory(intrinsicFunc, INTRINSIC);
 			
 			// You can also use the manual method to
 			// provides intrinsic methods that can be invoked on it via dot syntax:
@@ -264,6 +262,10 @@ namespace MiniScriptSharp.Intrinsics {
 			return valFunction;
 		}
 
+		public static void AddDescription(Intrinsic intrinsic, string description) {
+			AddDescription(intrinsic.function.Name, description);
+		}
+		
 		public static void AddDescription(string functionName, string description) {
 			if (string.IsNullOrEmpty(functionName)) return;
 			
@@ -278,8 +280,12 @@ namespace MiniScriptSharp.Intrinsics {
 				description : 
 				$"Help description for function \"{functionName}\" not founded!";
 		}
-		
-		public static void AddToCategory(string category, string functionSignature) {
+
+		public static void AddCategory(Intrinsic intrinsic, string category) {
+			AddCategory(intrinsic.function.ToString(), category);
+		}
+
+		public static void AddCategory(string functionSignature, string category) {
 			if (string.IsNullOrEmpty(category)) return;
 
 			var functionInfo = $"\n {functionSignature}";

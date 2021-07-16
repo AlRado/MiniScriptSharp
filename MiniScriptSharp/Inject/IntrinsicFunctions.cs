@@ -1257,26 +1257,27 @@ namespace MiniScriptSharp.Inject {
             return new Result(FunctionInjector.Context.Vm.VersionMap);
         }
         
-        [Description(
-            "\n   Pause execution of this script for some amount of time." +
-            "\n seconds (default 1.0): how many seconds to wait" +
-            "\n Example: wait 2.5		pauses the script for 2.5 seconds" +
-            "\n See also: time, yield" +
-            "\n"
-        )]
-        [Category(INTRINSIC)]
-        public Result Wait(double seconds = 1) {
-            var now = FunctionInjector.Context.Vm.RunTime;
-            if (FunctionInjector.PartialResult == null) {
-                // Just starting our wait; calculate end time and return as partial result
-                return new Result(new ValNumber(now + seconds), false);
-            } else {
-                // Continue until current time exceeds the time in the partial result
-                return now > FunctionInjector.PartialResult.ResultValue.DoubleValue() ? 
-                    Result.Null : 
-                    FunctionInjector.PartialResult;
-            }
-        }
+        // Moved to the Intrinsic.cs - this method was added manually there, in order to improve performance
+        // [Description(
+        //     "\n   Pause execution of this script for some amount of time." +
+        //     "\n seconds (default 1.0): how many seconds to wait" +
+        //     "\n Example: wait 2.5		pauses the script for 2.5 seconds" +
+        //     "\n See also: time, yield" +
+        //     "\n"
+        // )]
+        // [Category(INTRINSIC)]
+        // public Result Wait(double seconds = 1) {
+        //     var now = FunctionInjector.Context.Vm.RunTime;
+        //     if (FunctionInjector.PartialResult == null) {
+        //         // Just starting our wait; calculate end time and return as partial result
+        //         return new Result(new ValNumber(now + seconds), false);
+        //     } else {
+        //         // Continue until current time exceeds the time in the partial result
+        //         return now > FunctionInjector.PartialResult.ResultValue.DoubleValue() ? 
+        //             Result.Null : 
+        //             FunctionInjector.PartialResult;
+        //     }
+        // }
         
         [Description(
             "\n   Pause the execution of the script until the next \"tick\" of" +
