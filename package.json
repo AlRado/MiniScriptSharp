@@ -1,0 +1,18 @@
+{
+    "name": "com.alrado.miniscriptsharp",
+    "author": "AlRado",
+    "displayName": "MiniScript Sharp",
+    "description": "This is an alternative version of the excellent MiniScript scripting language by Joe Strout written in C#",
+    "unity": "2020.3",
+    "version": "0.1",
+    "keywords": [
+        "miniscript",
+        "sharp",
+        "unity"
+    ],
+    "dependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AlRado/MiniScriptSharp.git"
+    }
+}
