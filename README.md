@@ -43,19 +43,17 @@ using UnityEngine;
 
 public class Demo : MonoBehaviour {
 
-    private const string CODE = "print \"Help 'foo':\n\" + help(\"foo\");" +
-                                "foo 10, 10;" +
-                                "print \"Help 'bar':\n\" + help(\"bar\");" +
-                                "bar;" +
-                                "print \"All categories of functions:\" + category(all);" +
-                                "print \"All functions:\" + help(all)";
+    // TODO: copy&paste this miniScript code to "code" field in Unity inspector tab 
+    // print "Help 'foo': " + help("foo"); foo 10, 10; print "Help 'bar': " + help("bar"); bar;
+    // print "All categories of functions: " + category(all); print "All functions: " + help(all)
+    public string code;
     
     private void Start() {
         // I embed public methods from this class into MiniScript and specify log output
         // to see information about all injected functions
         FunctionInjector.AddFunctions(this, Debug.Log);
         
-        var interpreter = new Interpreter(CODE, Debug.Log, Debug.Log);
+        var interpreter = new Interpreter(code, Debug.Log, Debug.Log);
         interpreter.Compile();
         interpreter.RunUntilDone(60, false);
     }
