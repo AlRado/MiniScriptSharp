@@ -2,6 +2,19 @@
 
 This is an alternative version of the excellent [MiniScript scripting language](http://miniscript.org) by Joe Strout written in C#.
 
+# Installation
+
+## As unity module
+This repository can be installed as unity module directly from git url. In this way new line should be added to `Packages/manifest.json`:
+```
+"com.alrado.miniscriptsharp": "https://github.com/AlRado/MiniScriptSharp.git",
+```
+By default last released version will be used.
+
+## As source
+If you can't / don't want to use unity modules, code can be downloaded as sources archive.
+
+# The main idea
 The main idea was to use the features of modern versions of C# and to add new features that make it easier to embed functions and support them.
 Here is a list of the main features:
 - automatic embedding of methods (`FunctionInjector.cs`)
@@ -19,6 +32,7 @@ Tested in Unity `2020.3.3f1, 2021.1.4f1` and `NetFramework v4.7.1, netcoreapp2.2
 
 Supported language version: `C# 8`.
 
+# Examples
 
 Example of using it in Unity:
 ```
